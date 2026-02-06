@@ -9,26 +9,26 @@ public sealed class CacheModule : IScaffoldModule
     public string Name => "Cache";
     public int Order => 20;
 
-    public bool IsEnabled(GenerateScaffoldRequest request) => request.Cache != CacheProvider.None;
+    public bool IsEnabled(GenerateScaffoldRequest request) => request.Backend.Cache != CacheProvider.None;
 
     public Task ContributeAsync(ScaffoldPlan plan, GenerateScaffoldRequest request, CancellationToken ct = default)
     {
         var model = new
         {
-            request.ProjectName,
-            request.Namespace,
-            CacheType = request.Cache.ToString(),
-            UseRedis = request.Cache == CacheProvider.Redis
+            ProjectName = request.Basic.ProjectName,
+            Namespace = request.Basic.Namespace,
+            CacheType = request.Backend.Cache.ToString(),
+            UseRedis = request.Backend.Cache == CacheProvider.Redis
         };
 
-        if (request.Cache == CacheProvider.Redis)
+        if (request.Backend.Cache == CacheProvider.Redis)
         {
             plan.AddNugetPackage("StackExchange.Redis");
-            plan.AddTemplateFile("backend/RedisSetup.cs.sbn", $"src/{request.ProjectName}.Api/Extensions/RedisSetup.cs", model);
+            plan.AddTemplateFile("backend/RedisSetup.cs.sbn", $"src/{request.Basic.ProjectName}.Api/Extensions/RedisSetup.cs", model);
         }
         else
         {
-            plan.AddTemplateFile("backend/MemoryCacheSetup.cs.sbn", $"src/{request.ProjectName}.Api/Extensions/MemoryCacheSetup.cs", model);
+            plan.AddTemplateFile("backend/MemoryCacheSetup.cs.sbn", $"src/{request.Basic.ProjectName}.Api/Extensions/MemoryCacheSetup.cs", model);
         }
 
         return Task.CompletedTask;

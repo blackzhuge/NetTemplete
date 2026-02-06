@@ -1,3 +1,4 @@
+using {{ namespace }}.Api.Extensions;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()

@@ -20,6 +20,36 @@ public class GenerateEndpointTests : IClassFixture<CustomWebApplicationFactory>
         _client = factory.CreateClient();
     }
 
+    private static GenerateScaffoldRequest CreateRequest(
+        string projectName = "TestProject",
+        string ns = "TestProject",
+        DatabaseProvider database = DatabaseProvider.SQLite,
+        CacheProvider cache = CacheProvider.None,
+        bool swagger = true,
+        bool jwtAuth = true)
+    {
+        return new GenerateScaffoldRequest
+        {
+            Basic = new BasicOptions
+            {
+                ProjectName = projectName,
+                Namespace = ns
+            },
+            Backend = new BackendOptions
+            {
+                Database = database,
+                Cache = cache,
+                Swagger = swagger,
+                JwtAuth = jwtAuth
+            },
+            Frontend = new FrontendOptions
+            {
+                RouterMode = RouterMode.Hash,
+                MockData = false
+            }
+        };
+    }
+
     [Fact]
     public async Task HealthCheck_ReturnsOk()
     {
@@ -30,17 +60,9 @@ public class GenerateEndpointTests : IClassFixture<CustomWebApplicationFactory>
     [Fact]
     public async Task Generate_ValidRequest_ReturnsZipFile()
     {
-        var request = new GenerateScaffoldRequest
-        {
-            ProjectName = "TestProject",
-            Namespace = "TestProject",
-            Database = DatabaseProvider.SQLite,
-            Cache = CacheProvider.None,
-            EnableSwagger = true,
-            EnableJwtAuth = true
-        };
+        var request = CreateRequest();
 
-        var response = await _client.PostAsJsonAsync("/api/generate", request);
+        var response = await _client.PostAsJsonAsync("/api/v1/scaffolds/generate-zip", request);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         response.Content.Headers.ContentType?.MediaType.Should().Be("application/zip");
@@ -52,28 +74,31 @@ public class GenerateEndpointTests : IClassFixture<CustomWebApplicationFactory>
     }
 
     [Fact]
-    public async Task Generate_EmptyProjectName_ReturnsBadRequest()
+    public async Task Generate_LegacyEndpoint_StillWorks()
     {
-        var request = new GenerateScaffoldRequest
-        {
-            ProjectName = "",
-            Namespace = "Test"
-        };
+        var request = CreateRequest();
 
         var response = await _client.PostAsJsonAsync("/api/generate", request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.Content.Headers.ContentType?.MediaType.Should().Be("application/zip");
+    }
+
+    [Fact]
+    public async Task Generate_EmptyProjectName_ReturnsBadRequest()
+    {
+        var request = CreateRequest(projectName: "", ns: "Test");
+
+        var response = await _client.PostAsJsonAsync("/api/v1/scaffolds/generate-zip", request);
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
     [Fact]
     public async Task Generate_InvalidNamespace_ReturnsBadRequest()
     {
-        var request = new GenerateScaffoldRequest
-        {
-            ProjectName = "Test",
-            Namespace = "123-invalid"
-        };
+        var request = CreateRequest(projectName: "Test", ns: "123-invalid");
 
-        var response = await _client.PostAsJsonAsync("/api/generate", request);
+        var response = await _client.PostAsJsonAsync("/api/v1/scaffolds/generate-zip", request);
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
@@ -82,14 +107,12 @@ public class GenerateEndpointTests : IClassFixture<CustomWebApplicationFactory>
     {
         foreach (var provider in Enum.GetValues<DatabaseProvider>())
         {
-            var request = new GenerateScaffoldRequest
-            {
-                ProjectName = $"Test{provider}",
-                Namespace = $"Test{provider}",
-                Database = provider
-            };
+            var request = CreateRequest(
+                projectName: $"Test{provider}",
+                ns: $"Test{provider}",
+                database: provider);
 
-            var response = await _client.PostAsJsonAsync("/api/generate", request);
+            var response = await _client.PostAsJsonAsync("/api/v1/scaffolds/generate-zip", request);
             response.StatusCode.Should().Be(HttpStatusCode.OK,
                 $"Database provider {provider} should work");
         }
@@ -100,14 +123,12 @@ public class GenerateEndpointTests : IClassFixture<CustomWebApplicationFactory>
     {
         foreach (var provider in Enum.GetValues<CacheProvider>())
         {
-            var request = new GenerateScaffoldRequest
-            {
-                ProjectName = $"TestCache{provider}",
-                Namespace = $"TestCache{provider}",
-                Cache = provider
-            };
+            var request = CreateRequest(
+                projectName: $"TestCache{provider}",
+                ns: $"TestCache{provider}",
+                cache: provider);
 
-            var response = await _client.PostAsJsonAsync("/api/generate", request);
+            var response = await _client.PostAsJsonAsync("/api/v1/scaffolds/generate-zip", request);
             response.StatusCode.Should().Be(HttpStatusCode.OK,
                 $"Cache provider {provider} should work");
         }

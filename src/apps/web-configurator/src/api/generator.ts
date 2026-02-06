@@ -20,8 +20,29 @@ api.interceptors.response.use(
   }
 )
 
+// 将扁平配置转换为嵌套结构
+function toApiRequest(config: ScaffoldConfig) {
+  return {
+    basic: {
+      projectName: config.projectName,
+      namespace: config.namespace
+    },
+    backend: {
+      database: config.database,
+      cache: config.cache,
+      swagger: config.enableSwagger,
+      jwtAuth: config.enableJwtAuth
+    },
+    frontend: {
+      routerMode: config.routerMode.toLowerCase(),
+      mockData: config.enableMockData
+    }
+  }
+}
+
 export async function generateScaffold(config: ScaffoldConfig): Promise<Blob> {
-  const response = await api.post('/generate', config, {
+  const payload = toApiRequest(config)
+  const response = await api.post('/v1/scaffolds/generate-zip', payload, {
     responseType: 'blob'
   })
   return response.data

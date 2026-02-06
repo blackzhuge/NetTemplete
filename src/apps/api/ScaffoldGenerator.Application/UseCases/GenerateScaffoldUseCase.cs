@@ -29,11 +29,7 @@ public sealed class GenerateScaffoldUseCase
         if (!validationResult.IsValid)
         {
             var errors = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
-            return new GenerationResult
-            {
-                Success = false,
-                ErrorMessage = errors
-            };
+            return GenerationResult.Fail(errors, ErrorCode.ValidationError);
         }
 
         try
@@ -49,22 +45,19 @@ public sealed class GenerateScaffoldUseCase
             }
 
             var zipContent = _zipBuilder.Build();
-            var fileName = $"{request.ProjectName}.zip";
+            var fileName = $"{request.Basic.ProjectName}.zip";
 
-            return new GenerationResult
-            {
-                Success = true,
-                FileName = fileName,
-                FileContent = zipContent
-            };
+            return GenerationResult.Ok(fileName, zipContent);
         }
-        catch (Exception ex)
+        catch (InvalidOperationException ex)
         {
-            return new GenerationResult
-            {
-                Success = false,
-                ErrorMessage = $"生成失败: {ex.Message}"
-            };
+            // 无效的选项组合
+            return GenerationResult.Fail(ex.Message, ErrorCode.InvalidCombination);
+        }
+        catch (Exception)
+        {
+            // 模板渲染错误 - 不泄露内部细节
+            return GenerationResult.Fail("模板生成失败，请稍后重试", ErrorCode.TemplateError);
         }
     }
 }

@@ -14,30 +14,37 @@ public sealed class CoreModule : IScaffoldModule
     {
         var model = new
         {
-            request.ProjectName,
-            request.Namespace,
-            DbType = request.Database.ToString(),
+            ProjectName = request.Basic.ProjectName,
+            Namespace = request.Basic.Namespace,
+            DbType = request.Backend.Database.ToString(),
             ConnectionString = GetConnectionString(request),
-            CacheType = request.Cache.ToString(),
-            EnableJwtAuth = request.EnableJwtAuth,
-            EnableSwagger = request.EnableSwagger,
-            RouterMode = request.RouterMode.ToString()
+            CacheType = request.Backend.Cache.ToString(),
+            EnableJwtAuth = request.Backend.JwtAuth,
+            EnableSwagger = request.Backend.Swagger,
+            RouterMode = request.Frontend.RouterMode.ToString(),
+            EnableMockData = request.Frontend.MockData
         };
 
-        plan.AddTemplateFile("backend/Program.cs.sbn", $"src/{request.ProjectName}.Api/Program.cs", model);
-        plan.AddTemplateFile("backend/appsettings.json.sbn", $"src/{request.ProjectName}.Api/appsettings.json", model);
+        // 核心后端文件
+        plan.AddTemplateFile("backend/Program.cs.sbn", $"src/{request.Basic.ProjectName}.Api/Program.cs", model);
+        plan.AddTemplateFile("backend/appsettings.json.sbn", $"src/{request.Basic.ProjectName}.Api/appsettings.json", model);
+
+        // 项目文件 - 使生成的项目可运行
+        plan.AddTemplateFile("backend/Api.csproj.sbn", $"src/{request.Basic.ProjectName}.Api/{request.Basic.ProjectName}.Api.csproj", model);
+        plan.AddTemplateFile("backend/Solution.sln.sbn", $"{request.Basic.ProjectName}.sln", model);
+        plan.AddTemplateFile("backend/Directory.Build.props.sbn", $"Directory.Build.props", model);
 
         return Task.CompletedTask;
     }
 
     private static string GetConnectionString(GenerateScaffoldRequest request)
     {
-        return request.Database switch
+        return request.Backend.Database switch
         {
-            Contracts.Enums.DatabaseProvider.SQLite => $"Data Source={request.ProjectName}.db",
-            Contracts.Enums.DatabaseProvider.MySQL => $"Server=localhost;Database={request.ProjectName};User=root;Password=;",
-            Contracts.Enums.DatabaseProvider.SQLServer => $"Server=localhost;Database={request.ProjectName};Trusted_Connection=True;TrustServerCertificate=True;",
-            _ => $"Data Source={request.ProjectName}.db"
+            Contracts.Enums.DatabaseProvider.SQLite => $"Data Source={request.Basic.ProjectName}.db",
+            Contracts.Enums.DatabaseProvider.MySQL => $"Server=localhost;Database={request.Basic.ProjectName};User=root;Password=;",
+            Contracts.Enums.DatabaseProvider.SQLServer => $"Server=localhost;Database={request.Basic.ProjectName};Trusted_Connection=True;TrustServerCertificate=True;",
+            _ => $"Data Source={request.Basic.ProjectName}.db"
         };
     }
 }

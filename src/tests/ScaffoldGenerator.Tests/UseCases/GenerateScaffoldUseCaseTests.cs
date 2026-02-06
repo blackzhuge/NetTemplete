@@ -13,6 +13,36 @@ namespace ScaffoldGenerator.Tests.UseCases;
 
 public class GenerateScaffoldUseCaseTests
 {
+    private static GenerateScaffoldRequest CreateRequest(
+        string projectName = "TestProject",
+        string ns = "TestProject",
+        DatabaseProvider database = DatabaseProvider.SQLite,
+        CacheProvider cache = CacheProvider.None,
+        bool swagger = true,
+        bool jwtAuth = true)
+    {
+        return new GenerateScaffoldRequest
+        {
+            Basic = new BasicOptions
+            {
+                ProjectName = projectName,
+                Namespace = ns
+            },
+            Backend = new BackendOptions
+            {
+                Database = database,
+                Cache = cache,
+                Swagger = swagger,
+                JwtAuth = jwtAuth
+            },
+            Frontend = new FrontendOptions
+            {
+                RouterMode = RouterMode.Hash,
+                MockData = false
+            }
+        };
+    }
+
     [Fact]
     public async Task ExecuteAsync_InvalidRequest_ReturnsErrorResult()
     {
@@ -25,11 +55,7 @@ public class GenerateScaffoldUseCaseTests
 
         var useCase = new GenerateScaffoldUseCase(planBuilder, zipBuilder, validator);
 
-        var request = new GenerateScaffoldRequest
-        {
-            ProjectName = "", // Invalid - empty
-            Namespace = "Test"
-        };
+        var request = CreateRequest(projectName: "", ns: "Test");
 
         // Act
         var result = await useCase.ExecuteAsync(request);
@@ -52,11 +78,7 @@ public class GenerateScaffoldUseCaseTests
 
         var useCase = new GenerateScaffoldUseCase(planBuilder, zipBuilder, validator);
 
-        var request = new GenerateScaffoldRequest
-        {
-            ProjectName = "TestProject",
-            Namespace = "TestProject"
-        };
+        var request = CreateRequest();
 
         // Act
         var result = await useCase.ExecuteAsync(request);
@@ -81,11 +103,7 @@ public class GenerateScaffoldUseCaseTests
 
         var useCase = new GenerateScaffoldUseCase(planBuilder, zipBuilder, validator);
 
-        var request = new GenerateScaffoldRequest
-        {
-            ProjectName = "Test",
-            Namespace = "Test"
-        };
+        var request = CreateRequest(projectName: "Test", ns: "Test");
 
         // Act
         await useCase.ExecuteAsync(request);
@@ -105,11 +123,7 @@ public class GenerateScaffoldUseCaseTests
 
         var useCase = new GenerateScaffoldUseCase(planBuilder, zipBuilder, validator);
 
-        var request = new GenerateScaffoldRequest
-        {
-            ProjectName = "Test",
-            Namespace = "123-invalid" // Invalid namespace
-        };
+        var request = CreateRequest(projectName: "Test", ns: "123-invalid");
 
         // Act
         var result = await useCase.ExecuteAsync(request);
