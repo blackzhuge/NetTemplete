@@ -13,11 +13,19 @@ export interface ScaffoldConfig {
   enableMockData: boolean
 }
 
+export type ErrorCode = 'None' | 'ValidationError' | 'InvalidCombination' | 'TemplateError'
+
+export interface ApiErrorResponse {
+  error: string
+  errorCode?: ErrorCode
+}
+
 export interface GenerationResult {
   success: boolean
   fileName?: string
   fileContent?: Blob
   errorMessage?: string
+  errorCode?: ErrorCode
 }
 
 export interface FileTreeNode {

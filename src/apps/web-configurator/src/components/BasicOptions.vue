@@ -1,7 +1,10 @@
 <template>
   <el-card class="basic-options">
     <template #header>
-      <span class="card-title">基本配置</span>
+      <div class="card-header">
+        <el-icon class="header-icon"><Setting /></el-icon>
+        <span class="card-title">基本配置</span>
+      </div>
     </template>
 
     <el-form label-width="120px" label-position="right">
@@ -10,11 +13,12 @@
           v-model="projectName"
           placeholder="输入项目名称"
           @input="syncNamespace"
+          clearable
         />
       </el-form-item>
 
       <el-form-item label="命名空间" required :error="namespaceError">
-        <el-input v-model="namespace" placeholder="输入命名空间" />
+        <el-input v-model="namespace" placeholder="输入命名空间" clearable />
       </el-form-item>
     </el-form>
   </el-card>
@@ -22,7 +26,7 @@
 
 <script setup lang="ts">
 import { useField } from 'vee-validate'
-import { watch } from 'vue'
+import { Setting } from '@element-plus/icons-vue'
 
 const { value: projectName, errorMessage: projectNameError } = useField<string>('projectName')
 const { value: namespace, errorMessage: namespaceError } = useField<string>('namespace')
@@ -32,16 +36,22 @@ function syncNamespace() {
     namespace.value = projectName.value || ''
   }
 }
-
-// Sync with store when values change
-watch([projectName, namespace], () => {
-  // Values are automatically synced via VeeValidate form context
-})
 </script>
 
 <style scoped>
 .basic-options {
   margin-bottom: 16px;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-icon {
+  color: #409eff;
+  font-size: 18px;
 }
 
 .card-title {

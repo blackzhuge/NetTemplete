@@ -1,7 +1,10 @@
 <template>
   <el-card class="frontend-options">
     <template #header>
-      <span class="card-title">前端配置</span>
+      <div class="card-header">
+        <el-icon class="header-icon"><Monitor /></el-icon>
+        <span class="card-title">前端配置</span>
+      </div>
     </template>
 
     <el-form label-width="120px" label-position="right">
@@ -21,6 +24,7 @@
 
 <script setup lang="ts">
 import { useField } from 'vee-validate'
+import { Monitor } from '@element-plus/icons-vue'
 import type { RouterMode } from '@/types'
 
 const { value: routerMode } = useField<RouterMode>('routerMode')
@@ -30,6 +34,17 @@ const { value: enableMockData } = useField<boolean>('enableMockData')
 <style scoped>
 .frontend-options {
   margin-bottom: 16px;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-icon {
+  color: #e6a23c;
+  font-size: 18px;
 }
 
 .card-title {

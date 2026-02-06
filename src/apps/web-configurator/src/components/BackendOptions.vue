@@ -1,7 +1,10 @@
 <template>
   <el-card class="backend-options">
     <template #header>
-      <span class="card-title">后端配置</span>
+      <div class="card-header">
+        <el-icon class="header-icon"><Cpu /></el-icon>
+        <span class="card-title">后端配置</span>
+      </div>
     </template>
 
     <el-form label-width="120px" label-position="right">
@@ -31,6 +34,7 @@
 
 <script setup lang="ts">
 import { useField } from 'vee-validate'
+import { Cpu } from '@element-plus/icons-vue'
 import type { DatabaseProvider, CacheProvider } from '@/types'
 
 const { value: database } = useField<DatabaseProvider>('database')
@@ -42,6 +46,17 @@ const { value: enableSwagger } = useField<boolean>('enableSwagger')
 <style scoped>
 .backend-options {
   margin-bottom: 16px;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-icon {
+  color: #67c23a;
+  font-size: 18px;
 }
 
 .card-title {

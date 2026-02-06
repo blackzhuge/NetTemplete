@@ -1,0 +1,11 @@
+{"task": "*", "file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "全栈项目，所有任务需考虑前后端交互"}
+{"task": "*", "file": ".trellis/spec/guides/code-reuse-thinking-guide.md", "reason": "避免重复代码，识别复用模式"}
+{"task": "6.1", "file": ".trellis/spec/backend/quality-guidelines.md", "reason": "后端测试需遵循质量规范"}
+{"task": "6.1", "file": ".trellis/spec/backend/error-handling.md", "reason": "测试需覆盖错误处理路径"}
+{"task": "6.1", "file": ".trellis/spec/backend/logging-guidelines.md", "reason": "测试日志输出规范"}
+{"task": "6.2", "file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "端到端测试涉及前端组件"}
+{"task": "6.2", "file": ".trellis/spec/frontend/component-guidelines.md", "reason": "UI 测试需理解组件结构"}
+{"task": "6.2", "file": ".trellis/spec/frontend/state-management.md", "reason": "测试状态流转逻辑"}
+{"task": "7.2", "file": ".trellis/spec/backend/quality-guidelines.md", "reason": "后端性能优化遵循质量规范"}
+{"task": "7.2", "file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "前端优化遵循质量规范"}
+{"task": "7.2", "file": ".trellis/spec/frontend/component-guidelines.md", "reason": "UI 细节打磨需遵循组件规范"}

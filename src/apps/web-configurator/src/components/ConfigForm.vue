@@ -59,8 +59,8 @@ const initialValues: ScaffoldConfig = {
   enableMockData: false
 }
 
-function onSubmit(values: ScaffoldConfig) {
-  store.updateConfig(values)
+function onSubmit(values: Record<string, unknown>) {
+  store.updateConfig(values as unknown as ScaffoldConfig)
   generate()
 }
 </script>

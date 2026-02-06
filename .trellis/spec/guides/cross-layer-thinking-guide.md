@@ -68,6 +68,52 @@
 
 **正确**：每层只知道相邻层
 
+### 错误 4：契约变更未同步测试（Critical）
+
+**场景**：DTO 结构从扁平改为嵌套
+
+```csharp
+// 旧契约（扁平）
+public sealed record Request { public string ProjectName { get; init; } }
+
+// 新契约（嵌套）
+public sealed record Request { public BasicOptions Basic { get; init; } }
+public sealed record BasicOptions { public string ProjectName { get; init; } }
+```
+
+**错误**：只改 DTO，测试仍用旧结构 → 编译失败
+
+```csharp
+// ❌ 测试使用旧结构
+var request = new Request { ProjectName = "Test" };  // 编译错误！
+```
+
+**正确**：契约变更时必须同步更新：
+1. 所有调用点（UseCase、Modules）
+2. 所有测试代码
+3. 前端 API 调用
+
+```csharp
+// ✅ 测试辅助方法封装创建逻辑
+private static GenerateScaffoldRequest CreateRequest(
+    string projectName = "TestProject",
+    DatabaseProvider database = DatabaseProvider.SQLite) =>
+    new()
+    {
+        Basic = new() { ProjectName = projectName, Namespace = "Test" },
+        Backend = new() { Database = database }
+    };
+
+// 测试使用辅助方法
+var request = CreateRequest(projectName: "MyApp");
+```
+
+**检查清单**：
+- [ ] Grep 搜索 `new Request` 找所有创建点
+- [ ] 更新所有 Module 中的属性访问路径
+- [ ] 更新测试的请求构造代码
+- [ ] 验证前端 API 请求结构匹配
+
 ---
 
 ## 跨层功能检查清单

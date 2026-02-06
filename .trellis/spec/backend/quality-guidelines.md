@@ -37,6 +37,49 @@ public sealed record GenerationResult
 }
 ```
 
+### 1.1 嵌套 DTO 结构（复杂请求）
+
+**场景**：当请求包含多个逻辑分组时，使用嵌套 DTO 而非扁平结构。
+
+```csharp
+// ✅ 正确：嵌套结构，语义清晰
+public sealed record GenerateScaffoldRequest
+{
+    public required BasicOptions Basic { get; init; }
+    public BackendOptions Backend { get; init; } = new();
+    public FrontendOptions Frontend { get; init; } = new();
+}
+
+public sealed record BasicOptions
+{
+    public required string ProjectName { get; init; }
+    public required string Namespace { get; init; }
+}
+
+public sealed record BackendOptions
+{
+    public DatabaseProvider Database { get; init; } = DatabaseProvider.SQLite;
+    public bool EnableSwagger { get; init; } = true;
+}
+
+// ❌ 错误：扁平结构，字段过多难维护
+public sealed record GenerateScaffoldRequest
+{
+    public required string ProjectName { get; init; }
+    public required string Namespace { get; init; }
+    public DatabaseProvider Database { get; init; }
+    public bool EnableSwagger { get; init; }
+    public bool EnableFrontend { get; init; }
+    public string FrontendFramework { get; init; }
+    // ... 20+ 字段
+}
+```
+
+**规则**：
+- 超过 6 个字段考虑分组
+- 分组名用业务语义（Basic/Backend/Frontend）
+- 嵌套 DTO 也使用 `sealed record`
+
 **关键特性**：
 - `sealed` 修饰符（防止继承）
 - `record` 类型（不可变性）
@@ -85,7 +128,7 @@ public async Task<string> RenderAsync(string templatePath, object model, Cancell
 ### 4. Minimal API 端点
 
 ```csharp
-app.MapPost("/api/generate", async (
+app.MapPost("/api/v1/scaffolds/generate-zip", async (
     GenerateScaffoldRequest request,
     GenerateScaffoldUseCase useCase,
     CancellationToken ct) =>
@@ -99,6 +142,47 @@ app.MapPost("/api/generate", async (
 
     return Results.File(result.FileContent, "application/zip", result.FileName);
 });
+```
+
+### 5. RESTful 路由命名规范
+
+| 规则 | 正确示例 | 错误示例 |
+|------|----------|----------|
+| 版本化 API | `/api/v1/...` | `/api/...` |
+| 复数资源名 | `/scaffolds` | `/scaffold` |
+| 动作后缀 | `/generate-zip` | `/generate` |
+| kebab-case | `/generate-zip` | `/generateZip` |
+
+```csharp
+// ✅ 正确：版本化 + 资源复数 + 动作后缀
+app.MapPost("/api/v1/scaffolds/generate-zip", ...)
+app.MapGet("/api/v1/users/{id}", ...)
+app.MapPost("/api/v1/orders/batch-create", ...)
+
+// ❌ 错误
+app.MapPost("/api/generate", ...)  // 无版本、无资源名
+app.MapPost("/api/v1/scaffold/generateZip", ...)  // 单数、camelCase
+```
+
+### 6. JSON 序列化配置
+
+**枚举必须配置字符串序列化**，否则前端收到数字而非字符串：
+
+```csharp
+// Program.cs
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
+```
+
+**常见错误**：
+```json
+// ❌ 无 JsonStringEnumConverter
+{ "database": 0, "cache": 1 }
+
+// ✅ 有 JsonStringEnumConverter
+{ "database": "SQLite", "cache": "MemoryCache" }
 ```
 
 ---

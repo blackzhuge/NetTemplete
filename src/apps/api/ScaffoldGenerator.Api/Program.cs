@@ -40,11 +40,12 @@ try
     });
 
     // DI Registration
+    builder.Services.AddMemoryCache();
     builder.Services.AddScoped<IValidator<GenerateScaffoldRequest>, GenerateScaffoldValidator>();
     builder.Services.AddScoped<IZipBuilder, SystemZipBuilder>();
-    builder.Services.AddScoped<ITemplateFileProvider>(_ =>
+    builder.Services.AddSingleton<ITemplateFileProvider>(_ =>
         new FileSystemTemplateProvider(Path.Combine(AppContext.BaseDirectory, "templates")));
-    builder.Services.AddScoped<ITemplateRenderer, ScribanTemplateRenderer>();
+    builder.Services.AddSingleton<ITemplateRenderer, ScribanTemplateRenderer>();
 
     // Module Registration
     builder.Services.AddScoped<IScaffoldModule, CoreModule>();

@@ -1,7 +1,9 @@
 import { ref } from 'vue'
+import { AxiosError } from 'axios'
 import { generateScaffold } from '@/api/generator'
 import { useConfigStore } from '@/stores/config'
 import { ElMessage } from 'element-plus'
+import type { ApiErrorResponse } from '@/types'
 
 export function useGenerator() {
   const store = useConfigStore()
@@ -18,10 +20,13 @@ export function useGenerator() {
       const blob = await generateScaffold(store.config)
       downloadBlob(blob, `${store.config.projectName}.zip`)
       ElMessage.success('项目生成成功！')
-    } catch (err: any) {
-      const message = err.response?.data?.error || '生成失败，请重试'
+    } catch (err: unknown) {
+      let message = '生成失败，请重试'
+      if (err instanceof AxiosError) {
+        const data = err.response?.data as ApiErrorResponse | undefined
+        message = data?.error || message
+      }
       store.setError(message)
-      ElMessage.error(message)
     } finally {
       downloading.value = false
       store.setLoading(false)

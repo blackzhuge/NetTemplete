@@ -154,6 +154,57 @@ app.Use(async (context, next) =>
 
 ## API 错误响应
 
+### ErrorCode 状态码映射
+
+**必须**定义错误码枚举，并映射到正确的 HTTP 状态码：
+
+```csharp
+// Contracts/Responses/GenerationResult.cs
+public enum ErrorCode
+{
+    None = 0,
+    ValidationError = 1,    // → 400 Bad Request
+    InvalidCombination = 2, // → 422 Unprocessable Entity
+    TemplateError = 3       // → 500 Internal Server Error
+}
+
+public sealed record GenerationResult
+{
+    public bool Success { get; init; }
+    public ErrorCode ErrorCode { get; init; } = ErrorCode.None;
+    public string? ErrorMessage { get; init; }
+    // ...
+}
+```
+
+**API 端点映射**：
+
+```csharp
+app.MapPost("/api/v1/scaffolds/generate-zip", async (...) =>
+{
+    var result = await useCase.ExecuteAsync(request, ct);
+
+    if (!result.Success)
+    {
+        var statusCode = result.ErrorCode switch
+        {
+            ErrorCode.ValidationError => 400,
+            ErrorCode.InvalidCombination => 422,
+            ErrorCode.TemplateError => 500,
+            _ => 400
+        };
+        return Results.Json(new { error = result.ErrorMessage }, statusCode: statusCode);
+    }
+    // ...
+});
+```
+
+| ErrorCode | HTTP 状态码 | 场景 |
+|-----------|-------------|------|
+| ValidationError | 400 | 输入格式错误、必填字段缺失 |
+| InvalidCombination | 422 | 语义错误（如 MySQL + MemoryCache 不兼容） |
+| TemplateError | 500 | 服务端模板渲染失败 |
+
 ### 成功响应
 
 ```json
