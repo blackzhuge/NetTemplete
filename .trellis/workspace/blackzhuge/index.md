@@ -7,9 +7,9 @@
 ## 当前状态
 
 <!-- @@@auto:current-status -->
-- **活跃文件**: `journal-1.md`
-- **总会话数**: 4
-- **最近活跃**: 2026-02-07
+- **Active File**: `journal-1.md`
+- **Total Sessions**: 5
+- **Last Active**: 2026-02-07
 <!-- @@@/auto:current-status -->
 
 ---
@@ -17,9 +17,9 @@
 ## 活跃文档
 
 <!-- @@@auto:active-documents -->
-| 文件 | 行数 | 状态 |
-|------|------|------|
-| `journal-1.md` | ~297 | 活跃 |
+| File | Lines | Status |
+|------|-------|--------|
+| `journal-1.md` | ~347 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | 日期 | 标题 | 提交 |
 |---|------|------|------|
+| 1 | 2026-02-07 | 规范文档中文化 + 任务归档 | `b1db71e` |
 | 4 | 2026-02-07 | Phase 6.1 后端单元测试完成 | `ba194cf` |
 | 3 | 2026-02-07 | 实现 Phase 3-5: 模块系统、模板引擎、配置器前端 | `ad6e5c2` |
 | 2 | 2026-02-06 | Phase 2: 后端核心实现 | `89a077a` |

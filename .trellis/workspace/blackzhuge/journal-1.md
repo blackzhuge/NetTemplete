@@ -1,36 +1,36 @@
-# 日志 - blackzhuge (第 1 部分)
+# Journal - blackzhuge (Part 1)
 
-> AI 开发会话日志
-> 开始时间: 2026-02-06
+> AI development session journal
+> Started: 2026-02-06
 
 ---
 
 
-## 会话 1: Phase 1: Scaffold Generator 初始化
+## Session 1: Phase 1: Scaffold Generator Init
 
-**日期**: 2026-02-06
-**任务**: Phase 1: Scaffold Generator Init
+**Date**: 2026-02-06
+**Task**: Phase 1: Scaffold Generator Init
 
-### 摘要
+### Summary
 
 完成 scaffold-generator 项目 Phase 1: 项目初始化
 
-### 主要变更
+### Main Changes
 
-## 完成任务
-| 任务 | 状态 |
-|------|------|
+## Completed Tasks
+| Task | Status |
+|------|--------|
 | Monorepo 骨架 (pnpm + .NET) | ✅ |
 | 后端 Solution (4 projects) | ✅ |
 | 前端工作区 (3 packages) | ✅ |
 | 多模型审查 (Codex + Gemini) | ✅ |
 
-## 关键决策
+## Key Decisions
 - 统一使用 .NET 9.0 (审查后从 8.0 升级)
 - 添加 global.json 锁定 SDK 版本
 - 项目产出放入 src/ 目录
 
-## 创建的文件
+## Files Created
 - `src/scaffold-generator.sln` - .NET Solution
 - `src/Directory.Build.props` - 共享配置
 - `src/Directory.Packages.props` - NuGet 版本管理
@@ -41,38 +41,38 @@
 - `src/apps/template-frontend/` - 前端模板源
 - `src/packages/@scaffold/shared-types/` - 共享类型
 
-## 下一步
+## Next Steps
 - Phase 2: 后端核心 (DTO, 模板渲染, ZIP 生成)
 
-### Git 提交
+### Git Commits
 
-| 哈希 | 消息 |
-|------|------|
-| `eaa1f77` | (见 git log) |
-| `114d5a0` | (见 git log) |
+| Hash | Message |
+|------|---------|
+| `eaa1f77` | (see git log) |
+| `114d5a0` | (see git log) |
 
-### 测试
+### Testing
 
-- [OK] (添加测试结果)
+- [OK] (Add test results)
 
-### 状态
+### Status
 
-[OK] **已完成**
+[OK] **Completed**
 
-### 下一步
+### Next Steps
 
-- 无 - 任务完成
+- None - task complete
 
-## 会话 2: Phase 2: 后端核心实现
+## Session 2: Phase 2: Backend Core Implementation
 
-**日期**: 2026-02-06
-**任务**: Phase 2: Backend Core Implementation
+**Date**: 2026-02-06
+**Task**: Phase 2: Backend Core Implementation
 
-### 摘要
+### Summary
 
-实现 scaffold-generator Phase 2: 后端核心 (14 个任务完成)
+Implemented Phase 2 of scaffold-generator: Backend Core (14 tasks completed)
 
-### 主要变更
+### Main Changes
 
 ### 2.1 契约层 (Contracts)
 - [x] `GenerateScaffoldRequest` DTO
@@ -96,48 +96,48 @@
 - [x] Serilog 日志
 - [x] CORS 配置
 
-## 变更的文件
-| 层 | 添加的文件 |
-|------|------------|
+## Files Changed
+| Layer | Files Added |
+|-------|-------------|
 | Contracts | 5 (Enums, Request, Response) |
 | Application | 4 (Interfaces, Validator, UseCase) |
 | Infrastructure | 4 (Renderer, ZipBuilder, Provider) |
-| Api | 2 修改 (Program.cs, csproj) |
+| Api | 2 modified (Program.cs, csproj) |
 
-## 里程碑
+## Milestone
 **M2 达成**: Backend API can return empty ZIP
 
-## 下一阶段
+## Next Phase
 Phase 3: 模块系统 (IScaffoldModule, DatabaseModule, CacheModule, etc.)
 
-### Git 提交
+### Git Commits
 
-| 哈希 | 消息 |
-|------|------|
-| `89a077a` | (见 git log) |
+| Hash | Message |
+|------|---------|
+| `89a077a` | (see git log) |
 
-### 测试
+### Testing
 
-- [OK] (添加测试结果)
+- [OK] (Add test results)
 
-### 状态
+### Status
 
-[OK] **已完成**
+[OK] **Completed**
 
-### 下一步
+### Next Steps
 
-- 无 - 任务完成
+- None - task complete
 
-## 会话 3: 实现 Phase 3-5: 模块系统、模板引擎、配置器前端
+## Session 3: 实现 Phase 3-5: 模块系统、模板引擎、配置器前端
 
-**日期**: 2026-02-07
-**任务**: 实现 Phase 3-5: 模块系统、模板引擎、配置器前端
+**Date**: 2026-02-07
+**Task**: 实现 Phase 3-5: 模块系统、模板引擎、配置器前端
 
-### 摘要
+### Summary
 
 完成 Phase 3-5 的全部实现
 
-### 主要变更
+### Main Changes
 
 ## 完成内容
 
@@ -203,39 +203,39 @@ GenerateScaffoldRequest
 - Phase 6: 集成测试
 - Phase 7: 完善文档
 
-### Git 提交
+### Git Commits
 
-| 哈希 | 消息 |
-|------|------|
-| `ad6e5c2` | (见 git log) |
+| Hash | Message |
+|------|---------|
+| `ad6e5c2` | (see git log) |
 
-### 测试
+### Testing
 
-- [OK] (添加测试结果)
+- [OK] (Add test results)
 
-### 状态
+### Status
 
-[OK] **已完成**
+[OK] **Completed**
 
-### 下一步
+### Next Steps
 
-- 无 - 任务完成
+- None - task complete
 
-## 会话 4: Phase 6.1 后端单元测试完成
+## Session 4: Phase 6.1 后端单元测试完成
 
-**日期**: 2026-02-07
-**任务**: Phase 6.1 后端单元测试完成
+**Date**: 2026-02-07
+**Task**: Phase 6.1 后端单元测试完成
 
-### 摘要
+### Summary
 
 完成 Phase 6.1 后端单元测试
 
-### 主要变更
+### Main Changes
 
 ### Phase 6.1 后端单元测试 ✅
 
 | 测试文件 | 测试数 | 覆盖内容 |
-|---------|--------|---------
+|---------|--------|---------|
 | `SystemZipBuilderTests.cs` | 6 | ZIP 生成、多文件、重置、编码 |
 | `ScribanTemplateRendererTests.cs` | 7 | 模板渲染、循环、条件、嵌套属性 |
 | `GenerateScaffoldUseCaseTests.cs` | 4 | UseCase 验证、错误处理 |
@@ -268,21 +268,80 @@ GenerateScaffoldRequest
 - Phase 7.1: 文档完善
 - Phase 7.2: 优化完善
 
-### Git 提交
+### Git Commits
 
-| 哈希 | 消息 |
-|------|------|
-| `ba194cf` | (见 git log) |
+| Hash | Message |
+|------|---------|
+| `ba194cf` | (see git log) |
 
-### 测试
+### Testing
 
-- [OK] (添加测试结果)
+- [OK] (Add test results)
 
-### 状态
+### Status
 
-[OK] **已完成**
+[OK] **Completed**
 
-### 下一步
+### Next Steps
 
-- 无 - 任务完成
+- None - task complete
+
+## Session 5: 规范文档中文化 + 任务归档
+
+**Date**: 2026-02-07
+**Task**: 规范文档中文化 + 任务归档
+
+### Summary
+
+将所有 .trellis/spec 规范文档转换为中文，归档 Bootstrap Guidelines 任务
+
+### Main Changes
+
+## 完成内容
+
+| 类别 | 文件数 | 描述 |
+|------|--------|------|
+| 后端规范 | 6 | 全部转换为中文 |
+| 前端规范 | 7 | 全部转换为中文 |
+| 思维指南 | 3 | 全部转换为中文 |
+| 工作区文档 | 3 | 全部转换为中文 |
+| 任务归档 | 1 | 00-bootstrap-guidelines |
+
+## 变更文件
+
+**后端规范** (`.trellis/spec/backend/`):
+- directory-structure.md, database-guidelines.md, error-handling.md
+- logging-guidelines.md, quality-guidelines.md, index.md
+
+**前端规范** (`.trellis/spec/frontend/`):
+- directory-structure.md, component-guidelines.md, hook-guidelines.md
+- state-management.md, type-safety.md, quality-guidelines.md, index.md
+
+**思维指南** (`.trellis/spec/guides/`):
+- code-reuse-thinking-guide.md, cross-layer-thinking-guide.md, index.md
+
+**工作区** (`.trellis/workspace/`):
+- index.md, blackzhuge/index.md
+
+## 归档任务
+
+- `00-bootstrap-guidelines` → `archive/2026-02/`
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `b1db71e` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
 
