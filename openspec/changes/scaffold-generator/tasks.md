@@ -29,26 +29,26 @@
 ## Phase 2: 后端核心 (Day 3-5)
 
 ### 2.1 契约层
-- [ ] 定义 `GenerateScaffoldRequest` DTO
-- [ ] 定义 `GenerationResult` 响应
-- [ ] 定义枚举类型 (DatabaseProvider, CacheProvider, RouterMode)
+- [x] 定义 `GenerateScaffoldRequest` DTO
+- [x] 定义 `GenerationResult` 响应
+- [x] 定义枚举类型 (DatabaseProvider, CacheProvider, RouterMode)
 
 ### 2.2 应用层
-- [ ] 实现 `ITemplateRenderer` 接口
-- [ ] 实现 `IZipBuilder` 接口
-- [ ] 实现 `GenerateScaffoldValidator` (FluentValidation)
-- [ ] 实现 `GenerateScaffoldUseCase`
+- [x] 实现 `ITemplateRenderer` 接口
+- [x] 实现 `IZipBuilder` 接口
+- [x] 实现 `GenerateScaffoldValidator` (FluentValidation)
+- [x] 实现 `GenerateScaffoldUseCase`
 
 ### 2.3 基础设施层
-- [ ] 实现 `ScribanTemplateRenderer`
-- [ ] 实现 `SystemZipBuilder`
-- [ ] 实现 `TemplateFileProvider`
+- [x] 实现 `ScribanTemplateRenderer`
+- [x] 实现 `SystemZipBuilder`
+- [x] 实现 `TemplateFileProvider`
 
 ### 2.4 API 层
-- [ ] 配置 Minimal API 端点
-- [ ] 配置异常处理中间件
-- [ ] 配置 Serilog
-- [ ] 配置 CORS
+- [x] 配置 Minimal API 端点
+- [x] 配置异常处理中间件
+- [x] 配置 Serilog
+- [x] 配置 CORS
 
 ---
 

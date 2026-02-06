@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" />
     <ProjectReference Include="..\ScaffoldGenerator.Contracts\ScaffoldGenerator.Contracts.csproj" />
   </ItemGroup>
 

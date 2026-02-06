@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="Scriban" />
     <ProjectReference Include="..\ScaffoldGenerator.Application\ScaffoldGenerator.Application.csproj" />
   </ItemGroup>
 

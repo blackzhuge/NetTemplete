@@ -1,34 +1,92 @@
-var builder = WebApplication.CreateBuilder(args);
+using FluentValidation;
+using ScaffoldGenerator.Application.Abstractions;
+using ScaffoldGenerator.Application.UseCases;
+using ScaffoldGenerator.Application.Validators;
+using ScaffoldGenerator.Contracts.Requests;
+using ScaffoldGenerator.Contracts.Responses;
+using ScaffoldGenerator.Infrastructure.FileSystem;
+using ScaffoldGenerator.Infrastructure.Rendering;
+using Serilog;
 
-// Add services to the container.
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
 
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-
-app.UseHttpsRedirection();
-
-var summaries = new[]
+try
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    var builder = WebApplication.CreateBuilder(args);
 
-app.MapGet("/weatherforecast", () =>
+    builder.Host.UseSerilog();
+
+    // CORS
+    builder.Services.AddCors(options =>
+    {
+        options.AddDefaultPolicy(policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+    });
+
+    // DI Registration
+    builder.Services.AddScoped<IValidator<GenerateScaffoldRequest>, GenerateScaffoldValidator>();
+    builder.Services.AddScoped<IZipBuilder, SystemZipBuilder>();
+    builder.Services.AddScoped<ITemplateFileProvider>(_ =>
+        new FileSystemTemplateProvider(Path.Combine(Directory.GetCurrentDirectory(), "templates")));
+    builder.Services.AddScoped<ITemplateRenderer, ScribanTemplateRenderer>();
+    builder.Services.AddScoped<GenerateScaffoldUseCase>();
+
+    var app = builder.Build();
+
+    app.UseSerilogRequestLogging();
+    app.UseCors();
+
+    // Exception handling middleware
+    app.Use(async (context, next) =>
+    {
+        try
+        {
+            await next(context);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Unhandled exception");
+            context.Response.StatusCode = 500;
+            await context.Response.WriteAsJsonAsync(new { error = "服务器内部错误" });
+        }
+    });
+
+    // Health check
+    app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
+
+    // Generate scaffold endpoint
+    app.MapPost("/api/generate", async (
+        GenerateScaffoldRequest request,
+        GenerateScaffoldUseCase useCase,
+        CancellationToken ct) =>
+    {
+        var result = await useCase.ExecuteAsync(request, ct);
+
+        if (!result.Success)
+        {
+            return Results.BadRequest(new { error = result.ErrorMessage });
+        }
+
+        return Results.File(
+            result.FileContent,
+            "application/zip",
+            result.FileName);
+    });
+
+    Log.Information("Starting ScaffoldGenerator API");
+    app.Run();
+}
+catch (Exception ex)
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-});
-
-app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
 {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    Log.CloseAndFlush();
 }
