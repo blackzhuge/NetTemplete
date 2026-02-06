@@ -12,6 +12,11 @@
     <InternalsVisibleTo Include="ScaffoldGenerator.Tests" />
   </ItemGroup>
 
+  <!-- Copy templates to output directory -->
+  <ItemGroup>
+    <None Include="templates\**\*" CopyToOutputDirectory="PreserveNewest" LinkBase="templates" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>

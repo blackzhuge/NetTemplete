@@ -33,7 +33,7 @@ try
     builder.Services.AddScoped<IValidator<GenerateScaffoldRequest>, GenerateScaffoldValidator>();
     builder.Services.AddScoped<IZipBuilder, SystemZipBuilder>();
     builder.Services.AddScoped<ITemplateFileProvider>(_ =>
-        new FileSystemTemplateProvider(Path.Combine(Directory.GetCurrentDirectory(), "templates")));
+        new FileSystemTemplateProvider(Path.Combine(AppContext.BaseDirectory, "templates")));
     builder.Services.AddScoped<ITemplateRenderer, ScribanTemplateRenderer>();
 
     // Module Registration
@@ -99,3 +99,6 @@ finally
 {
     Log.CloseAndFlush();
 }
+
+// Expose Program class for integration tests
+public partial class Program { }

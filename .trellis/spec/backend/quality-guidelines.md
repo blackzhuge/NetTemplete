@@ -210,6 +210,59 @@ var service = serviceProvider.GetService<IUserService>();
 public MyClass(IUserService userService)
 ```
 
+### 6. Hardcoded Absolute Paths
+
+```csharp
+// FORBIDDEN - Only works on specific machine
+builder.Services.AddScoped<ITemplateFileProvider>(_ =>
+    new FileSystemTemplateProvider("/Users/developer/project/templates"));
+
+// FORBIDDEN - Directory.GetCurrentDirectory() varies by execution context
+builder.Services.AddScoped<ITemplateFileProvider>(_ =>
+    new FileSystemTemplateProvider(Path.Combine(Directory.GetCurrentDirectory(), "templates")));
+
+// REQUIRED - Use relative path resolution
+public static string FindProjectPath(string relativePath)
+{
+    var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
+    while (dir != null)
+    {
+        var targetPath = Path.Combine(dir.FullName, relativePath);
+        if (Directory.Exists(targetPath) || File.Exists(targetPath))
+            return targetPath;
+        dir = dir.Parent;
+    }
+    throw new InvalidOperationException($"Could not find: {relativePath}");
+}
+```
+
+**Why**:
+- Absolute paths break on other machines
+- `Directory.GetCurrentDirectory()` returns different values in tests vs runtime
+- Upward search ensures portability across development, test, and production environments
+
+**Common Gotcha (Integration Tests)**:
+
+```csharp
+// In CustomWebApplicationFactory for tests
+protected override void ConfigureWebHost(IWebHostBuilder builder)
+{
+    builder.ConfigureServices(services =>
+    {
+        // Remove runtime registration
+        var descriptor = services.SingleOrDefault(
+            d => d.ServiceType == typeof(ITemplateFileProvider));
+        if (descriptor != null)
+            services.Remove(descriptor);
+
+        // Re-register with test-friendly path resolution
+        var templatesPath = FindTemplatesPath(); // Uses relative search
+        services.AddScoped<ITemplateFileProvider>(_ =>
+            new FileSystemTemplateProvider(templatesPath));
+    });
+}
+```
+
 ---
 
 ## Testing Requirements
