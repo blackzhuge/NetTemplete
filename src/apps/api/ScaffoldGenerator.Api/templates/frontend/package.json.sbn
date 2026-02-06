@@ -1,5 +1,5 @@
 {
-  "name": "web-configurator",
+  "name": "{{ project_name | string.downcase | string.replace ' ' '-' }}",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -10,15 +10,11 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix"
   },
   "dependencies": {
-    "@scaffold/shared-types": "workspace:*",
     "vue": "^3.4.0",
     "vue-router": "^4.2.0",
     "pinia": "^2.1.0",
     "axios": "^1.6.0",
-    "element-plus": "^2.5.0",
-    "vee-validate": "^4.12.0",
-    "zod": "^3.22.0",
-    "@vee-validate/zod": "^4.12.0"
+    "element-plus": "^2.5.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.0",
@@ -26,8 +22,6 @@
     "vite": "^5.0.0",
     "vue-tsc": "^1.8.0",
     "@types/node": "^20.10.0",
-    "sass": "^1.69.0",
-    "unplugin-auto-import": "^0.17.0",
-    "unplugin-vue-components": "^0.26.0"
+    "sass": "^1.69.0"
   }
 }

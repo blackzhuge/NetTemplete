@@ -1,0 +1,25 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "Default": "{{ connection_string }}"
+  },
+  "Database": {
+    "DbType": "{{ db_type }}"
+  }{{~ if enable_jwt_auth ~}},
+  "Jwt": {
+    "Secret": "YourSuperSecretKeyHereMustBeAtLeast32Characters",
+    "Issuer": "{{ project_name }}",
+    "Audience": "{{ project_name }}",
+    "ExpireMinutes": 60
+  }{{~ end ~}}{{~ if cache_type == "Redis" ~}},
+  "Redis": {
+    "ConnectionString": "localhost:6379",
+    "InstanceName": "{{ project_name }}_"
+  }{{~ end ~}}
+}

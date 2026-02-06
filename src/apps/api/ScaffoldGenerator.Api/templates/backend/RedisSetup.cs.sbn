@@ -1,0 +1,24 @@
+using StackExchange.Redis;
+
+namespace {{ namespace }}.Api.Extensions;
+
+public static class RedisSetup
+{
+    public static IServiceCollection AddRedisCache(this IServiceCollection services, IConfiguration configuration)
+    {
+        var redisSection = configuration.GetSection("Redis");
+        var connectionString = redisSection["ConnectionString"] ?? "localhost:6379";
+        var instanceName = redisSection["InstanceName"] ?? "{{ project_name }}_";
+
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = connectionString;
+            options.InstanceName = instanceName;
+        });
+
+        services.AddSingleton<IConnectionMultiplexer>(_ =>
+            ConnectionMultiplexer.Connect(connectionString));
+
+        return services;
+    }
+}

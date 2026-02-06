@@ -8,6 +8,10 @@
     <ProjectReference Include="..\ScaffoldGenerator.Infrastructure\ScaffoldGenerator.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="ScaffoldGenerator.Tests" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>

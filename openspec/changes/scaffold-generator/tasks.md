@@ -55,62 +55,62 @@
 ## Phase 3: 模块系统 (Day 6-7)
 
 ### 3.1 模块接口
-- [ ] 定义 `IScaffoldModule` 接口
-- [ ] 实现 `ScaffoldPlanBuilder`
-- [ ] 实现模块注册机制
+- [x] 定义 `IScaffoldModule` 接口
+- [x] 实现 `ScaffoldPlanBuilder`
+- [x] 实现模块注册机制
 
 ### 3.2 功能模块
-- [ ] 实现 `DatabaseModule` (SQLite/MySQL/SQLServer)
-- [ ] 实现 `CacheModule` (None/Memory/Redis)
-- [ ] 实现 `JwtModule`
-- [ ] 实现 `SwaggerModule`
+- [x] 实现 `DatabaseModule` (SQLite/MySQL/SQLServer)
+- [x] 实现 `CacheModule` (None/Memory/Redis)
+- [x] 实现 `JwtModule`
+- [x] 实现 `SwaggerModule`
 
 ---
 
 ## Phase 4: 模板文件 (Day 8-10)
 
 ### 4.1 后端模板
-- [ ] 创建 `templates/backend/manifest.json`
-- [ ] 创建 `Program.cs.sbn` 模板
-- [ ] 创建 `appsettings.json.sbn` 模板
-- [ ] 创建 SqlSugar 配置模板
-- [ ] 创建 JWT 模块模板 (条件化)
-- [ ] 创建缓存模块模板 (条件化)
+- [x] 创建 `templates/backend/manifest.json`
+- [x] 创建 `Program.cs.sbn` 模板
+- [x] 创建 `appsettings.json.sbn` 模板
+- [x] 创建 SqlSugar 配置模板
+- [x] 创建 JWT 模块模板 (条件化)
+- [x] 创建缓存模块模板 (条件化)
 
 ### 4.2 前端模板
-- [ ] 完善 `apps/template-frontend` 项目
-- [ ] 创建 `packages/@scaffold/template-utils` 转换脚本
-- [ ] 生成 `templates/frontend/` 模板文件
-- [ ] 创建 `templates/frontend/manifest.json`
+- [x] 完善 `apps/template-frontend` 项目
+- [x] 创建 `packages/@scaffold/template-utils` 转换脚本
+- [x] 生成 `templates/frontend/` 模板文件
+- [x] 创建 `templates/frontend/manifest.json`
 
 ---
 
 ## Phase 5: 配置器前端 (Day 11-14)
 
 ### 5.1 基础架构
-- [ ] 配置 Element Plus
-- [ ] 配置 Pinia Store
-- [ ] 配置 Axios
-- [ ] 配置 VeeValidate + Zod
+- [x] 配置 Element Plus
+- [x] 配置 Pinia Store
+- [x] 配置 Axios
+- [x] 配置 VeeValidate + Zod
 
 ### 5.2 组件开发
-- [ ] 实现 `ConfigForm.vue` 容器
-- [ ] 实现 `BasicOptions.vue`
-- [ ] 实现 `BackendOptions.vue`
-- [ ] 实现 `FrontendOptions.vue`
-- [ ] 实现 `FileTreeView.vue`
+- [x] 实现 `ConfigForm.vue` 容器
+- [x] 实现 `BasicOptions.vue`
+- [x] 实现 `BackendOptions.vue`
+- [x] 实现 `FrontendOptions.vue`
+- [x] 实现 `FileTreeView.vue`
 
 ### 5.3 业务逻辑
-- [ ] 实现 `useConfig.ts` composable
-- [ ] 实现 `useFileTree.ts` (客户端预览)
-- [ ] 实现 `generator.ts` API 调用
-- [ ] 实现 ZIP 下载逻辑
+- [x] 实现 `useConfig.ts` composable
+- [x] 实现 `useFileTree.ts` (客户端预览)
+- [x] 实现 `generator.ts` API 调用
+- [x] 实现 ZIP 下载逻辑
 
 ### 5.4 页面集成
-- [ ] 实现 `HomePage.vue` 分屏布局
-- [ ] 集成表单验证
-- [ ] 集成加载状态
-- [ ] 集成错误提示
+- [x] 实现 `HomePage.vue` 分屏布局
+- [x] 集成表单验证
+- [x] 集成加载状态
+- [x] 集成错误提示
 
 ---
 

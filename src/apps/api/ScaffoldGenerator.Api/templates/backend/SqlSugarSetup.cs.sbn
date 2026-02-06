@@ -1,0 +1,32 @@
+using SqlSugar;
+
+namespace {{ namespace }}.Api.Extensions;
+
+public static class SqlSugarSetup
+{
+    public static IServiceCollection AddSqlSugar(this IServiceCollection services, IConfiguration configuration)
+    {
+        var dbType = configuration["Database:DbType"] ?? "Sqlite";
+        var connectionString = configuration.GetConnectionString("Default");
+
+        services.AddScoped<ISqlSugarClient>(_ =>
+        {
+            var db = new SqlSugarClient(new ConnectionConfig
+            {
+                DbType = Enum.Parse<DbType>(dbType),
+                ConnectionString = connectionString,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute
+            });
+
+            db.Aop.OnLogExecuting = (sql, pars) =>
+            {
+                Console.WriteLine($"[SQL] {sql}");
+            };
+
+            return db;
+        });
+
+        return services;
+    }
+}

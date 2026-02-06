@@ -1,0 +1,77 @@
+using Serilog;
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
+
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
+
+    builder.Host.UseSerilog();
+
+    // CORS
+    builder.Services.AddCors(options =>
+    {
+        options.AddDefaultPolicy(policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+    });
+
+    // Database
+    builder.Services.AddSqlSugar(builder.Configuration);
+{{~ if enable_jwt_auth ~}}
+
+    // JWT Authentication
+    builder.Services.AddJwtAuthentication(builder.Configuration);
+{{~ end ~}}
+{{~ if cache_type == "MemoryCache" ~}}
+
+    // Memory Cache
+    builder.Services.AddMemoryCache();
+{{~ end ~}}
+{{~ if cache_type == "Redis" ~}}
+
+    // Redis Cache
+    builder.Services.AddRedisCache(builder.Configuration);
+{{~ end ~}}
+{{~ if enable_swagger ~}}
+
+    // Swagger
+    builder.Services.AddSwaggerSetup();
+{{~ end ~}}
+
+    var app = builder.Build();
+
+    app.UseSerilogRequestLogging();
+    app.UseCors();
+{{~ if enable_jwt_auth ~}}
+    app.UseAuthentication();
+    app.UseAuthorization();
+{{~ end ~}}
+{{~ if enable_swagger ~}}
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+{{~ end ~}}
+
+    // Health check
+    app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
+
+    Log.Information("Starting {{ project_name }} API");
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

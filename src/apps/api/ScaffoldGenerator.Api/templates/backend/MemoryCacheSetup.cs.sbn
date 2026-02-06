@@ -1,0 +1,10 @@
+namespace {{ namespace }}.Api.Extensions;
+
+public static class MemoryCacheSetup
+{
+    public static IServiceCollection AddMemoryCacheSetup(this IServiceCollection services)
+    {
+        services.AddMemoryCache();
+        return services;
+    }
+}

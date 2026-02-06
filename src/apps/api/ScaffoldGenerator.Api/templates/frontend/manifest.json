@@ -1,0 +1,46 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "files": [
+    {
+      "template": "package.json.sbn",
+      "output": "src/{{project_name}}.Web/package.json"
+    },
+    {
+      "template": "vite.config.ts.sbn",
+      "output": "src/{{project_name}}.Web/vite.config.ts"
+    },
+    {
+      "template": "tsconfig.json.sbn",
+      "output": "src/{{project_name}}.Web/tsconfig.json"
+    },
+    {
+      "template": "index.html.sbn",
+      "output": "src/{{project_name}}.Web/index.html"
+    },
+    {
+      "template": "main.ts.sbn",
+      "output": "src/{{project_name}}.Web/src/main.ts"
+    },
+    {
+      "template": "App.vue.sbn",
+      "output": "src/{{project_name}}.Web/src/App.vue"
+    },
+    {
+      "template": "router/index.ts.sbn",
+      "output": "src/{{project_name}}.Web/src/router/index.ts"
+    },
+    {
+      "template": "stores/index.ts.sbn",
+      "output": "src/{{project_name}}.Web/src/stores/index.ts"
+    },
+    {
+      "template": "api/index.ts.sbn",
+      "output": "src/{{project_name}}.Web/src/api/index.ts"
+    },
+    {
+      "template": "views/HomeView.vue.sbn",
+      "output": "src/{{project_name}}.Web/src/views/HomeView.vue"
+    }
+  ]
+}

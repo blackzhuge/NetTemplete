@@ -1,0 +1,42 @@
+<template>
+  <div class="home-container">
+    <el-card class="welcome-card">
+      <template #header>
+        <div class="card-header">
+          <span>欢迎使用 {{ project_name }}</span>
+        </div>
+      </template>
+      <p>项目已成功创建，开始构建你的应用吧！</p>
+      <el-divider />
+      <el-space wrap>
+        <el-tag type="success">Vue 3</el-tag>
+        <el-tag type="primary">TypeScript</el-tag>
+        <el-tag type="warning">Element Plus</el-tag>
+        <el-tag type="info">Pinia</el-tag>
+      </el-space>
+    </el-card>
+  </div>
+</template>
+
+<script setup lang="ts">
+</script>
+
+<style scoped>
+.home-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.welcome-card {
+  margin-top: 40px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+</style>

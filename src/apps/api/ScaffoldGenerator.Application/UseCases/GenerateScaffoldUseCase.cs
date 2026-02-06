@@ -7,16 +7,16 @@ namespace ScaffoldGenerator.Application.UseCases;
 
 public sealed class GenerateScaffoldUseCase
 {
-    private readonly ITemplateRenderer _templateRenderer;
+    private readonly ScaffoldPlanBuilder _planBuilder;
     private readonly IZipBuilder _zipBuilder;
     private readonly IValidator<GenerateScaffoldRequest> _validator;
 
     public GenerateScaffoldUseCase(
-        ITemplateRenderer templateRenderer,
+        ScaffoldPlanBuilder planBuilder,
         IZipBuilder zipBuilder,
         IValidator<GenerateScaffoldRequest> validator)
     {
-        _templateRenderer = templateRenderer;
+        _planBuilder = planBuilder;
         _zipBuilder = zipBuilder;
         _validator = validator;
     }
@@ -40,7 +40,13 @@ public sealed class GenerateScaffoldUseCase
         {
             _zipBuilder.Reset();
 
-            // TODO: 渲染模板并添加到 ZIP (Phase 3-4 实现)
+            var plan = await _planBuilder.BuildAsync(request, ct);
+            var renderedFiles = await _planBuilder.RenderPlanAsync(plan, ct);
+
+            foreach (var (path, content) in renderedFiles)
+            {
+                _zipBuilder.AddFile(path, content);
+            }
 
             var zipContent = _zipBuilder.Build();
             var fileName = $"{request.ProjectName}.zip";

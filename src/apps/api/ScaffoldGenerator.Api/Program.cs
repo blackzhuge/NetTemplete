@@ -1,9 +1,9 @@
 using FluentValidation;
 using ScaffoldGenerator.Application.Abstractions;
+using ScaffoldGenerator.Application.Modules;
 using ScaffoldGenerator.Application.UseCases;
 using ScaffoldGenerator.Application.Validators;
 using ScaffoldGenerator.Contracts.Requests;
-using ScaffoldGenerator.Contracts.Responses;
 using ScaffoldGenerator.Infrastructure.FileSystem;
 using ScaffoldGenerator.Infrastructure.Rendering;
 using Serilog;
@@ -35,6 +35,15 @@ try
     builder.Services.AddScoped<ITemplateFileProvider>(_ =>
         new FileSystemTemplateProvider(Path.Combine(Directory.GetCurrentDirectory(), "templates")));
     builder.Services.AddScoped<ITemplateRenderer, ScribanTemplateRenderer>();
+
+    // Module Registration
+    builder.Services.AddScoped<IScaffoldModule, CoreModule>();
+    builder.Services.AddScoped<IScaffoldModule, DatabaseModule>();
+    builder.Services.AddScoped<IScaffoldModule, CacheModule>();
+    builder.Services.AddScoped<IScaffoldModule, JwtModule>();
+    builder.Services.AddScoped<IScaffoldModule, SwaggerModule>();
+    builder.Services.AddScoped<IScaffoldModule, FrontendModule>();
+    builder.Services.AddScoped<ScaffoldPlanBuilder>();
     builder.Services.AddScoped<GenerateScaffoldUseCase>();
 
     var app = builder.Build();

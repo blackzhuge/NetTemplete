@@ -1,0 +1,44 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "files": [
+    {
+      "template": "Program.cs.sbn",
+      "output": "src/{{project_name}}.Api/Program.cs"
+    },
+    {
+      "template": "appsettings.json.sbn",
+      "output": "src/{{project_name}}.Api/appsettings.json"
+    },
+    {
+      "template": "SqlSugarSetup.cs.sbn",
+      "output": "src/{{project_name}}.Api/Extensions/SqlSugarSetup.cs",
+      "condition": "always"
+    },
+    {
+      "template": "JwtSetup.cs.sbn",
+      "output": "src/{{project_name}}.Api/Extensions/JwtSetup.cs",
+      "condition": "enable_jwt_auth"
+    },
+    {
+      "template": "JwtOptions.cs.sbn",
+      "output": "src/{{project_name}}.Api/Options/JwtOptions.cs",
+      "condition": "enable_jwt_auth"
+    },
+    {
+      "template": "SwaggerSetup.cs.sbn",
+      "output": "src/{{project_name}}.Api/Extensions/SwaggerSetup.cs",
+      "condition": "enable_swagger"
+    },
+    {
+      "template": "MemoryCacheSetup.cs.sbn",
+      "output": "src/{{project_name}}.Api/Extensions/MemoryCacheSetup.cs",
+      "condition": "cache_memory"
+    },
+    {
+      "template": "RedisSetup.cs.sbn",
+      "output": "src/{{project_name}}.Api/Extensions/RedisSetup.cs",
+      "condition": "cache_redis"
+    }
+  ]
+}

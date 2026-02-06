@@ -1,0 +1,39 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+
+namespace {{ namespace }}.Api.Extensions;
+
+public static class JwtSetup
+{
+    public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
+    {
+        var jwtSection = configuration.GetSection("Jwt");
+        var secret = jwtSection["Secret"] ?? throw new InvalidOperationException("JWT Secret not configured");
+        var issuer = jwtSection["Issuer"];
+        var audience = jwtSection["Audience"];
+
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = issuer,
+                ValidAudience = audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
+            };
+        });
+
+        services.AddAuthorization();
+
+        return services;
+    }
+}
