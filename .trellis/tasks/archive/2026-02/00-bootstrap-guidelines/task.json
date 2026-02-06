@@ -1,0 +1,32 @@
+{
+  "id": "00-bootstrap-guidelines",
+  "name": "初始化规范",
+  "description": "为 AI 助手填写项目开发规范",
+  "status": "completed",
+  "dev_type": "docs",
+  "priority": "P1",
+  "creator": "blackzhuge",
+  "assignee": "blackzhuge",
+  "createdAt": "2026-02-06",
+  "completedAt": "2026-02-07",
+  "commit": null,
+  "subtasks": [
+    {
+      "name": "填写后端规范",
+      "status": "completed"
+    },
+    {
+      "name": "填写前端规范",
+      "status": "completed"
+    },
+    {
+      "name": "添加代码示例",
+      "status": "completed"
+    }
+  ],
+  "relatedFiles": [
+    ".trellis/spec/backend/",
+    ".trellis/spec/frontend/"
+  ],
+  "notes": "由 trellis init 创建的首次设置任务（fullstack 项目）"
+}

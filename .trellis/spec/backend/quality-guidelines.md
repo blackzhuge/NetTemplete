@@ -1,24 +1,24 @@
-# Quality Guidelines
+# 质量规范
 
-> Code quality standards for backend development.
-
----
-
-## Overview
-
-**Framework**: .NET 9
-**API Style**: Minimal API
-**Testing**: xUnit
-**Validation**: FluentValidation
+> 后端开发的代码质量标准。
 
 ---
 
-## Required Patterns
+## 概述
 
-### 1. Immutable DTOs with Records
+**框架**：.NET 9
+**API 风格**：Minimal API
+**测试**：xUnit
+**验证**：FluentValidation
+
+---
+
+## 必需模式
+
+### 1. 不可变 DTOs 使用 Records
 
 ```csharp
-// REQUIRED: Use record for DTOs
+// 必需：DTOs 使用 record
 public sealed record GenerateScaffoldRequest
 {
     public required string ProjectName { get; init; }
@@ -27,7 +27,7 @@ public sealed record GenerateScaffoldRequest
     public bool EnableSwagger { get; init; } = true;
 }
 
-// REQUIRED: Use record for responses
+// 必需：响应使用 record
 public sealed record GenerationResult
 {
     public bool Success { get; init; }
@@ -37,14 +37,14 @@ public sealed record GenerationResult
 }
 ```
 
-**Key Features**:
-- `sealed` modifier (prevent inheritance)
-- `record` type (immutability)
-- `init` properties (set only during construction)
-- `required` for mandatory fields
-- `= []` for empty collections (C# 12)
+**关键特性**：
+- `sealed` 修饰符（防止继承）
+- `record` 类型（不可变性）
+- `init` 属性（仅构造时可设置）
+- `required` 用于必填字段
+- `= []` 用于空集合（C# 12）
 
-### 2. Constructor Injection
+### 2. 构造函数注入
 
 ```csharp
 public sealed class GenerateScaffoldUseCase
@@ -65,16 +65,16 @@ public sealed class GenerateScaffoldUseCase
 }
 ```
 
-### 3. Async with CancellationToken
+### 3. Async 配合 CancellationToken
 
 ```csharp
-// REQUIRED: All async methods accept CancellationToken
+// 必需：所有异步方法接受 CancellationToken
 public interface ITemplateRenderer
 {
     Task<string> RenderAsync(string templatePath, object model, CancellationToken ct = default);
 }
 
-// Implementation
+// 实现
 public async Task<string> RenderAsync(string templatePath, object model, CancellationToken ct = default)
 {
     var content = await _fileProvider.ReadTemplateAsync(templatePath, ct);
@@ -82,7 +82,7 @@ public async Task<string> RenderAsync(string templatePath, object model, Cancell
 }
 ```
 
-### 4. Minimal API Endpoints
+### 4. Minimal API 端点
 
 ```csharp
 app.MapPost("/api/generate", async (
@@ -103,125 +103,125 @@ app.MapPost("/api/generate", async (
 
 ---
 
-## Naming Conventions
+## 命名约定
 
-| Type | Convention | Example |
-|------|------------|---------|
-| Interface | `I` prefix + PascalCase | `ITemplateRenderer` |
-| Class | PascalCase | `ScribanTemplateRenderer` |
-| Method | PascalCase + `Async` suffix for async | `RenderAsync` |
-| Parameter | camelCase | `templatePath`, `ct` |
-| Private field | `_` prefix + camelCase | `_templateRenderer` |
-| Constant | PascalCase | `MaxRetryCount` |
-| Enum | PascalCase (singular) | `DatabaseProvider` |
-| Enum value | PascalCase | `SQLite`, `MySQL` |
+| 类型 | 约定 | 示例 |
+|------|------|------|
+| 接口 | `I` 前缀 + PascalCase | `ITemplateRenderer` |
+| 类 | PascalCase | `ScribanTemplateRenderer` |
+| 方法 | PascalCase + 异步加 `Async` 后缀 | `RenderAsync` |
+| 参数 | camelCase | `templatePath`、`ct` |
+| 私有字段 | `_` 前缀 + camelCase | `_templateRenderer` |
+| 常量 | PascalCase | `MaxRetryCount` |
+| 枚举 | PascalCase（单数） | `DatabaseProvider` |
+| 枚举值 | PascalCase | `SQLite`、`MySQL` |
 
 ---
 
-## DI Registration Pattern
+## DI 注册模式
 
-**File**: `Api/Program.cs`
+**文件**：`Api/Program.cs`
 
 ```csharp
-// Register by interface -> implementation
+// 按 接口 -> 实现 注册
 builder.Services.AddScoped<IValidator<GenerateScaffoldRequest>, GenerateScaffoldValidator>();
 builder.Services.AddScoped<IZipBuilder, SystemZipBuilder>();
 builder.Services.AddScoped<ITemplateRenderer, ScribanTemplateRenderer>();
 
-// Factory for configuration-dependent services
+// 需要配置的服务使用工厂
 builder.Services.AddScoped<ITemplateFileProvider>(_ =>
     new FileSystemTemplateProvider(Path.Combine(Directory.GetCurrentDirectory(), "templates")));
 
-// UseCase (concrete class)
+// UseCase（具体类）
 builder.Services.AddScoped<GenerateScaffoldUseCase>();
 ```
 
-### Service Lifetimes
+### 服务生命周期
 
-| Lifetime | When to Use |
-|----------|-------------|
-| `Scoped` | Default for most services, one per request |
-| `Singleton` | Stateless utilities, configuration, caches |
-| `Transient` | Lightweight, stateless, cheap to create |
+| 生命周期 | 何时使用 |
+|----------|----------|
+| `Scoped` | 大多数服务的默认值，每请求一个 |
+| `Singleton` | 无状态工具、配置、缓存 |
+| `Transient` | 轻量级、无状态、创建成本低 |
 
 ---
 
-## Forbidden Patterns
+## 禁止模式
 
-### 1. Mutable DTOs
+### 1. 可变 DTOs
 
 ```csharp
-// FORBIDDEN
+// 禁止
 public class UserDto
 {
-    public string Name { get; set; }  // Mutable!
+    public string Name { get; set; }  // 可变！
 }
 
-// REQUIRED
+// 必需
 public sealed record UserDto
 {
     public required string Name { get; init; }
 }
 ```
 
-### 2. Static Classes for Business Logic
+### 2. 静态类处理业务逻辑
 
 ```csharp
-// FORBIDDEN
+// 禁止
 public static class UserService
 {
     public static User GetUser(int id) { ... }
 }
 
-// REQUIRED: Use DI
+// 必需：使用 DI
 public sealed class UserService : IUserService
 {
     public User GetUser(int id) { ... }
 }
 ```
 
-### 3. Missing sealed Modifier
+### 3. 缺少 sealed 修饰符
 
 ```csharp
-// FORBIDDEN (allows unintended inheritance)
+// 禁止（允许意外继承）
 public class UserRepository { }
 
-// REQUIRED
+// 必需
 public sealed class UserRepository { }
 ```
 
-### 4. Async Without CancellationToken
+### 4. Async 不带 CancellationToken
 
 ```csharp
-// FORBIDDEN
+// 禁止
 public async Task<string> ProcessAsync()
 
-// REQUIRED
+// 必需
 public async Task<string> ProcessAsync(CancellationToken ct = default)
 ```
 
-### 5. Service Locator Pattern
+### 5. Service Locator 模式
 
 ```csharp
-// FORBIDDEN
+// 禁止
 var service = serviceProvider.GetService<IUserService>();
 
-// REQUIRED: Constructor injection
+// 必需：构造函数注入
 public MyClass(IUserService userService)
 ```
 
-### 6. Hardcoded Absolute Paths
+### 6. 硬编码绝对路径
 
 ```csharp
-// FORBIDDEN - Only works on specific machine
+// 禁止 - 只在特定机器工作
 builder.Services.AddScoped<ITemplateFileProvider>(_ =>
     new FileSystemTemplateProvider("/Users/developer/project/templates"));
 
-// FORBIDDEN - Directory.GetCurrentDirectory() varies by execution context
+// 禁止 - Directory.GetCurrentDirectory() 随执行上下文变化
 builder.Services.AddScoped<ITemplateFileProvider>(_ =>
     new FileSystemTemplateProvider(Path.Combine(Directory.GetCurrentDirectory(), "templates")));
 
-// REQUIRED - Use relative path resolution
+// 必需 - 使用相对路径解析
 public static string FindProjectPath(string relativePath)
 {
     var dir = new DirectoryInfo(Directory.GetCurrentDirectory());
@@ -236,27 +236,27 @@ public static string FindProjectPath(string relativePath)
 }
 ```
 
-**Why**:
-- Absolute paths break on other machines
-- `Directory.GetCurrentDirectory()` returns different values in tests vs runtime
-- Upward search ensures portability across development, test, and production environments
+**原因**：
+- 绝对路径在其他机器上失效
+- `Directory.GetCurrentDirectory()` 在测试和运行时返回不同值
+- 向上搜索确保跨开发、测试和生产环境的可移植性
 
-**Common Gotcha (Integration Tests)**:
+**常见陷阱（集成测试）**：
 
 ```csharp
-// In CustomWebApplicationFactory for tests
+// 在测试的 CustomWebApplicationFactory 中
 protected override void ConfigureWebHost(IWebHostBuilder builder)
 {
     builder.ConfigureServices(services =>
     {
-        // Remove runtime registration
+        // 移除运行时注册
         var descriptor = services.SingleOrDefault(
             d => d.ServiceType == typeof(ITemplateFileProvider));
         if (descriptor != null)
             services.Remove(descriptor);
 
-        // Re-register with test-friendly path resolution
-        var templatesPath = FindTemplatesPath(); // Uses relative search
+        // 使用测试友好的路径解析重新注册
+        var templatesPath = FindTemplatesPath(); // 使用相对搜索
         services.AddScoped<ITemplateFileProvider>(_ =>
             new FileSystemTemplateProvider(templatesPath));
     });
@@ -265,15 +265,15 @@ protected override void ConfigureWebHost(IWebHostBuilder builder)
 
 ---
 
-## Testing Requirements
+## 测试要求
 
-### Framework
+### 框架
 
 ```xml
 <PackageVersion Include="xunit" Version="2.6.4" />
 ```
 
-### Test Structure (TODO)
+### 测试结构（待完成）
 
 ```
 tests/
@@ -285,7 +285,7 @@ tests/
         └── ScribanTemplateRendererTests.cs
 ```
 
-### Test Naming
+### 测试命名
 
 ```csharp
 [Fact]
@@ -295,54 +295,54 @@ public async Task ExecuteAsync_WithValidRequest_ReturnsSuccessResult()
 public async Task ExecuteAsync_WithInvalidProjectName_ReturnsValidationError()
 ```
 
-**Format**: `{Method}_{Scenario}_{ExpectedResult}`
+**格式**：`{Method}_{Scenario}_{ExpectedResult}`
 
 ---
 
-## Code Review Checklist
+## 代码审查清单
 
-### Before Submitting
+### 提交前
 
-- [ ] All DTOs use `sealed record` with `init` properties
-- [ ] All async methods accept `CancellationToken`
-- [ ] All classes are `sealed` (unless inheritance is needed)
-- [ ] No `static` classes for business logic
-- [ ] Dependencies injected via constructor
-- [ ] Validation via FluentValidation
-- [ ] Error handling follows Result Pattern
+- [ ] 所有 DTOs 使用 `sealed record` 和 `init` 属性
+- [ ] 所有异步方法接受 `CancellationToken`
+- [ ] 所有类都是 `sealed`（除非需要继承）
+- [ ] 业务逻辑无 `static` 类
+- [ ] 依赖通过构造函数注入
+- [ ] 验证使用 FluentValidation
+- [ ] 错误处理遵循 Result Pattern
 
-### Reviewer Checklist
+### 审查者清单
 
-- [ ] Naming follows conventions
-- [ ] No forbidden patterns used
-- [ ] Clean Architecture layers respected
-- [ ] No circular dependencies
-- [ ] Proper error handling
-- [ ] Logging where appropriate
+- [ ] 命名遵循约定
+- [ ] 未使用禁止模式
+- [ ] 遵守 Clean Architecture 层级
+- [ ] 无循环依赖
+- [ ] 正确的错误处理
+- [ ] 适当的日志记录
 
 ---
 
-## Build Commands
+## 构建命令
 
 ```bash
-# Restore packages
+# 恢复包
 dotnet restore src/apps/api/ScaffoldGenerator.Api/ScaffoldGenerator.Api.csproj
 
-# Build
+# 构建
 dotnet build src/apps/api/ScaffoldGenerator.Api/ScaffoldGenerator.Api.csproj
 
-# Run
+# 运行
 dotnet run --project src/apps/api/ScaffoldGenerator.Api/ScaffoldGenerator.Api.csproj
 
-# Test (when tests exist)
+# 测试（当测试存在时）
 dotnet test
 ```
 
 ---
 
-## Package Management
+## 包管理
 
-Central package management via `Directory.Packages.props`:
+通过 `Directory.Packages.props` 集中管理：
 
 ```xml
 <Project>
@@ -352,13 +352,13 @@ Central package management via `Directory.Packages.props`:
   <ItemGroup>
     <!-- ORM -->
     <PackageVersion Include="SqlSugarCore" Version="5.1.4.169" />
-    <!-- Logging -->
+    <!-- 日志 -->
     <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
-    <!-- Validation -->
+    <!-- 验证 -->
     <PackageVersion Include="FluentValidation" Version="11.9.0" />
-    <!-- etc. -->
+    <!-- 等等 -->
   </ItemGroup>
 </Project>
 ```
 
-**Rule**: Add new packages to `Directory.Packages.props`, not individual `.csproj` files.
+**规则**：新包添加到 `Directory.Packages.props`，不要添加到单独的 `.csproj` 文件。

@@ -1,14 +1,14 @@
-# Database Guidelines
+# 数据库规范
 
-> Database patterns and conventions for this project.
+> 本项目的数据库模式和约定。
 
 ---
 
-## Overview
+## 概述
 
-**ORM**: SqlSugar 5.1.4.169
-**Supported Databases**: SQLite (dev), MySQL (prod), SQL Server (enterprise)
-**Package Management**: Central package management via `Directory.Packages.props`
+**ORM**：SqlSugar 5.1.4.169
+**支持的数据库**：SQLite（开发）、MySQL（生产）、SQL Server（企业版）
+**包管理**：通过 `Directory.Packages.props` 集中管理
 
 ```xml
 <!-- src/Directory.Packages.props -->
@@ -17,14 +17,14 @@
 
 ---
 
-## Entity Definition
+## 实体定义
 
-### Pattern: Entity Class
+### 模式：实体类
 
-Entities should be defined in a `Domain/Entities/` folder (to be created).
+实体应定义在 `Domain/Entities/` 文件夹中（待创建）。
 
 ```csharp
-// Example pattern (to be implemented)
+// 示例模式（待实现）
 namespace ScaffoldGenerator.Domain.Entities;
 
 [SugarTable("users")]
@@ -47,21 +47,21 @@ public sealed class User
 }
 ```
 
-### Entity Conventions
+### 实体约定
 
-| Rule | Convention |
-|------|------------|
-| Class modifier | `sealed` |
-| Primary key | `Id` (long, auto-increment) |
-| Required fields | Use `required` keyword |
-| Nullable fields | Use nullable type (`?`) |
-| Timestamps | `CreatedAt`, `UpdatedAt` |
+| 规则 | 约定 |
+|------|------|
+| 类修饰符 | `sealed` |
+| 主键 | `Id`（long，自增） |
+| 必填字段 | 使用 `required` 关键字 |
+| 可空字段 | 使用可空类型（`?`） |
+| 时间戳 | `CreatedAt`、`UpdatedAt` |
 
 ---
 
-## Repository Pattern
+## Repository 模式
 
-### Interface Definition (Application Layer)
+### 接口定义（Application 层）
 
 ```csharp
 // Application/Abstractions/IUserRepository.cs
@@ -77,7 +77,7 @@ public interface IUserRepository
 }
 ```
 
-### Implementation (Infrastructure Layer)
+### 实现（Infrastructure 层）
 
 ```csharp
 // Infrastructure/Repositories/UserRepository.cs
@@ -102,31 +102,31 @@ public sealed class UserRepository : IUserRepository
     public async Task<long> CreateAsync(User entity, CancellationToken ct = default)
     {
         return await _db.Insertable(entity)
-            .ExecuteReturnSnowflakeIdAsync();  // or ExecuteReturnIdentityAsync()
+            .ExecuteReturnSnowflakeIdAsync();  // 或 ExecuteReturnIdentityAsync()
     }
 }
 ```
 
 ---
 
-## Query Patterns
+## 查询模式
 
-### Simple Query
+### 简单查询
 
 ```csharp
-// Single entity
+// 单个实体
 var user = await _db.Queryable<User>()
     .Where(u => u.Id == id)
     .FirstAsync(ct);
 
-// List with conditions
+// 带条件的列表
 var users = await _db.Queryable<User>()
     .Where(u => u.Status == UserStatus.Active)
     .OrderBy(u => u.CreatedAt, OrderByType.Desc)
     .ToListAsync(ct);
 ```
 
-### Pagination
+### 分页
 
 ```csharp
 var (list, total) = await _db.Queryable<User>()
@@ -134,7 +134,7 @@ var (list, total) = await _db.Queryable<User>()
     .ToPageListAsync(pageIndex, pageSize, ct);
 ```
 
-### Join Query
+### 联表查询
 
 ```csharp
 var result = await _db.Queryable<Order, User>((o, u) => o.UserId == u.Id)
@@ -149,16 +149,16 @@ var result = await _db.Queryable<Order, User>((o, u) => o.UserId == u.Id)
 
 ---
 
-## Transactions
+## 事务
 
-### Single Operation (Auto Transaction)
+### 单操作（自动事务）
 
 ```csharp
-// SqlSugar handles single operations automatically
+// SqlSugar 自动处理单操作
 await _db.Insertable(entity).ExecuteCommandAsync(ct);
 ```
 
-### Multiple Operations (Explicit Transaction)
+### 多操作（显式事务）
 
 ```csharp
 try
@@ -180,44 +180,44 @@ catch
 
 ---
 
-## Migrations
+## 迁移
 
-SqlSugar supports code-first migrations:
+SqlSugar 支持 Code-First 迁移：
 
 ```csharp
-// In Program.cs or startup
+// 在 Program.cs 或启动代码中
 _db.CodeFirst.InitTables<User, Order, OrderItem>();
 ```
 
-**Best Practice**: Run migrations only in development. Use SQL scripts for production.
+**最佳实践**：仅在开发环境运行迁移。生产环境使用 SQL 脚本。
 
 ---
 
-## Naming Conventions
+## 命名约定
 
-| Type | Convention | Example |
-|------|------------|---------|
-| Table name | snake_case, plural | `users`, `order_items` |
-| Column name | snake_case | `created_at`, `user_id` |
-| Primary key | `id` | `id` |
-| Foreign key | `{table}_id` | `user_id` |
-| Index name | `ix_{table}_{columns}` | `ix_users_email` |
-| Unique constraint | `uq_{table}_{columns}` | `uq_users_username` |
-
----
-
-## Common Mistakes
-
-| Mistake | Correct Approach |
-|---------|------------------|
-| N+1 queries | Use `.Includes()` for eager loading |
-| Missing `CancellationToken` | Always pass `ct` to async methods |
-| Raw SQL for simple queries | Use Queryable API first |
-| Forgetting transactions | Wrap multiple writes in transaction |
-| Selecting all columns | Use `.Select()` for projections |
+| 类型 | 约定 | 示例 |
+|------|------|------|
+| 表名 | snake_case，复数 | `users`、`order_items` |
+| 列名 | snake_case | `created_at`、`user_id` |
+| 主键 | `id` | `id` |
+| 外键 | `{table}_id` | `user_id` |
+| 索引名 | `ix_{table}_{columns}` | `ix_users_email` |
+| 唯一约束 | `uq_{table}_{columns}` | `uq_users_username` |
 
 ---
 
-## Status
+## 常见错误
 
-> **Note**: Database layer is not yet implemented in the codebase. This guideline defines the expected patterns when implementing.
+| 错误 | 正确做法 |
+|------|----------|
+| N+1 查询 | 使用 `.Includes()` 预加载 |
+| 缺少 `CancellationToken` | 始终传递 `ct` 给异步方法 |
+| 简单查询使用原生 SQL | 优先使用 Queryable API |
+| 忘记事务 | 多个写操作包装在事务中 |
+| 查询所有列 | 使用 `.Select()` 进行投影 |
+
+---
+
+## 状态
+
+> **注意**：数据库层尚未在代码库中实现。本规范定义了实现时的预期模式。

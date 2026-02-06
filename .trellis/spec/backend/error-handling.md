@@ -1,34 +1,34 @@
-# Error Handling
+# 错误处理
 
-> How errors are handled in this project.
-
----
-
-## Overview
-
-This project uses a **Result Pattern** for business logic errors and **Global Exception Middleware** for unexpected exceptions.
-
-**Principle**: Use return values for expected failures, exceptions for unexpected failures.
+> 本项目的错误处理方式。
 
 ---
 
-## Error Handling Strategy
+## 概述
 
-| Error Type | Handling Method | Example |
-|------------|-----------------|---------|
-| Validation errors | Return `Result` with errors | Invalid input |
-| Business rule violations | Return `Result` with errors | Insufficient balance |
-| Not found | Return `Result` with errors | Entity not found |
-| Infrastructure failures | Throw exception | Database down |
-| Unexpected errors | Caught by middleware | NullReferenceException |
+本项目使用 **Result Pattern（结果模式）** 处理业务逻辑错误，使用**全局异常中间件**处理意外异常。
+
+**原则**：预期失败使用返回值，意外失败使用异常。
+
+---
+
+## 错误处理策略
+
+| 错误类型 | 处理方式 | 示例 |
+|----------|----------|------|
+| 验证错误 | 返回带错误的 `Result` | 无效输入 |
+| 业务规则违反 | 返回带错误的 `Result` | 余额不足 |
+| 未找到 | 返回带错误的 `Result` | 实体不存在 |
+| 基础设施故障 | 抛出异常 | 数据库宕机 |
+| 意外错误 | 被中间件捕获 | NullReferenceException |
 
 ---
 
 ## Result Pattern
 
-### Result Type Definition
+### Result 类型定义
 
-**File**: `Contracts/Responses/GenerationResult.cs`
+**文件**：`Contracts/Responses/GenerationResult.cs`
 
 ```csharp
 public sealed record GenerationResult
@@ -40,16 +40,16 @@ public sealed record GenerationResult
 }
 ```
 
-### Usage in UseCase
+### UseCase 中的用法
 
-**File**: `Application/UseCases/GenerateScaffoldUseCase.cs`
+**文件**：`Application/UseCases/GenerateScaffoldUseCase.cs`
 
 ```csharp
 public async Task<GenerationResult> ExecuteAsync(
     GenerateScaffoldRequest request,
     CancellationToken ct = default)
 {
-    // 1. Validation
+    // 1. 验证
     var validationResult = await _validator.ValidateAsync(request, ct);
     if (!validationResult.IsValid)
     {
@@ -61,10 +61,10 @@ public async Task<GenerationResult> ExecuteAsync(
         };
     }
 
-    // 2. Business Logic
+    // 2. 业务逻辑
     try
     {
-        // ... processing ...
+        // ... 处理 ...
         return new GenerationResult
         {
             Success = true,
@@ -85,11 +85,11 @@ public async Task<GenerationResult> ExecuteAsync(
 
 ---
 
-## Input Validation
+## 输入验证
 
-### FluentValidation Pattern
+### FluentValidation 模式
 
-**File**: `Application/Validators/GenerateScaffoldValidator.cs`
+**文件**：`Application/Validators/GenerateScaffoldValidator.cs`
 
 ```csharp
 public sealed class GenerateScaffoldValidator : AbstractValidator<GenerateScaffoldRequest>
@@ -110,7 +110,7 @@ public sealed class GenerateScaffoldValidator : AbstractValidator<GenerateScaffo
 }
 ```
 
-### Validation in UseCase
+### UseCase 中的验证
 
 ```csharp
 var validationResult = await _validator.ValidateAsync(request, ct);
@@ -127,14 +127,14 @@ if (!validationResult.IsValid)
 
 ---
 
-## Global Exception Middleware
+## 全局异常中间件
 
-### Pattern: Inline Middleware
+### 模式：内联中间件
 
-**File**: `Api/Program.cs` (Lines 46-58)
+**文件**：`Api/Program.cs`（第 46-58 行）
 
 ```csharp
-// Exception handling middleware
+// 异常处理中间件
 app.Use(async (context, next) =>
 {
     try
@@ -152,9 +152,9 @@ app.Use(async (context, next) =>
 
 ---
 
-## API Error Responses
+## API 错误响应
 
-### Success Response
+### 成功响应
 
 ```json
 {
@@ -163,9 +163,9 @@ app.Use(async (context, next) =>
 }
 ```
 
-Or file download (binary response with headers).
+或文件下载（带响应头的二进制响应）。
 
-### Validation Error (400)
+### 验证错误（400）
 
 ```json
 {
@@ -173,7 +173,7 @@ Or file download (binary response with headers).
 }
 ```
 
-### Business Error (400)
+### 业务错误（400）
 
 ```json
 {
@@ -181,7 +181,7 @@ Or file download (binary response with headers).
 }
 ```
 
-### Server Error (500)
+### 服务器错误（500）
 
 ```json
 {
@@ -191,11 +191,11 @@ Or file download (binary response with headers).
 
 ---
 
-## Infrastructure Exception Pattern
+## 基础设施异常模式
 
-When external dependencies fail, throw descriptive exceptions:
+当外部依赖失败时，抛出描述性异常：
 
-**File**: `Infrastructure/Rendering/ScribanTemplateRenderer.cs`
+**文件**：`Infrastructure/Rendering/ScribanTemplateRenderer.cs`
 
 ```csharp
 public async Task<string> RenderAsync(string templatePath, object model, CancellationToken ct = default)
@@ -209,28 +209,28 @@ public async Task<string> RenderAsync(string templatePath, object model, Cancell
         throw new InvalidOperationException($"模板解析错误: {errors}");
     }
 
-    // ... render ...
+    // ... 渲染 ...
 }
 ```
 
 ---
 
-## Common Mistakes
+## 常见错误
 
-| Mistake | Correct Approach |
-|---------|------------------|
-| Using exceptions for flow control | Use Result Pattern for expected failures |
-| Swallowing exceptions silently | Always log before returning error |
-| Exposing internal error details | Return generic message for 500 errors |
-| Missing validation | Validate at entry point (API/UseCase) |
-| Inconsistent error format | Use standard error response structure |
+| 错误 | 正确做法 |
+|------|----------|
+| 使用异常控制流程 | 预期失败使用 Result Pattern |
+| 静默吞掉异常 | 返回错误前始终记录日志 |
+| 暴露内部错误详情 | 500 错误返回通用消息 |
+| 缺少验证 | 在入口点（API/UseCase）验证 |
+| 错误格式不一致 | 使用标准错误响应结构 |
 
 ---
 
-## Checklist
+## 检查清单
 
-- [ ] Validation errors return 400 with message
-- [ ] Business errors return Result with `Success = false`
-- [ ] Infrastructure exceptions are thrown and caught by middleware
-- [ ] All exceptions are logged with `Log.Error(ex, "message")`
-- [ ] 500 errors never expose internal details
+- [ ] 验证错误返回 400 和消息
+- [ ] 业务错误返回 `Success = false` 的 Result
+- [ ] 基础设施异常抛出并被中间件捕获
+- [ ] 所有异常用 `Log.Error(ex, "message")` 记录
+- [ ] 500 错误永不暴露内部详情

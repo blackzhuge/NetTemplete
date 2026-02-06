@@ -1,39 +1,36 @@
-# Journal - blackzhuge (Part 1)
+# 日志 - blackzhuge (第 1 部分)
 
-> AI development session journal
-> Started: 2026-02-06
+> AI 开发会话日志
+> 开始时间: 2026-02-06
 
 ---
 
 
-## Session 1: Phase 1: Scaffold Generator Init
+## 会话 1: Phase 1: Scaffold Generator 初始化
 
-**Date**: 2026-02-06
-**Task**: Phase 1: Scaffold Generator Init
+**日期**: 2026-02-06
+**任务**: Phase 1: Scaffold Generator Init
 
-### Summary
+### 摘要
 
-(Add summary)
-
-### Main Changes
-
-## Summary
 完成 scaffold-generator 项目 Phase 1: 项目初始化
 
-## Completed Tasks
-| Task | Status |
-|------|--------|
+### 主要变更
+
+## 完成任务
+| 任务 | 状态 |
+|------|------|
 | Monorepo 骨架 (pnpm + .NET) | ✅ |
 | 后端 Solution (4 projects) | ✅ |
 | 前端工作区 (3 packages) | ✅ |
 | 多模型审查 (Codex + Gemini) | ✅ |
 
-## Key Decisions
+## 关键决策
 - 统一使用 .NET 9.0 (审查后从 8.0 升级)
 - 添加 global.json 锁定 SDK 版本
 - 项目产出放入 src/ 目录
 
-## Files Created
+## 创建的文件
 - `src/scaffold-generator.sln` - .NET Solution
 - `src/Directory.Build.props` - 共享配置
 - `src/Directory.Packages.props` - NuGet 版本管理
@@ -44,43 +41,38 @@
 - `src/apps/template-frontend/` - 前端模板源
 - `src/packages/@scaffold/shared-types/` - 共享类型
 
-## Next Steps
+## 下一步
 - Phase 2: 后端核心 (DTO, 模板渲染, ZIP 生成)
 
-### Git Commits
+### Git 提交
 
-| Hash | Message |
-|------|---------|
-| `eaa1f77` | (see git log) |
-| `114d5a0` | (see git log) |
+| 哈希 | 消息 |
+|------|------|
+| `eaa1f77` | (见 git log) |
+| `114d5a0` | (见 git log) |
 
-### Testing
+### 测试
 
-- [OK] (Add test results)
+- [OK] (添加测试结果)
 
-### Status
+### 状态
 
-[OK] **Completed**
+[OK] **已完成**
 
-### Next Steps
+### 下一步
 
-- None - task complete
+- 无 - 任务完成
 
-## Session 2: Phase 2: Backend Core Implementation
+## 会话 2: Phase 2: 后端核心实现
 
-**Date**: 2026-02-06
-**Task**: Phase 2: Backend Core Implementation
+**日期**: 2026-02-06
+**任务**: Phase 2: Backend Core Implementation
 
-### Summary
+### 摘要
 
-(Add summary)
+实现 scaffold-generator Phase 2: 后端核心 (14 个任务完成)
 
-### Main Changes
-
-## Summary
-Implemented Phase 2 of scaffold-generator: Backend Core (14 tasks completed)
-
-## Completed Tasks
+### 主要变更
 
 ### 2.1 契约层 (Contracts)
 - [x] `GenerateScaffoldRequest` DTO
@@ -104,48 +96,48 @@ Implemented Phase 2 of scaffold-generator: Backend Core (14 tasks completed)
 - [x] Serilog 日志
 - [x] CORS 配置
 
-## Files Changed
-| Layer | Files Added |
-|-------|-------------|
+## 变更的文件
+| 层 | 添加的文件 |
+|------|------------|
 | Contracts | 5 (Enums, Request, Response) |
 | Application | 4 (Interfaces, Validator, UseCase) |
 | Infrastructure | 4 (Renderer, ZipBuilder, Provider) |
-| Api | 2 modified (Program.cs, csproj) |
+| Api | 2 修改 (Program.cs, csproj) |
 
-## Milestone
+## 里程碑
 **M2 达成**: Backend API can return empty ZIP
 
-## Next Phase
+## 下一阶段
 Phase 3: 模块系统 (IScaffoldModule, DatabaseModule, CacheModule, etc.)
 
-### Git Commits
+### Git 提交
 
-| Hash | Message |
-|------|---------|
-| `89a077a` | (see git log) |
+| 哈希 | 消息 |
+|------|------|
+| `89a077a` | (见 git log) |
 
-### Testing
+### 测试
 
-- [OK] (Add test results)
+- [OK] (添加测试结果)
 
-### Status
+### 状态
 
-[OK] **Completed**
+[OK] **已完成**
 
-### Next Steps
+### 下一步
 
-- None - task complete
+- 无 - 任务完成
 
-## Session 3: 实现 Phase 3-5: 模块系统、模板引擎、配置器前端
+## 会话 3: 实现 Phase 3-5: 模块系统、模板引擎、配置器前端
 
-**Date**: 2026-02-07
-**Task**: 实现 Phase 3-5: 模块系统、模板引擎、配置器前端
+**日期**: 2026-02-07
+**任务**: 实现 Phase 3-5: 模块系统、模板引擎、配置器前端
 
-### Summary
+### 摘要
 
-(Add summary)
+完成 Phase 3-5 的全部实现
 
-### Main Changes
+### 主要变更
 
 ## 完成内容
 
@@ -211,20 +203,86 @@ GenerateScaffoldRequest
 - Phase 6: 集成测试
 - Phase 7: 完善文档
 
-### Git Commits
+### Git 提交
 
-| Hash | Message |
-|------|---------|
-| `ad6e5c2` | (see git log) |
+| 哈希 | 消息 |
+|------|------|
+| `ad6e5c2` | (见 git log) |
 
-### Testing
+### 测试
 
-- [OK] (Add test results)
+- [OK] (添加测试结果)
 
-### Status
+### 状态
 
-[OK] **Completed**
+[OK] **已完成**
 
-### Next Steps
+### 下一步
 
-- None - task complete
+- 无 - 任务完成
+
+## 会话 4: Phase 6.1 后端单元测试完成
+
+**日期**: 2026-02-07
+**任务**: Phase 6.1 后端单元测试完成
+
+### 摘要
+
+完成 Phase 6.1 后端单元测试
+
+### 主要变更
+
+### Phase 6.1 后端单元测试 ✅
+
+| 测试文件 | 测试数 | 覆盖内容 |
+|---------|--------|---------
+| `SystemZipBuilderTests.cs` | 6 | ZIP 生成、多文件、重置、编码 |
+| `ScribanTemplateRendererTests.cs` | 7 | 模板渲染、循环、条件、嵌套属性 |
+| `GenerateScaffoldUseCaseTests.cs` | 4 | UseCase 验证、错误处理 |
+| `GenerateEndpointTests.cs` | 6 | API 端点、全量 Provider 测试 |
+
+**测试结果**: 23/23 通过
+
+### 路径问题修复
+
+- `Program.cs`: `Directory.GetCurrentDirectory()` → `AppContext.BaseDirectory`
+- `.csproj`: 添加 templates 复制到输出目录配置
+- `CustomWebApplicationFactory`: 优化路径查找策略
+
+### 规范更新
+
+- `quality-guidelines.md`: 新增禁止模式 #6 - 硬编码绝对路径
+
+## 变更文件
+
+- `src/tests/ScaffoldGenerator.Tests/` (新增)
+- `src/Directory.Packages.props`
+- `src/apps/api/ScaffoldGenerator.Api/Program.cs`
+- `src/apps/api/ScaffoldGenerator.Api/ScaffoldGenerator.Api.csproj`
+- `src/scaffold-generator.sln`
+- `.trellis/spec/backend/quality-guidelines.md`
+
+## 待完成
+
+- Phase 6.2: 端到端测试
+- Phase 7.1: 文档完善
+- Phase 7.2: 优化完善
+
+### Git 提交
+
+| 哈希 | 消息 |
+|------|------|
+| `ba194cf` | (见 git log) |
+
+### 测试
+
+- [OK] (添加测试结果)
+
+### 状态
+
+[OK] **已完成**
+
+### 下一步
+
+- 无 - 任务完成
+

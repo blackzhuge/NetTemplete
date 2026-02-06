@@ -1,16 +1,16 @@
-# Logging Guidelines
+# 日志规范
 
-> How logging is done in this project.
+> 本项目的日志记录方式。
 
 ---
 
-## Overview
+## 概述
 
-**Framework**: Serilog
-**Sinks**: Console (development), File (production)
-**Integration**: ASP.NET Core via `UseSerilog()`
+**框架**：Serilog
+**输出**：Console（开发）、File（生产）
+**集成**：通过 `UseSerilog()` 集成 ASP.NET Core
 
-### Dependencies
+### 依赖
 
 ```xml
 <!-- src/Directory.Packages.props -->
@@ -21,26 +21,26 @@
 
 ---
 
-## Configuration
+## 配置
 
-### Startup Configuration
+### 启动配置
 
-**File**: `Api/Program.cs`
+**文件**：`Api/Program.cs`
 
 ```csharp
-// Early initialization (before host build)
+// 早期初始化（在构建 host 前）
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();
 
-// Integrate with ASP.NET Core
+// 集成 ASP.NET Core
 builder.Host.UseSerilog();
 
-// Enable request logging
+// 启用请求日志
 app.UseSerilogRequestLogging();
 ```
 
-### Application Lifecycle
+### 应用生命周期
 
 ```csharp
 try
@@ -60,58 +60,58 @@ finally
 
 ---
 
-## Log Levels
+## 日志级别
 
-| Level | When to Use | Example |
-|-------|-------------|---------|
-| `Verbose` | Detailed debugging | Loop iterations, variable values |
-| `Debug` | Development diagnostics | Method entry/exit, state changes |
-| `Information` | Normal operations | App start, request completed, feature used |
-| `Warning` | Unexpected but handled | Retry, fallback, deprecated usage |
-| `Error` | Errors that need attention | Exception caught, operation failed |
-| `Fatal` | App cannot continue | Startup failure, unrecoverable error |
+| 级别 | 何时使用 | 示例 |
+|------|----------|------|
+| `Verbose` | 详细调试 | 循环迭代、变量值 |
+| `Debug` | 开发诊断 | 方法进入/退出、状态变化 |
+| `Information` | 正常操作 | 应用启动、请求完成、功能使用 |
+| `Warning` | 意外但已处理 | 重试、降级、弃用使用 |
+| `Error` | 需要关注的错误 | 异常捕获、操作失败 |
+| `Fatal` | 应用无法继续 | 启动失败、不可恢复错误 |
 
-### Usage Examples
+### 使用示例
 
 ```csharp
-// Information - Application lifecycle
+// Information - 应用生命周期
 Log.Information("Starting ScaffoldGenerator API");
 Log.Information("Generation completed for project {ProjectName}", request.ProjectName);
 
-// Warning - Handled issues
+// Warning - 已处理的问题
 Log.Warning("Template cache miss, reloading from disk");
 Log.Warning("Deprecated API endpoint called: {Endpoint}", endpoint);
 
-// Error - Exceptions
+// Error - 异常
 Log.Error(ex, "Unhandled exception");
 Log.Error(ex, "Failed to render template {TemplatePath}", templatePath);
 
-// Fatal - Application cannot continue
+// Fatal - 应用无法继续
 Log.Fatal(ex, "Application terminated unexpectedly");
 ```
 
 ---
 
-## Structured Logging
+## 结构化日志
 
-### Use Message Templates (Not String Interpolation)
+### 使用消息模板（不是字符串插值）
 
 ```csharp
-// GOOD - Structured logging
+// 正确 - 结构化日志
 Log.Information("User {UserId} created order {OrderId}", userId, orderId);
 
-// BAD - String interpolation (loses structure)
+// 错误 - 字符串插值（丢失结构）
 Log.Information($"User {userId} created order {orderId}");
 ```
 
-### Property Naming
+### 属性命名
 
-| Type | Format | Example |
-|------|--------|---------|
-| Identifiers | PascalCase | `{UserId}`, `{OrderId}` |
-| Counts | End with `Count` | `{ItemCount}` |
-| Durations | End with `Ms` or `Duration` | `{ElapsedMs}` |
-| Destructured objects | Prefix with `@` | `{@Request}` |
+| 类型 | 格式 | 示例 |
+|------|------|------|
+| 标识符 | PascalCase | `{UserId}`、`{OrderId}` |
+| 计数 | 以 `Count` 结尾 | `{ItemCount}` |
+| 时长 | 以 `Ms` 或 `Duration` 结尾 | `{ElapsedMs}` |
+| 解构对象 | 前缀 `@` | `{@Request}` |
 
 ```csharp
 Log.Information("Processed {ItemCount} items in {ElapsedMs}ms", items.Count, sw.ElapsedMilliseconds);
@@ -120,66 +120,66 @@ Log.Debug("Request details: {@Request}", request);
 
 ---
 
-## What to Log
+## 应该记录什么
 
-### Must Log
+### 必须记录
 
-| Event | Level | Example |
-|-------|-------|---------|
-| Application start/stop | Information | `Starting API`, `Shutting down` |
-| Unhandled exceptions | Error | `Log.Error(ex, "Unhandled exception")` |
-| Authentication failures | Warning | `Login failed for {Username}` |
-| Critical business operations | Information | `Order {OrderId} created` |
-| External service calls (failure) | Error | `Payment gateway returned error` |
+| 事件 | 级别 | 示例 |
+|------|------|------|
+| 应用启动/停止 | Information | `Starting API`、`Shutting down` |
+| 未处理的异常 | Error | `Log.Error(ex, "Unhandled exception")` |
+| 认证失败 | Warning | `Login failed for {Username}` |
+| 关键业务操作 | Information | `Order {OrderId} created` |
+| 外部服务调用（失败） | Error | `Payment gateway returned error` |
 
-### Consider Logging
+### 考虑记录
 
-| Event | Level |
-|-------|-------|
-| Request/response (via middleware) | Information |
-| Cache hits/misses | Debug |
-| Database query timing | Debug |
-| Configuration loaded | Information |
+| 事件 | 级别 |
+|------|------|
+| 请求/响应（通过中间件） | Information |
+| 缓存命中/未命中 | Debug |
+| 数据库查询耗时 | Debug |
+| 配置加载 | Information |
 
 ---
 
-## What NOT to Log
+## 不应该记录什么
 
-### Never Log
+### 永不记录
 
-| Data Type | Reason |
-|-----------|--------|
-| Passwords | Security |
-| API keys / Tokens | Security |
-| Credit card numbers | PCI compliance |
-| Full SSN / ID numbers | PII |
-| Session tokens | Security |
+| 数据类型 | 原因 |
+|----------|------|
+| 密码 | 安全 |
+| API 密钥 / Token | 安全 |
+| 信用卡号 | PCI 合规 |
+| 完整身份证号 | PII |
+| 会话令牌 | 安全 |
 
-### Mask Sensitive Data
+### 敏感数据脱敏
 
 ```csharp
-// BAD
+// 错误
 Log.Information("User logged in with password {Password}", password);
 
-// GOOD
+// 正确
 Log.Information("User {Username} logged in successfully", username);
 
-// If must include, mask it
+// 如必须包含，进行脱敏
 Log.Information("Processing card ending in {CardLast4}", card[^4..]);
 ```
 
 ---
 
-## Request Logging
+## 请求日志
 
-Enabled via `UseSerilogRequestLogging()`:
+通过 `UseSerilogRequestLogging()` 启用：
 
 ```
 [14:23:45 INF] HTTP GET /api/health responded 200 in 12.3456 ms
 [14:23:46 INF] HTTP POST /api/generate responded 200 in 234.5678 ms
 ```
 
-### Customize Request Logging
+### 自定义请求日志
 
 ```csharp
 app.UseSerilogRequestLogging(options =>
@@ -195,22 +195,22 @@ app.UseSerilogRequestLogging(options =>
 
 ---
 
-## Exception Logging
+## 异常日志
 
-### Pattern
+### 模式
 
 ```csharp
 catch (Exception ex)
 {
-    // Always include exception object first
+    // 始终将异常对象放在第一个参数
     Log.Error(ex, "Failed to process request for {ProjectName}", request.ProjectName);
 
-    // Return error response
+    // 返回错误响应
     return new GenerationResult { Success = false, ErrorMessage = "..." };
 }
 ```
 
-### Middleware Exception Logging
+### 中间件异常日志
 
 ```csharp
 catch (Exception ex)
@@ -223,19 +223,19 @@ catch (Exception ex)
 
 ---
 
-## Common Mistakes
+## 常见错误
 
-| Mistake | Correct Approach |
-|---------|------------------|
-| String interpolation in log | Use message template with `{Property}` |
-| Missing exception object | Put `ex` as first parameter |
-| Logging PII | Mask or exclude sensitive data |
-| Over-logging in loops | Log summary, not each iteration |
-| Missing context | Include relevant IDs and names |
+| 错误 | 正确做法 |
+|------|----------|
+| 日志中使用字符串插值 | 使用 `{Property}` 的消息模板 |
+| 缺少异常对象 | 将 `ex` 作为第一个参数 |
+| 记录 PII | 脱敏或排除敏感数据 |
+| 循环中过度日志 | 记录摘要，而非每次迭代 |
+| 缺少上下文 | 包含相关 ID 和名称 |
 
 ---
 
-## Production Configuration (TODO)
+## 生产配置（待完成）
 
 ```csharp
 Log.Logger = new LoggerConfiguration()
