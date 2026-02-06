@@ -1,0 +1,14 @@
+{
+  "name": "web-configurator",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@scaffold/shared-types": "workspace:*"
+  }
+}

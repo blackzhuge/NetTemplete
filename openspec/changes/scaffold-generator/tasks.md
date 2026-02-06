@@ -3,25 +3,26 @@
 ## Phase 1: 项目初始化 (Day 1-2)
 
 ### 1.1 Monorepo 骨架
-- [ ] 创建根目录结构
-- [ ] 配置 `pnpm-workspace.yaml`
-- [ ] 配置 `Directory.Build.props`
-- [ ] 配置 `Directory.Packages.props`
-- [ ] 创建 `.gitignore`
+- [x] 创建根目录结构
+- [x] 配置 `pnpm-workspace.yaml`
+- [x] 配置 `Directory.Build.props`
+- [x] 配置 `Directory.Packages.props`
+- [x] 创建 `.gitignore`
+- [x] 添加 `global.json` (审查补充)
 
 ### 1.2 后端 Solution
-- [ ] 创建 `scaffold-generator.sln`
-- [ ] 创建 `ScaffoldGenerator.Api` 项目
-- [ ] 创建 `ScaffoldGenerator.Contracts` 项目
-- [ ] 创建 `ScaffoldGenerator.Application` 项目
-- [ ] 创建 `ScaffoldGenerator.Infrastructure` 项目
-- [ ] 配置项目引用关系
+- [x] 创建 `scaffold-generator.sln`
+- [x] 创建 `ScaffoldGenerator.Api` 项目
+- [x] 创建 `ScaffoldGenerator.Contracts` 项目
+- [x] 创建 `ScaffoldGenerator.Application` 项目
+- [x] 创建 `ScaffoldGenerator.Infrastructure` 项目
+- [x] 配置项目引用关系
 
 ### 1.3 前端工作区
-- [ ] 初始化 `apps/web-configurator` (Vue 3 + Vite)
-- [ ] 初始化 `apps/template-frontend` (Vue 3 模板源)
-- [ ] 初始化 `packages/@scaffold/shared-types`
-- [ ] 配置 TypeScript 共享
+- [x] 初始化 `apps/web-configurator` (Vue 3 + Vite)
+- [x] 初始化 `apps/template-frontend` (Vue 3 模板源)
+- [x] 初始化 `packages/@scaffold/shared-types`
+- [x] 配置 TypeScript 共享
 
 ---
 
