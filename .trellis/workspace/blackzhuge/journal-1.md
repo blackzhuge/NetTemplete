@@ -614,3 +614,71 @@ Codex+Gemini 双模型审查发现 5 个 Critical 问题，全部修复：API �
 ### Next Steps
 
 - None - task complete
+
+## Session 11: Package Manager 集成 + Moq 迁移
+
+**Date**: 2026-02-08
+**Task**: Package Manager 集成 + Moq 迁移
+
+### Summary
+
+(Add summary)
+
+### Main Changes
+
+## 完成内容
+
+| 功能 | 说明 |
+|------|------|
+| 后端 API | NuGet/npm 包搜索端点 (4个) |
+| 前端组件 | PackageSelector 组件 |
+| 模板渲染 | 动态包引用支持 |
+| 测试迁移 | NSubstitute → Moq |
+
+## 新增文件 (13个)
+
+**后端:**
+- `Endpoints/PackagesEndpoints.cs`
+- `Packages/IPackageSearchService.cs`, `PopularPackages.cs`
+- `Packages/PackageInfo.cs`, `PackageReference.cs`, `PackageSearchRequest.cs`, `PackageSearchResponse.cs`
+- `Packages/NuGetSearchService.cs`, `NpmSearchService.cs`
+
+**前端:**
+- `api/packages.ts`
+- `components/PackageSelector.vue`
+- `types/packages.ts`
+
+**测试:**
+- `PackageSearchServiceTests.cs`
+
+## 统计
+
+- 文件变更: 32
+- 新增: +1508 行
+- 删除: -151 行
+- 测试通过: 74/83 (89%)
+
+## 技术要点
+
+- NuGet v3 API: service index 发现 + SearchQueryService
+- npm registry API: /-/v1/search
+- Moq: Mock<T> + Protected() 模拟 HttpMessageHandler
+- 缓存: IMemoryCache TTL=5min
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `8ea81d4` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

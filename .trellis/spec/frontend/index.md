@@ -4,34 +4,24 @@
 
 ---
 
-## 概述
+## 技术栈
 
-本目录包含前端开发规范。每个文件记录了项目的具体约定。
+- **Vue 3.4** + Composition API
+- **Vite 5** + TypeScript 5.6
+- **Pinia 2.1** (Setup Store)
+- **Element Plus 2.5**
+- **测试**：Vitest + Playwright
 
 ---
 
 ## 规范索引
 
-| 规范 | 描述 | 状态 |
-|------|------|------|
-| [目录结构](./directory-structure.md) | 模块组织和文件布局 | 完成 |
-| [组件规范](./component-guidelines.md) | 组件模式、Props、组合 | 完成 |
-| [Hook 规范](./hook-guidelines.md) | 自定义 hooks、数据获取模式 | 完成 |
-| [状态管理](./state-management.md) | 本地状态、全局状态、服务端状态 | 完成 |
-| [质量规范](./quality-guidelines.md) | 代码标准、禁止模式 | 完成 |
-| [类型安全](./type-safety.md) | 类型模式、验证 | 完成 |
-
----
-
-## 如何填写这些规范
-
-对于每个规范文件：
-
-1. 记录项目的**实际约定**（而非理想状态）
-2. 包含来自代码库的**代码示例**
-3. 列出**禁止模式**及其原因
-4. 添加团队曾经犯过的**常见错误**
-
-目标是帮助 AI 助手和新团队成员理解你的项目是如何运作的。
-
-**Language**: 所有文档使用 **中文**
+| 规范 | 描述 |
+|------|------|
+| [目录结构](./directory-structure.md) | 模块组织和文件布局 |
+| [组件规范](./component-guidelines.md) | Composition API、Props、组合 |
+| [Hook 规范](./hook-guidelines.md) | Composables、数据获取、防抖 |
+| [状态管理](./state-management.md) | Pinia Setup Store、storeToRefs |
+| [质量规范](./quality-guidelines.md) | 代码标准、禁止模式 |
+| [类型安全](./type-safety.md) | TypeScript 模式、Zod 验证 |
+| [测试规范](./test-guidelines.md) | Vitest、Playwright、E2E |
