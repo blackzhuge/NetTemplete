@@ -23,6 +23,7 @@
 |------|------|----------|
 | [代码复用思维指南](./code-reuse-thinking-guide.md) | 识别模式并减少重复 | 当你注意到重复模式时 |
 | [跨层思维指南](./cross-layer-thinking-guide.md) | 思考跨层数据流 | 功能跨越多个层时 |
+| [代码搜索工具指南](./code-search-tools-guide.md) | 选择正确的搜索工具 | LSP / ace-tool / Grep 的使用场景 |
 
 ---
 
