@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     BackendOptions: typeof import('./components/BackendOptions.vue')['default']
     BasicOptions: typeof import('./components/BasicOptions.vue')['default']
+    CodePreview: typeof import('./components/CodePreview.vue')['default']
     ConfigForm: typeof import('./components/ConfigForm.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
     ElButton: typeof import('element-plus/es')['ElButton']
@@ -19,15 +20,21 @@ declare module 'vue' {
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElIcon: typeof import('element-plus/es')['ElIcon']
     ElInput: typeof import('element-plus/es')['ElInput']
+    ElOption: typeof import('element-plus/es')['ElOption']
     ElRadio: typeof import('element-plus/es')['ElRadio']
     ElRadioGroup: typeof import('element-plus/es')['ElRadioGroup']
+    ElSelect: typeof import('element-plus/es')['ElSelect']
     ElSkeleton: typeof import('element-plus/es')['ElSkeleton']
     ElSkeletonItem: typeof import('element-plus/es')['ElSkeletonItem']
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTree: typeof import('element-plus/es')['ElTree']
     FileTreeView: typeof import('./components/FileTreeView.vue')['default']
     FrontendOptions: typeof import('./components/FrontendOptions.vue')['default']
+    PresetSelector: typeof import('./components/PresetSelector.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+  }
+  export interface ComponentCustomProperties {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

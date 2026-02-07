@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Microsoft.Extensions.Caching.Memory;
 using NSubstitute;
 using ScaffoldGenerator.Infrastructure.Rendering;
 using Xunit;
@@ -8,12 +9,14 @@ namespace ScaffoldGenerator.Tests.Infrastructure;
 public class ScribanTemplateRendererTests
 {
     private readonly ITemplateFileProvider _fileProvider;
+    private readonly IMemoryCache _cache;
     private readonly ScribanTemplateRenderer _renderer;
 
     public ScribanTemplateRendererTests()
     {
         _fileProvider = Substitute.For<ITemplateFileProvider>();
-        _renderer = new ScribanTemplateRenderer(_fileProvider);
+        _cache = new MemoryCache(new MemoryCacheOptions());
+        _renderer = new ScribanTemplateRenderer(_fileProvider, _cache);
     }
 
     [Fact]

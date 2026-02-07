@@ -32,7 +32,11 @@
       :props="treeProps"
       default-expand-all
       :expand-on-click-node="false"
+      node-key="path"
+      :current-node-key="store.selectedFile?.path"
+      highlight-current
       class="file-tree"
+      @node-click="handleNodeClick"
     >
       <template #default="{ node, data }">
         <span class="tree-node">
@@ -77,6 +81,12 @@ const fileCount = computed(() => {
   if (!fileTree.value) return 0
   return countFiles(fileTree.value)
 })
+
+function handleNodeClick(data: FileTreeNode) {
+  if (!data.isDirectory) {
+    store.selectFile(data)
+  }
+}
 </script>
 
 <style scoped>

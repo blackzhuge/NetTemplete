@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios'
 import type { AxiosInstance } from 'axios'
 import { ElMessage } from 'element-plus'
-import type { ScaffoldConfig, ApiErrorResponse, ErrorCode } from '@/types'
+import type { ScaffoldConfig, ApiErrorResponse, ErrorCode, ScaffoldPreset, PreviewFileResponse } from '@/types'
 
 type ErrorMessageKey = ErrorCode | 'NetworkError' | 'Unknown'
 
@@ -102,6 +102,20 @@ export async function healthCheck(): Promise<boolean> {
   } catch {
     return false
   }
+}
+
+export async function getPresets(): Promise<ScaffoldPreset[]> {
+  const response = await api.get<{ presets: ScaffoldPreset[] }>('/v1/scaffolds/presets')
+  return response.data.presets
+}
+
+export async function previewFile(config: ScaffoldConfig, outputPath: string): Promise<PreviewFileResponse> {
+  const payload = {
+    config: toApiRequest(config),
+    outputPath
+  }
+  const response = await api.post<PreviewFileResponse>('/v1/scaffolds/preview-file', payload)
+  return response.data
 }
 
 export default api

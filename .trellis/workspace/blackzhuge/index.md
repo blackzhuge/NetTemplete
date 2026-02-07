@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 7
+- **Total Sessions**: 8
 - **Last Active**: 2026-02-07
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~409 | Active |
+| `journal-1.md` | ~479 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | 日期 | 标题 | 提交 |
 |---|------|------|------|
+| 8 | 2026-02-07 | 脚手架配置器增强：预设系统 + 代码预览规划 | `9293aef`, `0761fb2` |
 | 7 | 2026-02-07 | Scaffold Generator Phase 7 完成 | `c164a85` |
 | 6 | 2026-02-07 | 双模型审查修复 scaffold-generator Critical 问题 | `d14995d` |
 | 1 | 2026-02-07 | 规范文档中文化 + 任务归档 | `b1db71e` |

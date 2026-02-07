@@ -407,3 +407,73 @@ Codex+Gemini 双模型审查发现 5 个 Critical 问题，全部修复：API �
 ### Next Steps
 
 - None - task complete
+
+## Session 8: 脚手架配置器增强：预设系统 + 代码预览规划
+
+**Date**: 2026-02-07
+**Task**: 脚手架配置器增强：预设系统 + 代码预览规划
+
+### Summary
+
+(Add summary)
+
+### Main Changes
+
+## 工作内容
+
+本次会话完成了脚手架配置器增强功能的需求研究和规划。
+
+### 需求研究 (ccg:spec-research)
+
+- 使用 `mcp__ace-tool__enhance_prompt` 增强需求描述
+- 使用 `mcp__ace-tool__search_context` 检索现有代码结构
+- 并行调用 Codex (后端) 和 Gemini (前端) 进行多模型分析
+- 用户决策：Shiki 高亮、后端 API 预设、选中后侧边栏预览
+
+### OpenSpec 提案创建 (ccg:spec-plan)
+
+| 文件 | 描述 |
+|------|------|
+| `proposal.md` | 提案概述、目标、非目标、技术决策 |
+| `specs.md` | API 契约、类型定义、PBT 属性、验收标准 |
+| `design.md` | 架构设计、目录结构、代码示例、风险缓解 |
+| `tasks.md` | 16 个可追踪任务，分 3 个 Phase |
+| `ccg-context.jsonl` | 任务专属规范配置 |
+
+### API 设计
+
+- `GET /v1/scaffolds/presets` - 获取预设模板列表
+- `POST /v1/scaffolds/preview-file` - 实时渲染单文件内容
+
+### 技术决策
+
+| 决策项 | 选择 |
+|--------|------|
+| 高亮库 | Shiki |
+| 预设来源 | 后端 API |
+| 预览触发 | 选中文件节点 |
+| 预览来源 | 后端实时渲染 |
+
+**更新文件**:
+- `openspec/changes/preset-preview/*` (5 files)
+- `.trellis/spec/guides/code-search-tools-guide.md`
+- `.trellis/spec/guides/index.md`
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `9293aef` | (see git log) |
+| `0761fb2` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

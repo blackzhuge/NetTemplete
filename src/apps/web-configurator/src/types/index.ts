@@ -34,3 +34,33 @@ export interface FileTreeNode {
   isDirectory: boolean
   children?: FileTreeNode[]
 }
+
+export interface ScaffoldPreset {
+  id: string
+  name: string
+  description: string
+  isDefault: boolean
+  tags: string[]
+  config: {
+    basic: {
+      projectName: string
+      namespace: string
+    }
+    backend: {
+      database: string
+      cache: string
+      swagger: boolean
+      jwtAuth: boolean
+    }
+    frontend: {
+      routerMode: string
+      mockData: boolean
+    }
+  }
+}
+
+export interface PreviewFileResponse {
+  content: string
+  language: string
+  outputPath: string
+}

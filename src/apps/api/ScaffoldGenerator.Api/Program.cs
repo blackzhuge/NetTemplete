@@ -1,9 +1,13 @@
 using FluentValidation;
+using ScaffoldGenerator.Api.Endpoints;
 using ScaffoldGenerator.Application.Abstractions;
+using ScaffoldGenerator.Application.Presets;
+using ScaffoldGenerator.Application.Preview;
+using ScaffoldGenerator.Application.Validators;
+using ScaffoldGenerator.Contracts.Preview;
 using ScaffoldGenerator.Contracts.Responses;
 using ScaffoldGenerator.Application.Modules;
 using ScaffoldGenerator.Application.UseCases;
-using ScaffoldGenerator.Application.Validators;
 using ScaffoldGenerator.Contracts.Requests;
 using ScaffoldGenerator.Infrastructure.FileSystem;
 using ScaffoldGenerator.Infrastructure.Rendering;
@@ -57,7 +61,20 @@ try
     builder.Services.AddScoped<ScaffoldPlanBuilder>();
     builder.Services.AddScoped<GenerateScaffoldUseCase>();
 
+    // Preset and Preview Services
+    builder.Services.AddScoped<IPresetService, PresetService>();
+    builder.Services.AddScoped<IPreviewService, PreviewService>();
+    builder.Services.AddScoped<IValidator<PreviewFileRequest>, PreviewFileRequestValidator>();
+
     var app = builder.Build();
+
+    // 启动时验证所有预设
+    using (var scope = app.Services.CreateScope())
+    {
+        var presetService = scope.ServiceProvider.GetRequiredService<IPresetService>();
+        presetService.ValidateAllPresets();
+        Log.Information("All presets validated successfully");
+    }
 
     app.UseSerilogRequestLogging();
     app.UseCors();
@@ -134,6 +151,11 @@ try
     });
 
     Log.Information("Starting ScaffoldGenerator API");
+
+    // 注册端点
+    app.MapPresetsEndpoints();
+    app.MapPreviewEndpoints();
+
     app.Run();
 }
 catch (Exception ex)

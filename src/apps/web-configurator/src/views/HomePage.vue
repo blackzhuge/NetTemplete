@@ -12,10 +12,14 @@
 
     <main class="page-content">
       <div class="left-panel">
+        <PresetSelector />
         <ConfigForm />
       </div>
-      <div class="right-panel">
+      <div class="center-panel">
         <FileTreeView />
+      </div>
+      <div class="right-panel">
+        <CodePreview />
       </div>
     </main>
 
@@ -36,6 +40,8 @@
 import { Box } from '@element-plus/icons-vue'
 import ConfigForm from '@/components/ConfigForm.vue'
 import FileTreeView from '@/components/FileTreeView.vue'
+import PresetSelector from '@/components/PresetSelector.vue'
+import CodePreview from '@/components/CodePreview.vue'
 </script>
 
 <style scoped>
@@ -53,7 +59,7 @@ import FileTreeView from '@/components/FileTreeView.vue'
 }
 
 .header-content {
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
   text-align: center;
 }
@@ -87,19 +93,24 @@ import FileTreeView from '@/components/FileTreeView.vue'
   display: flex;
   gap: 24px;
   padding: 24px;
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
   width: 100%;
 }
 
 .left-panel {
-  flex: 1;
-  min-width: 400px;
+  width: 360px;
+  flex-shrink: 0;
+}
+
+.center-panel {
+  width: 320px;
+  flex-shrink: 0;
 }
 
 .right-panel {
-  width: 400px;
-  flex-shrink: 0;
+  flex: 1;
+  min-width: 400px;
 }
 
 .page-footer {
@@ -109,7 +120,7 @@ import FileTreeView from '@/components/FileTreeView.vue'
 }
 
 .footer-content {
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -127,15 +138,31 @@ import FileTreeView from '@/components/FileTreeView.vue'
   margin: 0;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1200px) {
+  .page-content {
+    flex-wrap: wrap;
+  }
+
+  .left-panel,
+  .center-panel {
+    width: calc(50% - 12px);
+  }
+
+  .right-panel {
+    width: 100%;
+    min-width: unset;
+  }
+}
+
+@media (max-width: 768px) {
   .page-content {
     flex-direction: column;
   }
 
   .left-panel,
+  .center-panel,
   .right-panel {
     width: 100%;
-    min-width: unset;
   }
 }
 </style>
