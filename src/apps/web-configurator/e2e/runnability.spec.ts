@@ -39,7 +39,7 @@ test.describe('Generated Project Runnability', () => {
 
     const backendPath = path.join(tempDir, 'backend')
     if (fs.existsSync(backendPath)) {
-      const { stdout, stderr } = await execAsync('dotnet restore', { cwd: backendPath })
+      const { stderr } = await execAsync('dotnet restore', { cwd: backendPath })
       expect(stderr).not.toContain('error')
 
       const buildResult = await execAsync('dotnet build --no-restore', { cwd: backendPath })
