@@ -758,3 +758,76 @@ Codex+Gemini 双模型审查发现 5 个 Critical 问题，全部修复：API �
 ### Next Steps
 
 - None - task complete
+
+## Session 13: Package Manager 测试完成与生成请求修复
+
+**Date**: 2026-02-08
+**Task**: Package Manager 测试完成与生成请求修复
+
+### Summary
+
+(Add summary)
+
+### Main Changes
+
+## 完成工作
+
+### 任务完成
+- **Change**: `package-manager` 
+- **进度**: 26/26 任务 (100%)
+- **Phase 5 测试**: 3/3 完成
+
+### 新增测试
+
+| 类型 | 文件 | 测试数 |
+|------|------|--------|
+| Unit | `tests/components/PackageSelector.spec.ts` | 9 |
+| Unit | `tests/stores/config.spec.ts` (扩展) | 10 |
+| E2E | `e2e/package-selector.spec.ts` | 8 |
+
+### Bug 修复
+
+1. **生成请求缺失包数据**
+   - `src/api/generator.ts`: 添加 `nugetPackages/npmPackages` 到请求 DTO
+   - `src/composables/useGenerator.ts`: 合并包数据到生成请求
+
+2. **E2E 测试选择器修复**
+   - 更新 `configurator.spec.ts` 匹配当前 UI 结构
+   - 更新 `preset-preview.spec.ts` 修复预设验证
+   - 使用 `getByRole` 替代不精确的 CSS 选择器
+
+### 测试结果
+
+| 测试类型 | 通过 | 总数 |
+|----------|------|------|
+| Vitest Unit | 26 | 26 |
+| Playwright E2E | 26 | 26 |
+
+### 修改文件
+
+- `src/api/generator.ts` - 功能修复
+- `src/composables/useGenerator.ts` - 功能修复
+- `e2e/configurator.spec.ts` - 测试修复
+- `e2e/preset-preview.spec.ts` - 测试修复
+- `e2e/package-selector.spec.ts` - 新增
+- `tests/components/PackageSelector.spec.ts` - 新增
+- `tests/stores/config.spec.ts` - 扩展
+- `openspec/changes/package-manager/tasks.md` - 更新状态
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `2db45fa` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

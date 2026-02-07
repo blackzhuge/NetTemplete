@@ -13,7 +13,6 @@ declare module 'vue' {
     ConfigForm: typeof import('./components/ConfigForm.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
     ElButton: typeof import('element-plus/es')['ElButton']
-    ElCard: typeof import('element-plus/es')['ElCard']
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElDivider: typeof import('element-plus/es')['ElDivider']
@@ -36,8 +35,5 @@ declare module 'vue' {
     PresetSelector: typeof import('./components/PresetSelector.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-  }
-  export interface ComponentCustomProperties {
-    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }
