@@ -1,6 +1,7 @@
 using FluentValidation;
 using ScaffoldGenerator.Api.Endpoints;
 using ScaffoldGenerator.Application.Abstractions;
+using ScaffoldGenerator.Application.Packages;
 using ScaffoldGenerator.Application.Presets;
 using ScaffoldGenerator.Application.Preview;
 using ScaffoldGenerator.Application.Validators;
@@ -10,6 +11,7 @@ using ScaffoldGenerator.Application.Modules;
 using ScaffoldGenerator.Application.UseCases;
 using ScaffoldGenerator.Contracts.Requests;
 using ScaffoldGenerator.Infrastructure.FileSystem;
+using ScaffoldGenerator.Infrastructure.Packages;
 using ScaffoldGenerator.Infrastructure.Rendering;
 using Serilog;
 using System.Text.Json;
@@ -65,6 +67,16 @@ try
     builder.Services.AddScoped<IPresetService, PresetService>();
     builder.Services.AddScoped<IPreviewService, PreviewService>();
     builder.Services.AddScoped<IValidator<PreviewFileRequest>, PreviewFileRequestValidator>();
+
+    // Package Search Services
+    builder.Services.AddHttpClient<NuGetSearchService>(client =>
+    {
+        client.Timeout = TimeSpan.FromSeconds(10);
+    });
+    builder.Services.AddHttpClient<NpmSearchService>(client =>
+    {
+        client.Timeout = TimeSpan.FromSeconds(10);
+    });
 
     var app = builder.Build();
 
@@ -155,6 +167,7 @@ try
     // 注册端点
     app.MapPresetsEndpoints();
     app.MapPreviewEndpoints();
+    app.MapPackagesEndpoints();
 
     app.Run();
 }

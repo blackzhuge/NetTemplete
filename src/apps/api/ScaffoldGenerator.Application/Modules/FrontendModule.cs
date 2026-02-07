@@ -12,12 +12,19 @@ public sealed class FrontendModule : IScaffoldModule
 
     public Task ContributeAsync(ScaffoldPlan plan, GenerateScaffoldRequest request, CancellationToken ct = default)
     {
+        // 添加用户选择的 npm 包到 plan
+        foreach (var pkg in request.Frontend.NpmPackages)
+        {
+            plan.AddNpmPackage(pkg);
+        }
+
         var model = new
         {
             ProjectName = request.Basic.ProjectName,
             Namespace = request.Basic.Namespace,
             RouterMode = request.Frontend.RouterMode.ToString(),
-            EnableMockData = request.Frontend.MockData
+            EnableMockData = request.Frontend.MockData,
+            NpmPackages = request.Frontend.NpmPackages
         };
 
         plan.AddTemplateFile("frontend/package.json.sbn", $"src/{request.Basic.ProjectName}.Web/package.json", model);

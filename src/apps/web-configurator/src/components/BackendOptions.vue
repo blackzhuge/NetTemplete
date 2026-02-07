@@ -28,6 +28,14 @@
           <el-checkbox v-model="enableSwagger" border>Swagger 文档</el-checkbox>
         </div>
       </el-form-item>
+
+      <el-form-item label="NuGet 包">
+        <PackageSelector
+          manager-type="nuget"
+          v-model="store.nugetPackages"
+          :system-packages="store.systemNugetPackages"
+        />
+      </el-form-item>
     </el-form>
   </div>
 </template>
@@ -38,6 +46,7 @@ import { useField } from 'vee-validate'
 import { Cpu } from '@element-plus/icons-vue'
 import { useConfigStore } from '@/stores/config'
 import type { DatabaseProvider, CacheProvider } from '@/types'
+import PackageSelector from './PackageSelector.vue'
 
 const store = useConfigStore()
 

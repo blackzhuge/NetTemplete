@@ -1,7 +1,7 @@
 using FluentAssertions;
 using FluentValidation;
 using FluentValidation.Results;
-using NSubstitute;
+using Moq;
 using ScaffoldGenerator.Application.Abstractions;
 using ScaffoldGenerator.Application.UseCases;
 using ScaffoldGenerator.Application.Validators;
@@ -48,12 +48,12 @@ public class GenerateScaffoldUseCaseTests
     {
         // Arrange - use real validator
         var validator = new GenerateScaffoldValidator();
-        var templateRenderer = Substitute.For<ITemplateRenderer>();
+        var templateRenderer = new Mock<ITemplateRenderer>();
         var modules = Enumerable.Empty<IScaffoldModule>();
-        var planBuilder = new ScaffoldPlanBuilder(modules, templateRenderer);
-        var zipBuilder = Substitute.For<IZipBuilder>();
+        var planBuilder = new ScaffoldPlanBuilder(modules, templateRenderer.Object);
+        var zipBuilder = new Mock<IZipBuilder>();
 
-        var useCase = new GenerateScaffoldUseCase(planBuilder, zipBuilder, validator);
+        var useCase = new GenerateScaffoldUseCase(planBuilder, zipBuilder.Object, validator);
 
         var request = CreateRequest(projectName: "", ns: "Test");
 
@@ -70,13 +70,13 @@ public class GenerateScaffoldUseCaseTests
     {
         // Arrange
         var validator = new GenerateScaffoldValidator();
-        var templateRenderer = Substitute.For<ITemplateRenderer>();
+        var templateRenderer = new Mock<ITemplateRenderer>();
         var modules = Enumerable.Empty<IScaffoldModule>();
-        var planBuilder = new ScaffoldPlanBuilder(modules, templateRenderer);
-        var zipBuilder = Substitute.For<IZipBuilder>();
-        zipBuilder.Build().Returns(new byte[] { 0x50, 0x4B, 0x03, 0x04 });
+        var planBuilder = new ScaffoldPlanBuilder(modules, templateRenderer.Object);
+        var zipBuilder = new Mock<IZipBuilder>();
+        zipBuilder.Setup(x => x.Build()).Returns(new byte[] { 0x50, 0x4B, 0x03, 0x04 });
 
-        var useCase = new GenerateScaffoldUseCase(planBuilder, zipBuilder, validator);
+        var useCase = new GenerateScaffoldUseCase(planBuilder, zipBuilder.Object, validator);
 
         var request = CreateRequest();
 
@@ -86,8 +86,8 @@ public class GenerateScaffoldUseCaseTests
         // Assert
         result.Success.Should().BeTrue();
         result.FileName.Should().Be("TestProject.zip");
-        zipBuilder.Received(1).Reset();
-        zipBuilder.Received(1).Build();
+        zipBuilder.Verify(x => x.Reset(), Times.Once);
+        zipBuilder.Verify(x => x.Build(), Times.Once);
     }
 
     [Fact]
@@ -95,13 +95,13 @@ public class GenerateScaffoldUseCaseTests
     {
         // Arrange
         var validator = new GenerateScaffoldValidator();
-        var templateRenderer = Substitute.For<ITemplateRenderer>();
+        var templateRenderer = new Mock<ITemplateRenderer>();
         var modules = Enumerable.Empty<IScaffoldModule>();
-        var planBuilder = new ScaffoldPlanBuilder(modules, templateRenderer);
-        var zipBuilder = Substitute.For<IZipBuilder>();
-        zipBuilder.Build().Returns(new byte[] { 0x50, 0x4B });
+        var planBuilder = new ScaffoldPlanBuilder(modules, templateRenderer.Object);
+        var zipBuilder = new Mock<IZipBuilder>();
+        zipBuilder.Setup(x => x.Build()).Returns(new byte[] { 0x50, 0x4B });
 
-        var useCase = new GenerateScaffoldUseCase(planBuilder, zipBuilder, validator);
+        var useCase = new GenerateScaffoldUseCase(planBuilder, zipBuilder.Object, validator);
 
         var request = CreateRequest(projectName: "Test", ns: "Test");
 
@@ -109,7 +109,7 @@ public class GenerateScaffoldUseCaseTests
         await useCase.ExecuteAsync(request);
 
         // Assert
-        zipBuilder.Received(1).Reset();
+        zipBuilder.Verify(x => x.Reset(), Times.Once);
     }
 
     [Fact]
@@ -117,11 +117,11 @@ public class GenerateScaffoldUseCaseTests
     {
         // Arrange
         var validator = new GenerateScaffoldValidator();
-        var templateRenderer = Substitute.For<ITemplateRenderer>();
-        var planBuilder = new ScaffoldPlanBuilder([], templateRenderer);
-        var zipBuilder = Substitute.For<IZipBuilder>();
+        var templateRenderer = new Mock<ITemplateRenderer>();
+        var planBuilder = new ScaffoldPlanBuilder([], templateRenderer.Object);
+        var zipBuilder = new Mock<IZipBuilder>();
 
-        var useCase = new GenerateScaffoldUseCase(planBuilder, zipBuilder, validator);
+        var useCase = new GenerateScaffoldUseCase(planBuilder, zipBuilder.Object, validator);
 
         var request = CreateRequest(projectName: "Test", ns: "123-invalid");
 

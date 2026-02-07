@@ -1,3 +1,5 @@
+import type { PackageReference } from './packages'
+
 export type DatabaseProvider = 'SQLite' | 'MySQL' | 'SQLServer'
 export type CacheProvider = 'None' | 'MemoryCache' | 'Redis'
 export type RouterMode = 'Hash' | 'History'
@@ -11,6 +13,8 @@ export interface ScaffoldConfig {
   enableJwtAuth: boolean
   routerMode: RouterMode
   enableMockData: boolean
+  nugetPackages?: PackageReference[]
+  npmPackages?: PackageReference[]
 }
 
 export type ErrorCode = 'None' | 'ValidationError' | 'InvalidCombination' | 'TemplateError'

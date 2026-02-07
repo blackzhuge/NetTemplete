@@ -18,6 +18,14 @@
           <el-checkbox v-model="enableMockData" border>启用 Mock 数据</el-checkbox>
         </div>
       </el-form-item>
+
+      <el-form-item label="npm 包">
+        <PackageSelector
+          manager-type="npm"
+          v-model="store.npmPackages"
+          :system-packages="store.systemNpmPackages"
+        />
+      </el-form-item>
     </el-form>
   </div>
 </template>
@@ -28,6 +36,7 @@ import { useField } from 'vee-validate'
 import { Monitor } from '@element-plus/icons-vue'
 import { useConfigStore } from '@/stores/config'
 import type { RouterMode } from '@/types'
+import PackageSelector from './PackageSelector.vue'
 
 const store = useConfigStore()
 

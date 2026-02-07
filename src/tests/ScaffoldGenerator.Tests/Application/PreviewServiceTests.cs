@@ -1,5 +1,5 @@
 using FluentAssertions;
-using NSubstitute;
+using Moq;
 using ScaffoldGenerator.Application.Abstractions;
 using ScaffoldGenerator.Application.Preview;
 using ScaffoldGenerator.Contracts.Enums;
@@ -41,9 +41,9 @@ public class PreviewServiceTests
     public async Task PreviewFileAsync_FileNotFound_ReturnsNull()
     {
         // Arrange
-        var templateRenderer = Substitute.For<ITemplateRenderer>();
+        var templateRenderer = new Mock<ITemplateRenderer>();
         var modules = Enumerable.Empty<IScaffoldModule>();
-        var planBuilder = new ScaffoldPlanBuilder(modules, templateRenderer);
+        var planBuilder = new ScaffoldPlanBuilder(modules, templateRenderer.Object);
         var service = new PreviewService(planBuilder);
 
         var request = new PreviewFileRequest(
@@ -62,22 +62,22 @@ public class PreviewServiceTests
     public async Task PreviewFileAsync_WithValidFile_ReturnsContent()
     {
         // Arrange
-        var templateRenderer = Substitute.For<ITemplateRenderer>();
+        var templateRenderer = new Mock<ITemplateRenderer>();
         templateRenderer
-            .RenderAsync(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<CancellationToken>())
-            .Returns("rendered content");
+            .Setup(x => x.RenderAsync(It.IsAny<string>(), It.IsAny<object>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync("rendered content");
 
-        var module = Substitute.For<IScaffoldModule>();
-        module.IsEnabled(Arg.Any<GenerateScaffoldRequest>()).Returns(true);
-        module.Order.Returns(0);
-        module.When(m => m.ContributeAsync(Arg.Any<ScaffoldPlan>(), Arg.Any<GenerateScaffoldRequest>(), Arg.Any<CancellationToken>()))
-            .Do(callInfo =>
+        var module = new Mock<IScaffoldModule>();
+        module.Setup(m => m.IsEnabled(It.IsAny<GenerateScaffoldRequest>())).Returns(true);
+        module.Setup(m => m.Order).Returns(0);
+        module.Setup(m => m.ContributeAsync(It.IsAny<ScaffoldPlan>(), It.IsAny<GenerateScaffoldRequest>(), It.IsAny<CancellationToken>()))
+            .Callback<ScaffoldPlan, GenerateScaffoldRequest, CancellationToken>((plan, _, _) =>
             {
-                var plan = callInfo.Arg<ScaffoldPlan>();
                 plan.AddTemplateFile("template.sbn", "src/TestProject.Api/Program.cs", new { });
-            });
+            })
+            .Returns(Task.CompletedTask);
 
-        var planBuilder = new ScaffoldPlanBuilder(new[] { module }, templateRenderer);
+        var planBuilder = new ScaffoldPlanBuilder(new[] { module.Object }, templateRenderer.Object);
         var service = new PreviewService(planBuilder);
 
         var request = new PreviewFileRequest(
@@ -100,19 +100,19 @@ public class PreviewServiceTests
     public async Task PreviewFileAsync_StaticFile_ReturnsContentWithIsTemplateFalse()
     {
         // Arrange
-        var templateRenderer = Substitute.For<ITemplateRenderer>();
+        var templateRenderer = new Mock<ITemplateRenderer>();
 
-        var module = Substitute.For<IScaffoldModule>();
-        module.IsEnabled(Arg.Any<GenerateScaffoldRequest>()).Returns(true);
-        module.Order.Returns(0);
-        module.When(m => m.ContributeAsync(Arg.Any<ScaffoldPlan>(), Arg.Any<GenerateScaffoldRequest>(), Arg.Any<CancellationToken>()))
-            .Do(callInfo =>
+        var module = new Mock<IScaffoldModule>();
+        module.Setup(m => m.IsEnabled(It.IsAny<GenerateScaffoldRequest>())).Returns(true);
+        module.Setup(m => m.Order).Returns(0);
+        module.Setup(m => m.ContributeAsync(It.IsAny<ScaffoldPlan>(), It.IsAny<GenerateScaffoldRequest>(), It.IsAny<CancellationToken>()))
+            .Callback<ScaffoldPlan, GenerateScaffoldRequest, CancellationToken>((plan, _, _) =>
             {
-                var plan = callInfo.Arg<ScaffoldPlan>();
                 plan.AddFile("config.json", "{\"key\": \"value\"}");
-            });
+            })
+            .Returns(Task.CompletedTask);
 
-        var planBuilder = new ScaffoldPlanBuilder(new[] { module }, templateRenderer);
+        var planBuilder = new ScaffoldPlanBuilder(new[] { module.Object }, templateRenderer.Object);
         var service = new PreviewService(planBuilder);
 
         var request = new PreviewFileRequest(
@@ -135,19 +135,19 @@ public class PreviewServiceTests
     public async Task PreviewFileAsync_CaseInsensitivePathMatch()
     {
         // Arrange
-        var templateRenderer = Substitute.For<ITemplateRenderer>();
+        var templateRenderer = new Mock<ITemplateRenderer>();
 
-        var module = Substitute.For<IScaffoldModule>();
-        module.IsEnabled(Arg.Any<GenerateScaffoldRequest>()).Returns(true);
-        module.Order.Returns(0);
-        module.When(m => m.ContributeAsync(Arg.Any<ScaffoldPlan>(), Arg.Any<GenerateScaffoldRequest>(), Arg.Any<CancellationToken>()))
-            .Do(callInfo =>
+        var module = new Mock<IScaffoldModule>();
+        module.Setup(m => m.IsEnabled(It.IsAny<GenerateScaffoldRequest>())).Returns(true);
+        module.Setup(m => m.Order).Returns(0);
+        module.Setup(m => m.ContributeAsync(It.IsAny<ScaffoldPlan>(), It.IsAny<GenerateScaffoldRequest>(), It.IsAny<CancellationToken>()))
+            .Callback<ScaffoldPlan, GenerateScaffoldRequest, CancellationToken>((plan, _, _) =>
             {
-                var plan = callInfo.Arg<ScaffoldPlan>();
                 plan.AddFile("README.md", "# Hello");
-            });
+            })
+            .Returns(Task.CompletedTask);
 
-        var planBuilder = new ScaffoldPlanBuilder(new[] { module }, templateRenderer);
+        var planBuilder = new ScaffoldPlanBuilder(new[] { module.Object }, templateRenderer.Object);
         var service = new PreviewService(planBuilder);
 
         var request = new PreviewFileRequest(

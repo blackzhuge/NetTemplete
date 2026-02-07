@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
 import type { ScaffoldConfig, FileTreeNode, ScaffoldPreset, PreviewFileResponse } from '@/types'
+import type { PackageReference } from '@/types/packages'
 import { getPresets, previewFile } from '@/api/generator'
 
 export const useConfigStore = defineStore('config', () => {
@@ -24,6 +25,27 @@ export const useConfigStore = defineStore('config', () => {
   const selectedFile = ref<FileTreeNode | null>(null)
   const previewContent = ref<PreviewFileResponse | null>(null)
   const previewLoading = ref(false)
+
+  // 包管理状态
+  const nugetPackages = ref<PackageReference[]>([])
+  const npmPackages = ref<PackageReference[]>([])
+
+  // 系统包列表（用于冲突检测）
+  const systemNugetPackages = computed(() => [
+    'Serilog.AspNetCore',
+    'SqlSugarCore',
+    ...(config.value.enableJwtAuth ? ['Microsoft.AspNetCore.Authentication.JwtBearer'] : []),
+    ...(config.value.cache === 'Redis' ? ['StackExchange.Redis'] : []),
+    ...(config.value.enableSwagger ? ['Swashbuckle.AspNetCore'] : [])
+  ])
+
+  const systemNpmPackages = computed(() => [
+    'vue',
+    'vue-router',
+    'pinia',
+    'axios',
+    'element-plus'
+  ])
 
   // 防抖定时器
   let previewDebounceTimer: ReturnType<typeof setTimeout> | null = null
@@ -246,6 +268,53 @@ export const useConfigStore = defineStore('config', () => {
     }
   }
 
+  // 包管理 Actions
+  function addNugetPackage(pkg: PackageReference): boolean {
+    const nameLower = pkg.name.toLowerCase()
+    // 冲突检测：检查系统包
+    if (systemNugetPackages.value.some(p => p.toLowerCase() === nameLower)) {
+      return false
+    }
+    // 检查是否已存在
+    if (nugetPackages.value.some(p => p.name.toLowerCase() === nameLower)) {
+      return false
+    }
+    nugetPackages.value.push(pkg)
+    return true
+  }
+
+  function removeNugetPackage(packageName: string) {
+    const index = nugetPackages.value.findIndex(
+      p => p.name.toLowerCase() === packageName.toLowerCase()
+    )
+    if (index !== -1) {
+      nugetPackages.value.splice(index, 1)
+    }
+  }
+
+  function addNpmPackage(pkg: PackageReference): boolean {
+    const nameLower = pkg.name.toLowerCase()
+    // 冲突检测：检查系统包
+    if (systemNpmPackages.value.some(p => p.toLowerCase() === nameLower)) {
+      return false
+    }
+    // 检查是否已存在
+    if (npmPackages.value.some(p => p.name.toLowerCase() === nameLower)) {
+      return false
+    }
+    npmPackages.value.push(pkg)
+    return true
+  }
+
+  function removeNpmPackage(packageName: string) {
+    const index = npmPackages.value.findIndex(
+      p => p.name.toLowerCase() === packageName.toLowerCase()
+    )
+    if (index !== -1) {
+      npmPackages.value.splice(index, 1)
+    }
+  }
+
   // 监听 config 变化，自动刷新预览
   watch(
     config,
@@ -272,6 +341,15 @@ export const useConfigStore = defineStore('config', () => {
     fetchPresets,
     applyPreset,
     selectFile,
-    fetchPreview
+    fetchPreview,
+    // 包管理导出
+    nugetPackages,
+    npmPackages,
+    systemNugetPackages,
+    systemNpmPackages,
+    addNugetPackage,
+    removeNugetPackage,
+    addNpmPackage,
+    removeNpmPackage
   }
 })

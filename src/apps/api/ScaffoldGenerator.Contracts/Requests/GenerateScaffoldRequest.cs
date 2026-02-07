@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using ScaffoldGenerator.Contracts.Enums;
+using ScaffoldGenerator.Contracts.Packages;
 
 namespace ScaffoldGenerator.Contracts.Requests;
 
@@ -43,6 +44,9 @@ public sealed record BackendOptions
 
     [JsonPropertyName("jwtAuth")]
     public bool JwtAuth { get; init; } = true;
+
+    [JsonPropertyName("nugetPackages")]
+    public List<PackageReference> NugetPackages { get; init; } = [];
 }
 
 public sealed record FrontendOptions
@@ -53,4 +57,7 @@ public sealed record FrontendOptions
 
     [JsonPropertyName("mockData")]
     public bool MockData { get; init; }
+
+    [JsonPropertyName("npmPackages")]
+    public List<PackageReference> NpmPackages { get; init; } = [];
 }

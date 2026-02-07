@@ -1,6 +1,6 @@
 using FluentAssertions;
 using Microsoft.Extensions.Caching.Memory;
-using NSubstitute;
+using Moq;
 using ScaffoldGenerator.Infrastructure.Rendering;
 using Xunit;
 
@@ -8,15 +8,15 @@ namespace ScaffoldGenerator.Tests.Infrastructure;
 
 public class ScribanTemplateRendererTests
 {
-    private readonly ITemplateFileProvider _fileProvider;
+    private readonly Mock<ITemplateFileProvider> _fileProvider;
     private readonly IMemoryCache _cache;
     private readonly ScribanTemplateRenderer _renderer;
 
     public ScribanTemplateRendererTests()
     {
-        _fileProvider = Substitute.For<ITemplateFileProvider>();
+        _fileProvider = new Mock<ITemplateFileProvider>();
         _cache = new MemoryCache(new MemoryCacheOptions());
-        _renderer = new ScribanTemplateRenderer(_fileProvider, _cache);
+        _renderer = new ScribanTemplateRenderer(_fileProvider.Object, _cache);
     }
 
     [Fact]
@@ -24,8 +24,8 @@ public class ScribanTemplateRendererTests
     {
         // Arrange
         const string template = "Hello, {{ name }}!";
-        _fileProvider.ReadTemplateAsync("test.sbn", Arg.Any<CancellationToken>())
-            .Returns(template);
+        _fileProvider.Setup(x => x.ReadTemplateAsync("test.sbn", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(template);
 
         var model = new { Name = "World" };
 
@@ -41,8 +41,8 @@ public class ScribanTemplateRendererTests
     {
         // Arrange
         const string template = "{{ for item in items }}{{ item }},{{ end }}";
-        _fileProvider.ReadTemplateAsync("loop.sbn", Arg.Any<CancellationToken>())
-            .Returns(template);
+        _fileProvider.Setup(x => x.ReadTemplateAsync("loop.sbn", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(template);
 
         var model = new { Items = new[] { "A", "B", "C" } };
 
@@ -58,8 +58,8 @@ public class ScribanTemplateRendererTests
     {
         // Arrange
         const string template = "{{ if enabled }}ON{{ else }}OFF{{ end }}";
-        _fileProvider.ReadTemplateAsync("cond.sbn", Arg.Any<CancellationToken>())
-            .Returns(template);
+        _fileProvider.Setup(x => x.ReadTemplateAsync("cond.sbn", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(template);
 
         // Act
         var resultEnabled = await _renderer.RenderAsync("cond.sbn", new { Enabled = true });
@@ -75,8 +75,8 @@ public class ScribanTemplateRendererTests
     {
         // Arrange
         const string template = "{{ config.database.provider }}";
-        _fileProvider.ReadTemplateAsync("nested.sbn", Arg.Any<CancellationToken>())
-            .Returns(template);
+        _fileProvider.Setup(x => x.ReadTemplateAsync("nested.sbn", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(template);
 
         var model = new
         {
@@ -98,8 +98,8 @@ public class ScribanTemplateRendererTests
     {
         // Arrange
         const string invalidTemplate = "{{ if }}"; // Missing condition
-        _fileProvider.ReadTemplateAsync("invalid.sbn", Arg.Any<CancellationToken>())
-            .Returns(invalidTemplate);
+        _fileProvider.Setup(x => x.ReadTemplateAsync("invalid.sbn", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(invalidTemplate);
 
         // Act
         var act = async () => await _renderer.RenderAsync("invalid.sbn", new { });
@@ -114,8 +114,8 @@ public class ScribanTemplateRendererTests
     {
         // Arrange
         const string template = "项目名称: {{ project_name }}";
-        _fileProvider.ReadTemplateAsync("chinese.sbn", Arg.Any<CancellationToken>())
-            .Returns(template);
+        _fileProvider.Setup(x => x.ReadTemplateAsync("chinese.sbn", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(template);
 
         var model = new { ProjectName = "测试项目" };
 
@@ -131,8 +131,8 @@ public class ScribanTemplateRendererTests
     {
         // Arrange
         const string template = "Static content only";
-        _fileProvider.ReadTemplateAsync("static.sbn", Arg.Any<CancellationToken>())
-            .Returns(template);
+        _fileProvider.Setup(x => x.ReadTemplateAsync("static.sbn", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(template);
 
         // Act
         var result = await _renderer.RenderAsync("static.sbn", new { });

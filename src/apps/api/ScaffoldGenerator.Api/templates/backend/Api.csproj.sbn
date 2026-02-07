@@ -19,6 +19,9 @@
 {{~ if enable_swagger ~}}
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 {{~ end ~}}
+{{~ for pkg in nuget_packages ~}}
+    <PackageReference Include="{{ pkg.name }}" Version="{{ pkg.version }}" />
+{{~ end ~}}
   </ItemGroup>
 
 </Project>

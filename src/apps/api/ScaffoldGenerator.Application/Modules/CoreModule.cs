@@ -12,6 +12,12 @@ public sealed class CoreModule : IScaffoldModule
 
     public Task ContributeAsync(ScaffoldPlan plan, GenerateScaffoldRequest request, CancellationToken ct = default)
     {
+        // 添加用户选择的 NuGet 包到 plan
+        foreach (var pkg in request.Backend.NugetPackages)
+        {
+            plan.AddNugetPackage(pkg);
+        }
+
         var model = new
         {
             ProjectName = request.Basic.ProjectName,
@@ -22,7 +28,8 @@ public sealed class CoreModule : IScaffoldModule
             EnableJwtAuth = request.Backend.JwtAuth,
             EnableSwagger = request.Backend.Swagger,
             RouterMode = request.Frontend.RouterMode.ToString(),
-            EnableMockData = request.Frontend.MockData
+            EnableMockData = request.Frontend.MockData,
+            NugetPackages = request.Backend.NugetPackages
         };
 
         // 核心后端文件

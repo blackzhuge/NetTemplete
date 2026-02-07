@@ -14,7 +14,11 @@
     "vue-router": "^4.2.0",
     "pinia": "^2.1.0",
     "axios": "^1.6.0",
-    "element-plus": "^2.5.0"
+    "element-plus": "^2.5.0"{{~ if npm_packages && npm_packages.size > 0 ~}},
+{{~ for pkg in npm_packages ~}}
+    "{{ pkg.name }}": "{{ pkg.version }}"{{ if !for.last }},{{ end }}
+{{~ end ~}}
+{{~ end ~}}
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.0",

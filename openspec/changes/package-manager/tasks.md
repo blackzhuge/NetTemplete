@@ -4,7 +4,7 @@
 
 ### 1.1 创建包信息 DTO
 
-- [ ] **文件**: `src/apps/api/ScaffoldGenerator.Contracts/Packages/PackageInfo.cs`
+- [x] **文件**: `src/apps/api/ScaffoldGenerator.Contracts/Packages/PackageInfo.cs`
 
 ```csharp
 public sealed record PackageInfo(
@@ -15,13 +15,13 @@ public sealed record PackageInfo(
 );
 ```
 
-**验收**: 编译通过
+**验收**: 编译通过 ✓
 
 ---
 
 ### 1.2 创建包引用值对象
 
-- [ ] **文件**: `src/apps/api/ScaffoldGenerator.Contracts/Packages/PackageReference.cs`
+- [x] **文件**: `src/apps/api/ScaffoldGenerator.Contracts/Packages/PackageReference.cs`
 
 ```csharp
 public sealed record PackageReference(
@@ -31,13 +31,13 @@ public sealed record PackageReference(
 );
 ```
 
-**验收**: 编译通过
+**验收**: 编译通过 ✓
 
 ---
 
 ### 1.3 创建搜索请求/响应 DTO
 
-- [ ] **文件**: `src/apps/api/ScaffoldGenerator.Contracts/Packages/PackageSearchRequest.cs`
+- [x] **文件**: `src/apps/api/ScaffoldGenerator.Contracts/Packages/PackageSearchRequest.cs`
 
 ```csharp
 public sealed record PackageSearchRequest(
@@ -47,7 +47,7 @@ public sealed record PackageSearchRequest(
 );
 ```
 
-- [ ] **文件**: `src/apps/api/ScaffoldGenerator.Contracts/Packages/PackageSearchResponse.cs`
+- [x] **文件**: `src/apps/api/ScaffoldGenerator.Contracts/Packages/PackageSearchResponse.cs`
 
 ```csharp
 public sealed record PackageSearchResponse(
@@ -56,13 +56,13 @@ public sealed record PackageSearchResponse(
 );
 ```
 
-**验收**: 编译通过
+**验收**: 编译通过 ✓
 
 ---
 
 ### 1.4 扩展 BackendOptions
 
-- [ ] **文件**: `src/apps/api/ScaffoldGenerator.Contracts/Requests/GenerateScaffoldRequest.cs`
+- [x] **文件**: `src/apps/api/ScaffoldGenerator.Contracts/Requests/GenerateScaffoldRequest.cs`
 
 **修改**: 在 `BackendOptions` 添加:
 
@@ -71,13 +71,13 @@ public sealed record PackageSearchResponse(
 public List<PackageReference> NugetPackages { get; init; } = [];
 ```
 
-**验收**: 编译通过，现有测试通过
+**验收**: 编译通过，现有测试通过 ✓
 
 ---
 
 ### 1.5 扩展 FrontendOptions
 
-- [ ] **文件**: `src/apps/api/ScaffoldGenerator.Contracts/Requests/GenerateScaffoldRequest.cs`
+- [x] **文件**: `src/apps/api/ScaffoldGenerator.Contracts/Requests/GenerateScaffoldRequest.cs`
 
 **修改**: 在 `FrontendOptions` 添加:
 
@@ -86,13 +86,13 @@ public List<PackageReference> NugetPackages { get; init; } = [];
 public List<PackageReference> NpmPackages { get; init; } = [];
 ```
 
-**验收**: 编译通过，现有测试通过
+**验收**: 编译通过，现有测试通过 ✓
 
 ---
 
 ### 1.6 创建搜索服务接口
 
-- [ ] **文件**: `src/apps/api/ScaffoldGenerator.Application/Packages/IPackageSearchService.cs`
+- [x] **文件**: `src/apps/api/ScaffoldGenerator.Application/Packages/IPackageSearchService.cs`
 
 ```csharp
 public interface IPackageSearchService
@@ -105,13 +105,13 @@ public interface IPackageSearchService
 }
 ```
 
-**验收**: 编译通过
+**验收**: 编译通过 ✓
 
 ---
 
 ### 1.7 扩展 ScaffoldPlan
 
-- [ ] **文件**: `src/apps/api/ScaffoldGenerator.Application/Abstractions/ScaffoldPlan.cs`
+- [x] **文件**: `src/apps/api/ScaffoldGenerator.Application/Abstractions/ScaffoldPlan.cs`
 
 **修改**:
 1. 将 `_nugetPackages` 从 `List<string>` 改为 `Dictionary<string, PackageReference>`
@@ -119,7 +119,7 @@ public interface IPackageSearchService
 3. 保留 `AddNugetPackage(string)` 兼容性
 4. npm 同理
 
-**验收**: 编译通过，现有模块调用正常
+**验收**: 编译通过，现有模块调用正常 ✓
 
 ---
 
@@ -127,7 +127,7 @@ public interface IPackageSearchService
 
 ### 2.1 实现 NuGetSearchService
 
-- [ ] **文件**: `src/apps/api/ScaffoldGenerator.Infrastructure/Packages/NuGetSearchService.cs`
+- [x] **文件**: `src/apps/api/ScaffoldGenerator.Infrastructure/Packages/NuGetSearchService.cs`
 
 **实现要点**:
 - 使用 IHttpClientFactory typed client
@@ -135,26 +135,26 @@ public interface IPackageSearchService
 - 缓存 TTL=5min
 - 超时 10s
 
-**验收**: 单元测试通过
+**验收**: 单元测试通过 ✓
 
 ---
 
 ### 2.2 实现 NpmSearchService
 
-- [ ] **文件**: `src/apps/api/ScaffoldGenerator.Infrastructure/Packages/NpmSearchService.cs`
+- [x] **文件**: `src/apps/api/ScaffoldGenerator.Infrastructure/Packages/NpmSearchService.cs`
 
 **实现要点**:
 - 调用 `registry.npmjs.org/-/v1/search`
 - 缓存 TTL=5min
 - 超时 10s
 
-**验收**: 单元测试通过
+**验收**: 单元测试通过 ✓
 
 ---
 
 ### 2.3 创建 PackagesEndpoints
 
-- [ ] **文件**: `src/apps/api/ScaffoldGenerator.Api/Endpoints/PackagesEndpoints.cs`
+- [x] **文件**: `src/apps/api/ScaffoldGenerator.Api/Endpoints/PackagesEndpoints.cs`
 
 **端点**:
 - `GET /api/v1/packages/nuget/search`
@@ -162,13 +162,13 @@ public interface IPackageSearchService
 - `GET /api/v1/packages/nuget/{id}/versions`
 - `GET /api/v1/packages/npm/{name}/versions`
 
-**验收**: API 可调用
+**验收**: API 可调用 ✓
 
 ---
 
 ### 2.4 注册服务和端点
 
-- [ ] **文件**: `src/apps/api/ScaffoldGenerator.Api/Program.cs`
+- [x] **文件**: `src/apps/api/ScaffoldGenerator.Api/Program.cs`
 
 **修改**:
 1. 注册 HttpClient
@@ -176,17 +176,17 @@ public interface IPackageSearchService
 3. 注册 IPackageSearchService 实现
 4. 调用 `app.MapPackagesEndpoints()`
 
-**验收**: 启动无报错，端点可访问
+**验收**: 启动无报错，端点可访问 ✓
 
 ---
 
 ### 2.5 创建常用包预置
 
-- [ ] **文件**: `src/apps/api/ScaffoldGenerator.Application/Packages/PopularPackages.cs`
+- [x] **文件**: `src/apps/api/ScaffoldGenerator.Application/Packages/PopularPackages.cs`
 
 **内容**: 预置 NuGet/npm 常用包列表
 
-**验收**: 编译通过
+**验收**: 编译通过 ✓
 
 ---
 
@@ -194,7 +194,7 @@ public interface IPackageSearchService
 
 ### 3.1 修改 .csproj 模板
 
-- [ ] **文件**: `src/apps/api/ScaffoldGenerator.Api/templates/backend/Api.csproj.sbn`
+- [x] **文件**: `src/apps/api/ScaffoldGenerator.Api/templates/backend/Api.csproj.sbn`
 
 **修改**: 添加动态包渲染循环
 
@@ -204,27 +204,27 @@ public interface IPackageSearchService
 {{~ end ~}}
 ```
 
-**验收**: 生成的 .csproj 包含用户选择的包
+**验收**: 生成的 .csproj 包含用户选择的包 ✓
 
 ---
 
 ### 3.2 修改 package.json 模板
 
-- [ ] **文件**: `src/apps/api/ScaffoldGenerator.Api/templates/frontend/package.json.sbn`
+- [x] **文件**: `src/apps/api/ScaffoldGenerator.Api/templates/frontend/package.json.sbn`
 
 **修改**: 添加动态依赖渲染
 
-**验收**: 生成的 package.json 包含用户选择的包
+**验收**: 生成的 package.json 包含用户选择的包 ✓
 
 ---
 
 ### 3.3 修改模块传递包数据
 
-- [ ] **文件**: 相关 Module 文件
+- [x] **文件**: `CoreModule.cs` + `FrontendModule.cs`
 
 **修改**: 确保 `nuget_packages` / `npm_packages` 变量传递到模板
 
-**验收**: 端到端生成正确
+**验收**: 端到端生成正确 ✓
 
 ---
 
@@ -232,7 +232,7 @@ public interface IPackageSearchService
 
 ### 4.1 创建包类型定义
 
-- [ ] **文件**: `src/apps/web-configurator/src/types/packages.ts`
+- [x] **文件**: `src/apps/web-configurator/src/types/packages.ts`
 
 ```typescript
 export interface PackageInfo { name: string; version: string; description: string }
@@ -240,13 +240,13 @@ export interface PackageReference { name: string; version: string; source?: stri
 export interface PackageSource { name: string; url: string; isDefault: boolean }
 ```
 
-**验收**: 类型检查通过
+**验收**: 类型检查通过 ✓
 
 ---
 
 ### 4.2 创建包搜索 API
 
-- [ ] **文件**: `src/apps/web-configurator/src/api/packages.ts`
+- [x] **文件**: `src/apps/web-configurator/src/api/packages.ts`
 
 **实现**:
 - `searchNugetPackages(query, source)`
@@ -254,26 +254,26 @@ export interface PackageSource { name: string; url: string; isDefault: boolean }
 - `getNugetVersions(packageId, source)`
 - `getNpmVersions(packageName, source)`
 
-**验收**: API 调用成功
+**验收**: API 调用成功 ✓
 
 ---
 
 ### 4.3 扩展 Store
 
-- [ ] **文件**: `src/apps/web-configurator/src/stores/config.ts`
+- [x] **文件**: `src/apps/web-configurator/src/stores/config.ts`
 
 **修改**:
 1. 添加 `nugetPackages` / `npmPackages` 状态
 2. 添加 `systemNugetPackages` computed (用于冲突检测)
 3. 添加 `addPackage` / `removePackage` actions
 
-**验收**: Store 功能正常
+**验收**: Store 功能正常 ✓
 
 ---
 
 ### 4.4 创建 PackageSelector 组件
 
-- [ ] **文件**: `src/apps/web-configurator/src/components/PackageSelector.vue`
+- [x] **文件**: `src/apps/web-configurator/src/components/PackageSelector.vue`
 
 **Props**: `managerType`, `modelValue`, `systemPackages`
 
@@ -283,47 +283,47 @@ export interface PackageSource { name: string; url: string; isDefault: boolean }
 3. 包源切换 (el-popover)
 4. 冲突检测
 
-**验收**: 组件功能完整
+**验收**: 组件功能完整 ✓
 
 ---
 
 ### 4.5 集成到 BackendOptions
 
-- [ ] **文件**: `src/apps/web-configurator/src/components/BackendOptions.vue`
+- [x] **文件**: `src/apps/web-configurator/src/components/BackendOptions.vue`
 
 **修改**: 添加 NuGet PackageSelector
 
-**验收**: UI 显示正常
+**验收**: UI 显示正常 ✓
 
 ---
 
 ### 4.6 集成到 FrontendOptions
 
-- [ ] **文件**: `src/apps/web-configurator/src/components/FrontendOptions.vue`
+- [x] **文件**: `src/apps/web-configurator/src/components/FrontendOptions.vue`
 
 **修改**: 添加 npm PackageSelector
 
-**验收**: UI 显示正常
+**验收**: UI 显示正常 ✓
 
 ---
 
 ### 4.7 扩展 Zod Schema
 
-- [ ] **文件**: `src/apps/web-configurator/src/schemas/config.ts`
+- [x] **文件**: `src/apps/web-configurator/src/schemas/config.ts`
 
 **修改**: 添加 `nugetPackages` / `npmPackages` 验证
 
-**验收**: 表单验证正常
+**验收**: 表单验证正常 ✓
 
 ---
 
 ### 4.8 扩展类型定义
 
-- [ ] **文件**: `src/apps/web-configurator/src/types/index.ts`
+- [x] **文件**: `src/apps/web-configurator/src/types/index.ts`
 
 **修改**: 扩展 `ScaffoldConfig` 接口
 
-**验收**: 类型检查通过
+**验收**: 类型检查通过 ✓
 
 ---
 
@@ -331,14 +331,14 @@ export interface PackageSource { name: string; url: string; isDefault: boolean }
 
 ### 5.1 后端单元测试
 
-- [ ] **文件**: 新建测试文件
+- [x] **文件**: `src/tests/ScaffoldGenerator.Tests/Infrastructure/PackageSearchServiceTests.cs`
 
 **覆盖**:
 - NuGetSearchService
 - NpmSearchService
 - 冲突检测逻辑
 
-**验收**: 测试通过
+**验收**: 测试通过 ✓
 
 ---
 
@@ -352,6 +352,8 @@ export interface PackageSource { name: string; url: string; isDefault: boolean }
 
 **验收**: 测试通过
 
+**备注**: 待配置 Vitest 后补充
+
 ---
 
 ### 5.3 E2E 测试
@@ -364,6 +366,8 @@ export interface PackageSource { name: string; url: string; isDefault: boolean }
 3. 验证生成结果
 
 **验收**: E2E 通过
+
+**备注**: 待配置 Playwright 后补充
 
 ---
 
@@ -381,22 +385,22 @@ Phase 1 (1.4-1.5) → Phase 4 (4.1-4.8) → Phase 5 (5.1-5.3)
 
 | Phase | 总任务 | 已完成 | 进度 |
 |-------|--------|--------|------|
-| Phase 1 | 7 | 0 | 0% |
-| Phase 2 | 5 | 0 | 0% |
-| Phase 3 | 3 | 0 | 0% |
-| Phase 4 | 8 | 0 | 0% |
-| Phase 5 | 3 | 0 | 0% |
-| **总计** | **26** | **0** | **0%** |
+| Phase 1 | 7 | 7 | 100% ✓ |
+| Phase 2 | 5 | 5 | 100% ✓ |
+| Phase 3 | 3 | 3 | 100% ✓ |
+| Phase 4 | 8 | 8 | 100% ✓ |
+| Phase 5 | 3 | 1 | 33% |
+| **总计** | **26** | **24** | **92%** |
 
 ---
 
 ## 预估工时
 
-| Phase | 预估 |
-|-------|------|
-| Phase 1 | 1h |
-| Phase 2 | 2h |
-| Phase 3 | 0.5h |
-| Phase 4 | 3h |
-| Phase 5 | 1.5h |
-| **总计** | **8h** |
+| Phase | 预估 | 实际 |
+|-------|------|------|
+| Phase 1 | 1h | ✓ |
+| Phase 2 | 2h | ✓ |
+| Phase 3 | 0.5h | ✓ |
+| Phase 4 | 3h | ✓ |
+| Phase 5 | 1.5h | 部分 |
+| **总计** | **8h** | ~7h |
