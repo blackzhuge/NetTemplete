@@ -546,3 +546,71 @@ Codex+Gemini 双模型审查发现 5 个 Critical 问题，全部修复：API �
 ### Next Steps
 
 - None - task complete
+
+## Session 10: 修复配置变更预览不更新及UI优化
+
+**Date**: 2026-02-07
+**Task**: 修复配置变更预览不更新及UI优化
+
+### Summary
+
+(Add summary)
+
+### Main Changes
+
+## 问题修复
+
+| 问题 | 根因 | 修复方案 |
+|------|------|---------|
+| SqlSugarSetup.cs 找不到 | 路径为相对路径，与后端 manifest 不一致 | 改为完整路径 `src/${projectName}.Api/Extensions/...` |
+| 切换预设表单不同步 | vee-validate Form 未接收 store 变化 | ConfigForm 使用 store.config 作为初始值 + formRef.setValues |
+| 修改配置预览不更新 | useField 值变化未同步到 store | 三个 Options 组件添加 watch 实时同步到 store |
+| 文件树不完整 | 前端硬编码，缺少后端 manifest 中的文件 | 扩展 fileTree 与后端 manifest 一致 |
+
+## UI 优化 (Gemini 协作)
+
+- **布局重构**: 三栏改为双栏 IDE 风格 (配置侧边栏 + 预览区)
+- **代码预览**: 深色主题 One Dark Pro (#1e1e1e)
+- **复制按钮**: 圆润胶囊形 (border-radius: 20px)
+- **文件树**: 支持 dark 主题 prop
+
+## 规范沉淀
+
+**frontend/state-management.md**:
+- 新增: vee-validate + Pinia 数据流同步模式
+- 新增: computed + watch 联动模式
+
+**guides/cross-layer-thinking-guide.md**:
+- 新增: 前端硬编码与后端配置不一致问题
+
+## 变更文件
+
+- `src/apps/web-configurator/src/stores/config.ts` - 完整文件树 + config watch
+- `src/apps/web-configurator/src/components/BasicOptions.vue` - watch 同步
+- `src/apps/web-configurator/src/components/BackendOptions.vue` - watch 同步
+- `src/apps/web-configurator/src/components/FrontendOptions.vue` - watch 同步
+- `src/apps/web-configurator/src/components/ConfigForm.vue` - 表单同步预设
+- `src/apps/web-configurator/src/components/CodePreview.vue` - 深色主题
+- `src/apps/web-configurator/src/components/FileTreeView.vue` - dark 主题支持
+- `src/apps/web-configurator/src/views/HomePage.vue` - 双栏布局
+- `src/apps/web-configurator/src/composables/useShiki.ts` - One Dark Pro 主题
+- `.trellis/spec/frontend/state-management.md` - 规范更新
+- `.trellis/spec/guides/cross-layer-thinking-guide.md` - 规范更新
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `4f1129c` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
