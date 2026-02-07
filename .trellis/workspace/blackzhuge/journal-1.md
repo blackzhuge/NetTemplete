@@ -477,3 +477,72 @@ Codex+Gemini 双模型审查发现 5 个 Critical 问题，全部修复：API �
 ### Next Steps
 
 - None - task complete
+
+## Session 9: 实现预设选择和代码预览功能
+
+**Date**: 2026-02-07
+**Task**: 实现预设选择和代码预览功能
+
+### Summary
+
+(Add summary)
+
+### Main Changes
+
+## 完成内容
+
+| 模块 | 说明 |
+|------|------|
+| PresetSelector | 预设选择器组件，支持 3 个内置预设 |
+| CodePreview | 代码预览组件，集成 Shiki 语法高亮 |
+| useShiki | Composable，延迟加载高亮器 |
+| Store 扩展 | 添加预设/预览状态和 Actions |
+| 三栏布局 | HomePage 响应式布局更新 |
+| E2E 测试 | 8 个测试用例全部通过 |
+
+## 新增文件
+
+**前端**:
+- `src/components/PresetSelector.vue`
+- `src/components/CodePreview.vue`
+- `src/composables/useShiki.ts`
+- `e2e/preset-preview.spec.ts`
+
+**后端**:
+- `Endpoints/PresetsEndpoints.cs`, `PreviewEndpoints.cs`
+- `Presets/BuiltInPresets.cs`, `IPresetService.cs`, `PresetService.cs`
+- `Preview/IPreviewService.cs`, `LanguageMapper.cs`, `PreviewService.cs`
+- `Contracts/Presets/`, `Contracts/Preview/`
+
+**测试**:
+- `LanguageMapperTests.cs`, `PresetServiceTests.cs`
+- `PreviewFileRequestValidatorTests.cs`, `PreviewServiceTests.cs`
+
+## 验证结果
+
+- ✅ TypeScript 编译通过
+- ✅ Vite 构建成功
+- ✅ 8/8 单元测试通过
+- ✅ 8/8 E2E 测试通过
+
+## OpenSpec
+
+- 归档 Change: `preset-preview` → `archive/2026-02-07-preset-preview/`
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `4739275` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
