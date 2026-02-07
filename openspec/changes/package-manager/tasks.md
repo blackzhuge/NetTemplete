@@ -344,30 +344,26 @@ export interface PackageSource { name: string; url: string; isDefault: boolean }
 
 ### 5.2 前端单元测试
 
-- [ ] **文件**: `src/apps/web-configurator/tests/`
+- [x] **文件**: `src/apps/web-configurator/tests/`
 
 **覆盖**:
 - PackageSelector 组件
 - Store actions
 
-**验收**: 测试通过
-
-**备注**: 待配置 Vitest 后补充
+**验收**: 测试通过 ✓
 
 ---
 
 ### 5.3 E2E 测试
 
-- [ ] **文件**: `src/apps/web-configurator/e2e/package-selector.spec.ts`
+- [x] **文件**: `src/apps/web-configurator/e2e/package-selector.spec.ts`
 
 **场景**:
 1. 搜索并选择包
 2. 切换版本
 3. 验证生成结果
 
-**验收**: E2E 通过
-
-**备注**: 待配置 Playwright 后补充
+**验收**: E2E 通过 ✓
 
 ---
 

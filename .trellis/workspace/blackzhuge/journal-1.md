@@ -682,3 +682,79 @@ Codex+Gemini 双模型审查发现 5 个 Critical 问题，全部修复：API �
 ### Next Steps
 
 - None - task complete
+
+## Session 12: 整理规范并添加测试规范
+
+**Date**: 2026-02-08
+**Task**: 整理规范并添加测试规范
+
+### Summary
+
+(Add summary)
+
+### Main Changes
+
+## 工作内容
+
+整理 `.trellis/spec/` 目录下的现有规范：去除不适用内容、精简冗余、添加测试规范。
+
+## 变更统计
+
+| 分类 | 修改前 | 修改后 | 变化 |
+|------|--------|--------|------|
+| backend/ | 1381行 | ~646行 | -735行 |
+| frontend/ | 1595行 | ~588行 | -1007行 |
+| guides/ | 541行 | 541行 | 0 |
+| **总计** | **3517行** | **~1775行** | **-50%** |
+
+## 关键改动
+
+### 删除
+- `backend/database-guidelines.md` - 项目是代码生成器，不直接操作数据库
+
+### 新增
+- `backend/test-guidelines.md` - xUnit + Moq + FluentAssertions 测试规范
+- `frontend/test-guidelines.md` - Vitest + Playwright 测试规范
+
+### 更新
+- 添加 Module Pattern 接口约定（IScaffoldModule, Order）
+- 添加错误码三级分类（ValidationError/InvalidCombination/TemplateError）
+- 添加 300ms 防抖规范
+- 添加预设自动应用机制
+
+### 精简
+- 移除重复示例和冗余说明
+- 合并相似模式
+- 保留核心规则
+
+## 修改文件
+
+- `.trellis/spec/backend/index.md`
+- `.trellis/spec/backend/directory-structure.md`
+- `.trellis/spec/backend/quality-guidelines.md`
+- `.trellis/spec/backend/error-handling.md`
+- `.trellis/spec/backend/test-guidelines.md` (新增)
+- `.trellis/spec/frontend/index.md`
+- `.trellis/spec/frontend/component-guidelines.md`
+- `.trellis/spec/frontend/hook-guidelines.md`
+- `.trellis/spec/frontend/state-management.md`
+- `.trellis/spec/frontend/quality-guidelines.md`
+- `.trellis/spec/frontend/test-guidelines.md` (新增)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `a74fe35` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

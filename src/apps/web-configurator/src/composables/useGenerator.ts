@@ -3,7 +3,7 @@ import { AxiosError } from 'axios'
 import { generateScaffold } from '@/api/generator'
 import { useConfigStore } from '@/stores/config'
 import { ElMessage } from 'element-plus'
-import type { ApiErrorResponse } from '@/types'
+import type { ApiErrorResponse, ScaffoldConfig } from '@/types'
 
 export function useGenerator() {
   const store = useConfigStore()
@@ -17,7 +17,13 @@ export function useGenerator() {
     store.setError(null)
 
     try {
-      const blob = await generateScaffold(store.config)
+      // 合并 config 和包数据
+      const configWithPackages: ScaffoldConfig = {
+        ...store.config,
+        nugetPackages: store.nugetPackages,
+        npmPackages: store.npmPackages
+      }
+      const blob = await generateScaffold(configWithPackages)
       downloadBlob(blob, `${store.config.projectName}.zip`)
       ElMessage.success('项目生成成功！')
     } catch (err: unknown) {

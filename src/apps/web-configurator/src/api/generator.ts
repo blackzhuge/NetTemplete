@@ -2,6 +2,7 @@ import axios, { AxiosError } from 'axios'
 import type { AxiosInstance } from 'axios'
 import { ElMessage } from 'element-plus'
 import type { ScaffoldConfig, ApiErrorResponse, ErrorCode, ScaffoldPreset, PreviewFileResponse } from '@/types'
+import type { PackageReference } from '@/types/packages'
 
 type ErrorMessageKey = ErrorCode | 'NetworkError' | 'Unknown'
 
@@ -60,10 +61,12 @@ interface GenerateScaffoldRequestDto {
     cache: string
     swagger: boolean
     jwtAuth: boolean
+    nugetPackages?: PackageReference[]
   }
   frontend: {
     routerMode: string
     mockData: boolean
+    npmPackages?: PackageReference[]
   }
 }
 
@@ -78,11 +81,13 @@ function toApiRequest(config: ScaffoldConfig): GenerateScaffoldRequestDto {
       database: config.database,
       cache: config.cache,
       swagger: config.enableSwagger,
-      jwtAuth: config.enableJwtAuth
+      jwtAuth: config.enableJwtAuth,
+      nugetPackages: config.nugetPackages
     },
     frontend: {
       routerMode: config.routerMode.toLowerCase(),
-      mockData: config.enableMockData
+      mockData: config.enableMockData,
+      npmPackages: config.npmPackages
     }
   }
 }

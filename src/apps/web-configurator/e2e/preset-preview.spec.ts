@@ -72,9 +72,9 @@ test.describe('Preset Selection', () => {
     // Wait for form update
     await page.waitForTimeout(300)
 
-    // Verify form is updated with Enterprise config
-    const fileTree = page.locator('.center-panel').first()
-    await expect(fileTree).toContainText('EnterpriseApp')
+    // Verify form is updated with Enterprise config - check in IDE preview area
+    const idePreview = page.locator('.ide-preview')
+    await expect(idePreview).toContainText('EnterpriseApp')
   })
 
   test('should update file tree when switching presets', async ({ page }) => {
