@@ -114,6 +114,42 @@ var request = CreateRequest(projectName: "MyApp");
 - [ ] 更新测试的请求构造代码
 - [ ] 验证前端 API 请求结构匹配
 
+### 错误 5：前端硬编码与后端配置不一致（Critical）
+
+**场景**：前端硬编码数据结构（如文件树、路径），与后端配置（如 manifest.json）各自维护。
+
+```typescript
+// ❌ 错误：前端硬编码路径，与后端 manifest 不一致
+const files = [
+  { name: 'SqlSugarSetup.cs', path: 'Extensions/SqlSugarSetup.cs' }  // 相对路径
+]
+
+// 后端 manifest.json 定义的是完整路径
+// "output": "src/{{project_name}}.Api/Extensions/SqlSugarSetup.cs"
+```
+
+**后果**：
+- 路径不匹配导致预览失败
+- 前端显示的文件数量与实际生成不一致
+- 后端新增文件，前端不知道
+
+**正确**：
+```typescript
+// ✅ 方案 1：前端路径与后端 manifest 保持一致
+const basePath = `src/${projectName}.Api/Extensions`
+const files = [
+  { name: 'SqlSugarSetup.cs', path: `${basePath}/SqlSugarSetup.cs` }
+]
+
+// ✅ 方案 2（更好）：从后端 API 获取文件树
+const fileTree = await api.getFileTree(config)
+```
+
+**检查清单**：
+- [ ] 前端显示的路径/结构是否与后端生成逻辑一致？
+- [ ] 如果后端有 manifest/schema，前端是否同步？
+- [ ] 修改后端配置时，是否有机制提醒前端同步？
+
 ---
 
 ## 跨层功能检查清单

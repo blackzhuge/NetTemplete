@@ -1,17 +1,9 @@
 <template>
-  <el-card class="file-tree-view">
-    <template #header>
-      <div class="card-header">
-        <el-icon class="header-icon"><Files /></el-icon>
-        <span class="card-title">生成预览</span>
-        <el-tag v-if="fileCount > 0" size="small" type="info">{{ fileCount }} 文件</el-tag>
-      </div>
-    </template>
-
+  <div class="file-tree-view" :class="theme">
     <!-- Loading skeleton -->
     <div v-if="loading" class="skeleton-container">
       <div v-for="i in 6" :key="i" class="skeleton-item">
-        <el-skeleton :rows="0" animated>
+        <el-skeleton :rows="0" animated :class="{ 'dark-skeleton': theme === 'dark' }">
           <template #template>
             <el-skeleton-item variant="text" :style="{ width: `${60 + i * 15}%` }" />
           </template>
@@ -22,7 +14,7 @@
     <!-- Empty state -->
     <div v-else-if="!fileTree || fileTree.length === 0" class="empty-state">
       <el-icon class="empty-icon"><FolderOpened /></el-icon>
-      <p class="empty-text">配置项目后预览文件结构</p>
+      <p class="empty-text">配置项目预览</p>
     </div>
 
     <!-- File tree -->
@@ -46,19 +38,24 @@
           <el-icon v-else class="file-icon">
             <Document />
           </el-icon>
-          <span>{{ node.label }}</span>
+          <span class="node-label">{{ node.label }}</span>
         </span>
       </template>
     </el-tree>
-  </el-card>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useConfigStore } from '@/stores/config'
 import { storeToRefs } from 'pinia'
-import { Folder, Document, Files, FolderOpened } from '@element-plus/icons-vue'
+import { Folder, Document, FolderOpened } from '@element-plus/icons-vue'
 import type { FileTreeNode } from '@/types'
+
+withDefaults(defineProps<{
+  theme?: 'light' | 'dark'
+}>(), {
+  theme: 'light'
+})
 
 const store = useConfigStore()
 const { fileTree, loading } = storeToRefs(store)
@@ -67,20 +64,6 @@ const treeProps = {
   label: 'name',
   children: 'children'
 }
-
-function countFiles(nodes: FileTreeNode[]): number {
-  let count = 0
-  for (const node of nodes) {
-    if (!node.isDirectory) count++
-    if (node.children) count += countFiles(node.children)
-  }
-  return count
-}
-
-const fileCount = computed(() => {
-  if (!fileTree.value) return 0
-  return countFiles(fileTree.value)
-})
 
 function handleNodeClick(data: FileTreeNode) {
   if (!data.isDirectory) {
@@ -92,38 +75,22 @@ function handleNodeClick(data: FileTreeNode) {
 <style scoped>
 .file-tree-view {
   height: 100%;
+  padding: 8px 0;
 }
 
-.card-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.header-icon {
-  color: #409eff;
-  font-size: 18px;
-}
-
-.card-title {
-  font-weight: 600;
-  flex: 1;
-}
-
+/* Skeleton */
 .skeleton-container {
-  padding: 8px 0;
+  padding: 8px 16px;
 }
-
 .skeleton-item {
-  padding: 8px 0;
-  padding-left: 24px;
+  padding: 4px 0;
+}
+.dark-skeleton {
+  --el-skeleton-color: #333;
+  --el-skeleton-to-color: #444;
 }
 
-.skeleton-item:nth-child(2),
-.skeleton-item:nth-child(4) {
-  padding-left: 48px;
-}
-
+/* Empty State */
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -132,31 +99,33 @@ function handleNodeClick(data: FileTreeNode) {
   padding: 48px 24px;
   color: #909399;
 }
-
+.file-tree-view.dark .empty-state {
+  color: #6e7681;
+}
 .empty-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
+  font-size: 32px;
+  margin-bottom: 8px;
   opacity: 0.5;
 }
-
 .empty-text {
-  font-size: 14px;
+  font-size: 13px;
   margin: 0;
 }
 
+/* Tree Styling */
 .file-tree {
-  --el-tree-node-hover-bg-color: #f5f7fa;
+  background: transparent;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 13px;
 }
 
 .tree-node {
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: color 0.2s;
-}
-
-.tree-node:hover {
-  color: #409eff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .folder-icon {
@@ -165,5 +134,32 @@ function handleNodeClick(data: FileTreeNode) {
 
 .file-icon {
   color: #909399;
+}
+
+/* Dark Theme Overrides for Element Plus Tree */
+.file-tree-view.dark .file-tree {
+  color: #cccccc;
+  background: transparent;
+  --el-tree-node-content-height: 24px;
+  --el-tree-node-hover-bg-color: #2a2d2e;
+}
+
+.file-tree-view.dark .folder-icon {
+  color: #dcb67a;
+}
+
+.file-tree-view.dark .file-icon {
+  color: #8b949e;
+}
+
+/* Deep selector for tree node content */
+:deep(.el-tree-node__content) {
+  border-radius: 0;
+}
+
+.file-tree-view.dark :deep(.el-tree-node:focus > .el-tree-node__content),
+.file-tree-view.dark :deep(.el-tree-node.is-current > .el-tree-node__content) {
+  background-color: #37373d !important; /* Selected state */
+  color: #ffffff;
 }
 </style>

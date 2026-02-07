@@ -31,7 +31,7 @@ export function useShiki() {
     loadPromise.value = (async () => {
       const { createHighlighter } = await import('shiki')
       const hl = await createHighlighter({
-        themes: ['github-light', 'github-dark'],
+        themes: ['one-dark-pro', 'github-dark'],
         langs: SUPPORTED_LANGUAGES
       })
       highlighter.value = hl
@@ -50,7 +50,7 @@ export function useShiki() {
 
     return hl.codeToHtml(code, {
       lang,
-      theme: 'github-light'
+      theme: 'one-dark-pro'
     })
   }
 

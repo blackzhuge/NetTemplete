@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import type { ScaffoldConfig, FileTreeNode, ScaffoldPreset, PreviewFileResponse } from '@/types'
 import { getPresets, previewFile } from '@/api/generator'
 
@@ -29,6 +29,7 @@ export const useConfigStore = defineStore('config', () => {
   let previewDebounceTimer: ReturnType<typeof setTimeout> | null = null
 
   const fileTree = computed<FileTreeNode[]>(() => {
+    const projectName = config.value.projectName
     const root: FileTreeNode[] = [
       {
         name: 'src',
@@ -36,28 +37,79 @@ export const useConfigStore = defineStore('config', () => {
         isDirectory: true,
         children: [
           {
-            name: `${config.value.projectName}.Api`,
-            path: `src/${config.value.projectName}.Api`,
+            name: `${projectName}.Api`,
+            path: `src/${projectName}.Api`,
             isDirectory: true,
             children: [
-              { name: 'Program.cs', path: `src/${config.value.projectName}.Api/Program.cs`, isDirectory: false },
-              { name: 'appsettings.json', path: `src/${config.value.projectName}.Api/appsettings.json`, isDirectory: false },
+              { name: 'Program.cs', path: `src/${projectName}.Api/Program.cs`, isDirectory: false },
+              { name: 'appsettings.json', path: `src/${projectName}.Api/appsettings.json`, isDirectory: false },
               {
                 name: 'Extensions',
-                path: `src/${config.value.projectName}.Api/Extensions`,
+                path: `src/${projectName}.Api/Extensions`,
                 isDirectory: true,
                 children: getExtensionFiles()
-              }
+              },
+              // Options 目录 - 根据配置条件显示
+              ...(config.value.enableJwtAuth ? [{
+                name: 'Options',
+                path: `src/${projectName}.Api/Options`,
+                isDirectory: true,
+                children: [
+                  { name: 'JwtOptions.cs', path: `src/${projectName}.Api/Options/JwtOptions.cs`, isDirectory: false }
+                ]
+              }] : [])
             ]
           },
           {
-            name: `${config.value.projectName}.Web`,
-            path: `src/${config.value.projectName}.Web`,
+            name: `${projectName}.Web`,
+            path: `src/${projectName}.Web`,
             isDirectory: true,
             children: [
-              { name: 'package.json', path: `src/${config.value.projectName}.Web/package.json`, isDirectory: false },
-              { name: 'vite.config.ts', path: `src/${config.value.projectName}.Web/vite.config.ts`, isDirectory: false },
-              { name: 'index.html', path: `src/${config.value.projectName}.Web/index.html`, isDirectory: false }
+              { name: 'package.json', path: `src/${projectName}.Web/package.json`, isDirectory: false },
+              { name: 'vite.config.ts', path: `src/${projectName}.Web/vite.config.ts`, isDirectory: false },
+              { name: 'tsconfig.json', path: `src/${projectName}.Web/tsconfig.json`, isDirectory: false },
+              { name: 'index.html', path: `src/${projectName}.Web/index.html`, isDirectory: false },
+              {
+                name: 'src',
+                path: `src/${projectName}.Web/src`,
+                isDirectory: true,
+                children: [
+                  { name: 'main.ts', path: `src/${projectName}.Web/src/main.ts`, isDirectory: false },
+                  { name: 'App.vue', path: `src/${projectName}.Web/src/App.vue`, isDirectory: false },
+                  {
+                    name: 'router',
+                    path: `src/${projectName}.Web/src/router`,
+                    isDirectory: true,
+                    children: [
+                      { name: 'index.ts', path: `src/${projectName}.Web/src/router/index.ts`, isDirectory: false }
+                    ]
+                  },
+                  {
+                    name: 'stores',
+                    path: `src/${projectName}.Web/src/stores`,
+                    isDirectory: true,
+                    children: [
+                      { name: 'index.ts', path: `src/${projectName}.Web/src/stores/index.ts`, isDirectory: false }
+                    ]
+                  },
+                  {
+                    name: 'api',
+                    path: `src/${projectName}.Web/src/api`,
+                    isDirectory: true,
+                    children: [
+                      { name: 'index.ts', path: `src/${projectName}.Web/src/api/index.ts`, isDirectory: false }
+                    ]
+                  },
+                  {
+                    name: 'views',
+                    path: `src/${projectName}.Web/src/views`,
+                    isDirectory: true,
+                    children: [
+                      { name: 'HomeView.vue', path: `src/${projectName}.Web/src/views/HomeView.vue`, isDirectory: false }
+                    ]
+                  }
+                ]
+              }
             ]
           }
         ]
@@ -67,22 +119,23 @@ export const useConfigStore = defineStore('config', () => {
   })
 
   function getExtensionFiles(): FileTreeNode[] {
+    const basePath = `src/${config.value.projectName}.Api/Extensions`
     const files: FileTreeNode[] = [
-      { name: 'SqlSugarSetup.cs', path: 'Extensions/SqlSugarSetup.cs', isDirectory: false }
+      { name: 'SqlSugarSetup.cs', path: `${basePath}/SqlSugarSetup.cs`, isDirectory: false }
     ]
 
     if (config.value.enableJwtAuth) {
-      files.push({ name: 'JwtSetup.cs', path: 'Extensions/JwtSetup.cs', isDirectory: false })
+      files.push({ name: 'JwtSetup.cs', path: `${basePath}/JwtSetup.cs`, isDirectory: false })
     }
 
     if (config.value.enableSwagger) {
-      files.push({ name: 'SwaggerSetup.cs', path: 'Extensions/SwaggerSetup.cs', isDirectory: false })
+      files.push({ name: 'SwaggerSetup.cs', path: `${basePath}/SwaggerSetup.cs`, isDirectory: false })
     }
 
     if (config.value.cache === 'MemoryCache') {
-      files.push({ name: 'MemoryCacheSetup.cs', path: 'Extensions/MemoryCacheSetup.cs', isDirectory: false })
+      files.push({ name: 'MemoryCacheSetup.cs', path: `${basePath}/MemoryCacheSetup.cs`, isDirectory: false })
     } else if (config.value.cache === 'Redis') {
-      files.push({ name: 'RedisSetup.cs', path: 'Extensions/RedisSetup.cs', isDirectory: false })
+      files.push({ name: 'RedisSetup.cs', path: `${basePath}/RedisSetup.cs`, isDirectory: false })
     }
 
     return files
@@ -139,6 +192,37 @@ export const useConfigStore = defineStore('config', () => {
     fetchPreviewDebounced()
   }
 
+  // 当 config 变化时，如果有选中文件，需要更新文件路径并刷新预览
+  function onConfigChange() {
+    if (selectedFile.value) {
+      const fileName = selectedFile.value.name
+
+      // 在新的 fileTree 中查找同名文件
+      const newNode = findFileInTree(fileTree.value, fileName)
+      if (newNode) {
+        selectedFile.value = newNode
+        fetchPreviewDebounced()
+      } else {
+        // 文件不存在了（如关闭了某个功能），清除选择
+        selectedFile.value = null
+        previewContent.value = null
+      }
+    }
+  }
+
+  function findFileInTree(nodes: FileTreeNode[], fileName: string): FileTreeNode | null {
+    for (const node of nodes) {
+      if (!node.isDirectory && node.name === fileName) {
+        return node
+      }
+      if (node.children) {
+        const found = findFileInTree(node.children, fileName)
+        if (found) return found
+      }
+    }
+    return null
+  }
+
   function fetchPreviewDebounced() {
     if (previewDebounceTimer) {
       clearTimeout(previewDebounceTimer)
@@ -161,6 +245,15 @@ export const useConfigStore = defineStore('config', () => {
       previewLoading.value = false
     }
   }
+
+  // 监听 config 变化，自动刷新预览
+  watch(
+    config,
+    () => {
+      onConfigChange()
+    },
+    { deep: true }
+  )
 
   return {
     config,

@@ -1,15 +1,13 @@
 <template>
-  <el-card class="backend-options">
-    <template #header>
-      <div class="card-header">
-        <el-icon class="header-icon"><Cpu /></el-icon>
-        <span class="card-title">后端配置</span>
-      </div>
-    </template>
+  <div class="config-section">
+    <div class="section-header">
+      <el-icon class="header-icon"><Cpu /></el-icon>
+      <span class="section-title">后端配置</span>
+    </div>
 
-    <el-form label-width="120px" label-position="right">
+    <el-form label-position="top">
       <el-form-item label="数据库">
-        <el-radio-group v-model="database">
+        <el-radio-group v-model="database" class="full-width-radio">
           <el-radio value="SQLite">SQLite</el-radio>
           <el-radio value="MySQL">MySQL</el-radio>
           <el-radio value="SQLServer">SQL Server</el-radio>
@@ -17,7 +15,7 @@
       </el-form-item>
 
       <el-form-item label="缓存">
-        <el-radio-group v-model="cache">
+        <el-radio-group v-model="cache" class="full-width-radio">
           <el-radio value="None">无</el-radio>
           <el-radio value="MemoryCache">内存缓存</el-radio>
           <el-radio value="Redis">Redis</el-radio>
@@ -25,33 +23,51 @@
       </el-form-item>
 
       <el-form-item label="功能模块">
-        <el-checkbox v-model="enableJwtAuth">JWT 认证</el-checkbox>
-        <el-checkbox v-model="enableSwagger">Swagger 文档</el-checkbox>
+        <div class="checkbox-group">
+          <el-checkbox v-model="enableJwtAuth" border>JWT 认证</el-checkbox>
+          <el-checkbox v-model="enableSwagger" border>Swagger 文档</el-checkbox>
+        </div>
       </el-form-item>
     </el-form>
-  </el-card>
+  </div>
 </template>
 
 <script setup lang="ts">
+import { watch } from 'vue'
 import { useField } from 'vee-validate'
 import { Cpu } from '@element-plus/icons-vue'
+import { useConfigStore } from '@/stores/config'
 import type { DatabaseProvider, CacheProvider } from '@/types'
+
+const store = useConfigStore()
 
 const { value: database } = useField<DatabaseProvider>('database')
 const { value: cache } = useField<CacheProvider>('cache')
 const { value: enableJwtAuth } = useField<boolean>('enableJwtAuth')
 const { value: enableSwagger } = useField<boolean>('enableSwagger')
+
+// 实时同步到 store，触发预览刷新
+watch([database, cache, enableJwtAuth, enableSwagger], ([db, c, jwt, swagger]) => {
+  store.updateConfig({
+    database: db,
+    cache: c,
+    enableJwtAuth: jwt,
+    enableSwagger: swagger
+  })
+})
 </script>
 
 <style scoped>
-.backend-options {
-  margin-bottom: 16px;
+.config-section {
+  margin-bottom: 32px;
 }
 
-.card-header {
+.section-header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  margin-bottom: 16px;
+  color: #334155;
 }
 
 .header-icon {
@@ -59,7 +75,26 @@ const { value: enableSwagger } = useField<boolean>('enableSwagger')
   font-size: 18px;
 }
 
-.card-title {
+.section-title {
   font-weight: 600;
+  font-size: 15px;
+}
+
+.full-width-radio {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.checkbox-group .el-checkbox {
+  margin: 0;
+  width: 100%;
 }
 </style>

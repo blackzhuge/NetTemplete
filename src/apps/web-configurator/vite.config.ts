@@ -5,6 +5,9 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
+// 后端 API 地址：优先使用环境变量，默认 5241（与 dev.sh 保持一致）
+const apiTarget = process.env.VITE_API_TARGET || 'http://localhost:5241'
+
 export default defineConfig({
   plugins: [
     vue(),
@@ -27,8 +30,14 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
-        changeOrigin: true
+        target: apiTarget,
+        changeOrigin: true,
+        configure: (proxy) => {
+          proxy.on('error', (err) => {
+            console.error('\x1b[31m[Proxy Error]\x1b[0m', err.message)
+            console.error('\x1b[33m[Hint]\x1b[0m 后端服务可能未启动，请运行: scripts/dev.sh')
+          })
+        }
       }
     }
   }

@@ -266,3 +266,62 @@ const useModalStore = defineStore('modal', () => {
 // ✅ 正确：UI 相关用局部状态
 const isModalOpen = ref(false)
 ```
+
+### 6. vee-validate 与 Pinia 数据流断裂
+
+**场景**：使用 `vee-validate` 的 `useField` 时，表单值变化不会自动同步到 Pinia store。
+
+```typescript
+// ❌ 错误：useField 与 store 数据流断裂
+const { value: projectName } = useField<string>('projectName')
+// 用户修改 → vee-validate 更新 → store 不知道 → 依赖 store 的功能失效
+
+// ✅ 正确：添加 watch 实时同步到 store
+import { watch } from 'vue'
+import { useConfigStore } from '@/stores/config'
+
+const store = useConfigStore()
+const { value: projectName } = useField<string>('projectName')
+
+watch(projectName, (newVal) => {
+  store.updateConfig({ projectName: newVal || '' })
+})
+```
+
+**适用场景**：表单值变化需要触发其他响应式逻辑（预览刷新、联动计算等）
+
+---
+
+## computed + watch 联动模式
+
+当 `computed` 派生状态变化需要触发副作用时，需要配合 `watch`：
+
+```typescript
+export const useConfigStore = defineStore('config', () => {
+  const config = ref<Config>({...})
+  const selectedFile = ref<FileNode | null>(null)
+
+  // computed 负责派生状态
+  const fileTree = computed(() => buildTree(config.value))
+
+  // watch 负责副作用：当 config 变化时，更新关联状态并触发请求
+  watch(config, () => {
+    if (selectedFile.value) {
+      // 同步更新关联状态（路径可能变了）
+      const newNode = findInTree(fileTree.value, selectedFile.value.name)
+      if (newNode) {
+        selectedFile.value = newNode
+        fetchPreview()  // 触发副作用
+      } else {
+        selectedFile.value = null  // 文件不存在了
+      }
+    }
+  }, { deep: true })
+
+  return { config, fileTree, selectedFile }
+})
+```
+
+**原则**：
+- `computed` = 纯派生，无副作用
+- `watch` = 副作用触发器（API 调用、状态同步）
