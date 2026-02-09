@@ -12,12 +12,14 @@
 
 **Given**: 用户输入搜索关键词
 **When**: 触发搜索请求
-**Then**: 返回匹配的包列表，包含 Name, Version, Description
+**Then**: 返回匹配的包列表，包含 Name, Version, Description, DownloadCount
 
 **约束**:
 - 搜索防抖 300ms
 - 默认返回前 20 条结果
 - 版本号仅支持精确格式 (SemVer: x.y.z)
+- `downloadCount` 映射自 NuGet API 的 `totalDownloads` 字段
+- `lastUpdated` 暂为 null（避免 N+1 请求）
 
 ---
 
@@ -27,11 +29,14 @@
 
 **Given**: 用户输入搜索关键词
 **When**: 触发搜索请求
-**Then**: 返回匹配的包列表，包含 Name, Version, Description
+**Then**: 返回匹配的包列表，包含 Name, Version, Description, DownloadCount, LastUpdated
 
 **约束**:
 - 搜索防抖 300ms
 - 默认返回前 20 条结果
+- `downloadCount` 映射自 npm API 的 `downloads.weekly` 字段
+- `lastUpdated` 映射自 npm API 的 `package.date` 字段
+- 字段可空，前端需容错处理
 
 ---
 

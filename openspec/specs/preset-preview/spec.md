@@ -148,3 +148,25 @@ export interface PreviewFileResponse {
 - [ ] 前端防抖处理 (300ms)，避免频繁 API 调用
 - [ ] 路径安全验证通过，拒绝恶意路径
 - [ ] 类型检查和 lint 通过
+
+---
+
+## REQ-003: 右侧预览 Drawer
+
+**场景**: 用户需要预览生成的文件结构和代码
+
+**Given**: 用户在配置页面
+**When**: 点击"预览"按钮
+**Then**: 右侧滑出 Drawer，包含文件树和代码预览 Tab
+
+**约束**:
+- Drawer 方向: `rtl`（从右侧滑出）
+- Drawer 宽度: 50%（最小 400px）
+- 默认激活 Tab: 文件树（Explorer）
+- 点击文件自动切换到代码预览 Tab
+
+### PBT 属性
+
+**PROP: Drawer 状态幂等性**
+- 不变量: 连续多次点击打开按钮，Drawer 状态保持一致
+- 伪造策略: 快速点击 10 次，验证 `showPreviewDrawer` 最终为 true

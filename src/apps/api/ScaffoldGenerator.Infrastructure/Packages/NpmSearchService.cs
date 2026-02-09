@@ -47,7 +47,9 @@ public sealed class NpmSearchService : IPackageSearchService
                 o.Package?.Name ?? string.Empty,
                 o.Package?.Version ?? string.Empty,
                 o.Package?.Description ?? string.Empty,
-                null
+                null,
+                o.Downloads?.Weekly,
+                o.Package?.Date
             )).ToList() ?? [];
 
             var result = new PackageSearchResponse(items, response?.Total ?? 0);
@@ -106,13 +108,19 @@ public sealed class NpmSearchService : IPackageSearchService
     );
 
     private sealed record NpmSearchObject(
-        [property: JsonPropertyName("package")] NpmPackageInfo? Package
+        [property: JsonPropertyName("package")] NpmPackageInfo? Package,
+        [property: JsonPropertyName("downloads")] NpmDownloads? Downloads
+    );
+
+    private sealed record NpmDownloads(
+        [property: JsonPropertyName("weekly")] long? Weekly
     );
 
     private sealed record NpmPackageInfo(
         [property: JsonPropertyName("name")] string? Name,
         [property: JsonPropertyName("version")] string? Version,
-        [property: JsonPropertyName("description")] string? Description
+        [property: JsonPropertyName("description")] string? Description,
+        [property: JsonPropertyName("date")] DateTimeOffset? Date
     );
 
     private sealed record NpmPackageMetadata(

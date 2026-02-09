@@ -4,6 +4,8 @@ export interface PackageInfo {
   version: string
   description: string
   iconUrl?: string
+  downloadCount?: number
+  lastUpdated?: string
 }
 
 /** 包引用 - 用于存储用户选择的包 */

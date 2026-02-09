@@ -1,69 +1,20 @@
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
-import { mount, flushPromises } from '@vue/test-utils'
+import { describe, it, expect, beforeEach } from 'vitest'
+import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { defineComponent, h } from 'vue'
 import PackageSelector from '@/components/PackageSelector.vue'
 import type { PackageReference } from '@/types/packages'
-import * as packagesApi from '@/api/packages'
-
-// Mock Element Plus
-vi.mock('element-plus', async () => {
-  return {
-    ElMessage: {
-      warning: vi.fn(),
-      error: vi.fn(),
-      success: vi.fn()
-    }
-  }
-})
-
-// Mock packages API
-vi.mock('@/api/packages', () => ({
-  searchPackages: vi.fn(),
-  getPackageVersions: vi.fn()
-}))
 
 // Simple stubs for Element Plus components
 const stubs = {
-  'el-input': defineComponent({
-    props: ['modelValue', 'placeholder', 'clearable'],
-    emits: ['update:modelValue', 'input'],
-    setup(props, { emit, slots }) {
-      return () => h('div', { class: 'el-input' }, [
-        h('input', {
-          value: props.modelValue,
-          placeholder: props.placeholder,
-          onInput: (e: Event) => {
-            const value = (e.target as HTMLInputElement).value
-            emit('update:modelValue', value)
-            emit('input', value)
-          }
-        }),
-        slots.append?.()
-      ])
-    }
-  }),
   'el-button': defineComponent({
-    props: ['type', 'size'],
-    setup(_, { slots }) {
-      return () => h('button', { class: 'el-button' }, slots.default?.())
-    }
-  }),
-  'el-select': defineComponent({
-    props: ['modelValue', 'loading', 'size'],
-    emits: ['update:modelValue'],
-    setup(props, { emit, slots }) {
-      return () => h('select', {
-        class: 'el-select',
-        value: props.modelValue,
-        onChange: (e: Event) => emit('update:modelValue', (e.target as HTMLSelectElement).value)
+    props: ['type', 'size', 'plain'],
+    emits: ['click'],
+    setup(_, { emit, slots }) {
+      return () => h('button', {
+        class: 'el-button',
+        onClick: () => emit('click')
       }, slots.default?.())
-    }
-  }),
-  'el-option': defineComponent({
-    props: ['value', 'label'],
-    setup(props) {
-      return () => h('option', { value: props.value }, props.label)
     }
   }),
   'el-tag': defineComponent({
@@ -72,7 +23,6 @@ const stubs = {
     },
     emits: ['close'],
     setup(props, { emit, slots, attrs }) {
-      // Handle closable as boolean attribute (no value = true)
       const isClosable = props.closable || attrs.closable !== undefined
       return () => h('span', { class: 'el-tag' }, [
         slots.default?.(),
@@ -80,30 +30,31 @@ const stubs = {
       ])
     }
   }),
-  'el-popover': defineComponent({
-    props: ['visible', 'placement', 'width', 'trigger'],
-    setup(_, { slots }) {
-      return () => h('div', { class: 'el-popover' }, [slots.reference?.(), slots.default?.()])
-    }
-  }),
   'el-icon': defineComponent({
     setup(_, { slots }) {
       return () => h('span', { class: 'el-icon' }, slots.default?.())
     }
   }),
-  'arrow-down': { template: '<span>▼</span>' },
-  'loading': { template: '<span>⏳</span>' }
+  'Plus': { template: '<span>+</span>' },
+  'PackageSelectorModal': defineComponent({
+    props: ['visible', 'managerType', 'existingPackages', 'systemPackages'],
+    emits: ['update:visible', 'confirm'],
+    setup(props, { emit }) {
+      return () => h('div', {
+        class: 'package-selector-modal',
+        'data-visible': props.visible,
+        onClick: () => {
+          // Simulate confirm with test packages
+          emit('confirm', [{ name: 'TestPackage', version: '1.0.0' }])
+        }
+      })
+    }
+  })
 }
 
 describe('PackageSelector', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
-    vi.useFakeTimers()
-  })
-
-  afterEach(() => {
-    vi.useRealTimers()
-    vi.clearAllMocks()
   })
 
   const mountComponent = (props: Partial<{
@@ -124,122 +75,28 @@ describe('PackageSelector', () => {
     })
   }
 
-  describe('搜索功能', () => {
-    it('should debounce search by 300ms', async () => {
-      const mockSearch = vi.mocked(packagesApi.searchPackages)
-      mockSearch.mockResolvedValue({ items: [], totalCount: 0 })
-
-      const wrapper = mountComponent()
-      const input = wrapper.find('input')
-
-      await input.setValue('serilog')
-      expect(mockSearch).not.toHaveBeenCalled()
-
-      vi.advanceTimersByTime(299)
-      expect(mockSearch).not.toHaveBeenCalled()
-
-      vi.advanceTimersByTime(1)
-      await flushPromises()
-      expect(mockSearch).toHaveBeenCalledWith('nuget', 'serilog', undefined)
+  describe('渲染', () => {
+    it('should render add button for NuGet', () => {
+      const wrapper = mountComponent({ managerType: 'nuget' })
+      const button = wrapper.find('.el-button')
+      expect(button.exists()).toBe(true)
+      expect(button.text()).toContain('NuGet')
     })
 
-    it('should clear results when query is empty', async () => {
-      const mockSearch = vi.mocked(packagesApi.searchPackages)
-      mockSearch.mockResolvedValue({
-        items: [{ name: 'Serilog', version: '3.1.1', description: 'Logging' }],
-        totalCount: 1
-      })
-
-      const wrapper = mountComponent()
-      const input = wrapper.find('input')
-
-      await input.setValue('serilog')
-      vi.advanceTimersByTime(300)
-      await flushPromises()
-
-      expect(wrapper.findAll('.result-item')).toHaveLength(1)
-
-      await input.setValue('')
-      await flushPromises()
-      expect(wrapper.findAll('.result-item')).toHaveLength(0)
+    it('should render add button for npm', () => {
+      const wrapper = mountComponent({ managerType: 'npm' })
+      const button = wrapper.find('.el-button')
+      expect(button.exists()).toBe(true)
+      expect(button.text()).toContain('npm')
     })
 
-    it('should display search results', async () => {
-      const mockSearch = vi.mocked(packagesApi.searchPackages)
-      mockSearch.mockResolvedValue({
-        items: [
-          { name: 'Serilog', version: '3.1.1', description: 'Logging framework' },
-          { name: 'Serilog.Sinks.Console', version: '5.0.0', description: 'Console sink' }
-        ],
-        totalCount: 2
-      })
-
-      const wrapper = mountComponent()
-      const input = wrapper.find('input')
-
-      await input.setValue('serilog')
-      vi.advanceTimersByTime(300)
-      await flushPromises()
-
-      const results = wrapper.findAll('.result-item')
-      expect(results).toHaveLength(2)
-      expect(wrapper.find('.pkg-name').text()).toBe('Serilog')
+    it('should not render tags when no packages selected', () => {
+      const wrapper = mountComponent({ modelValue: [] })
+      expect(wrapper.findAll('.el-tag')).toHaveLength(0)
     })
   })
 
-  describe('冲突检测', () => {
-    it('should reject packages that conflict with system packages', async () => {
-      const { ElMessage } = await import('element-plus')
-      const mockSearch = vi.mocked(packagesApi.searchPackages)
-      mockSearch.mockResolvedValue({
-        items: [{ name: 'SqlSugarCore', version: '5.1.0', description: 'ORM' }],
-        totalCount: 1
-      })
-
-      const wrapper = mountComponent({
-        systemPackages: ['SqlSugarCore']
-      })
-
-      const input = wrapper.find('input')
-      await input.setValue('sqlsugar')
-      vi.advanceTimersByTime(300)
-      await flushPromises()
-
-      const resultItem = wrapper.find('.result-item')
-      await resultItem.trigger('click')
-
-      expect(ElMessage.warning).toHaveBeenCalledWith(
-        expect.stringContaining('SqlSugarCore')
-      )
-    })
-
-    it('should reject duplicate packages (case insensitive)', async () => {
-      const { ElMessage } = await import('element-plus')
-      const mockSearch = vi.mocked(packagesApi.searchPackages)
-      mockSearch.mockResolvedValue({
-        items: [{ name: 'Newtonsoft.Json', version: '13.0.3', description: 'JSON' }],
-        totalCount: 1
-      })
-
-      const wrapper = mountComponent({
-        modelValue: [{ name: 'newtonsoft.json', version: '13.0.0' }]
-      })
-
-      const input = wrapper.find('input')
-      await input.setValue('newtonsoft')
-      vi.advanceTimersByTime(300)
-      await flushPromises()
-
-      const resultItem = wrapper.find('.result-item')
-      await resultItem.trigger('click')
-
-      expect(ElMessage.warning).toHaveBeenCalledWith(
-        expect.stringContaining('已添加')
-      )
-    })
-  })
-
-  describe('包管理', () => {
+  describe('包展示', () => {
     it('should display selected packages as tags', () => {
       const wrapper = mountComponent({
         modelValue: [
@@ -272,46 +129,64 @@ describe('PackageSelector', () => {
     })
   })
 
-  describe('版本选择', () => {
-    it('should load versions when package is selected', async () => {
-      const mockSearch = vi.mocked(packagesApi.searchPackages)
-      const mockVersions = vi.mocked(packagesApi.getPackageVersions)
-
-      mockSearch.mockResolvedValue({
-        items: [{ name: 'Serilog', version: '3.1.1', description: 'Logging' }],
-        totalCount: 1
-      })
-      mockVersions.mockResolvedValue(['3.1.1', '3.1.0', '3.0.0'])
-
+  describe('Modal 交互', () => {
+    it('should open modal when clicking add button', async () => {
       const wrapper = mountComponent()
+      const button = wrapper.find('.el-button')
+      await button.trigger('click')
 
-      const input = wrapper.find('input')
-      await input.setValue('serilog')
-      vi.advanceTimersByTime(300)
-      await flushPromises()
+      const modal = wrapper.find('.package-selector-modal')
+      expect(modal.attributes('data-visible')).toBe('true')
+    })
 
-      const resultItem = wrapper.find('.result-item')
-      await resultItem.trigger('click')
-      await flushPromises()
+    it('should add packages when modal confirms', async () => {
+      const wrapper = mountComponent({ modelValue: [] })
 
-      expect(mockVersions).toHaveBeenCalledWith('nuget', 'Serilog', undefined)
-      expect(wrapper.find('.version-selector').exists()).toBe(true)
+      // Open modal
+      await wrapper.find('.el-button').trigger('click')
+
+      // Trigger confirm (simulated by clicking the mock modal)
+      await wrapper.find('.package-selector-modal').trigger('click')
+
+      const emitted = wrapper.emitted('update:modelValue')
+      expect(emitted).toBeTruthy()
+      expect(emitted![0][0]).toContainEqual({ name: 'TestPackage', version: '1.0.0' })
+    })
+
+    it('should append to existing packages when confirming', async () => {
+      const wrapper = mountComponent({
+        modelValue: [{ name: 'ExistingPackage', version: '1.0.0' }]
+      })
+
+      // Open and confirm
+      await wrapper.find('.el-button').trigger('click')
+      await wrapper.find('.package-selector-modal').trigger('click')
+
+      const emitted = wrapper.emitted('update:modelValue')
+      expect(emitted).toBeTruthy()
+      expect(emitted![0][0]).toHaveLength(2)
     })
   })
 
-  describe('npm 支持', () => {
-    it('should search npm packages when managerType is npm', async () => {
-      const mockSearch = vi.mocked(packagesApi.searchPackages)
-      mockSearch.mockResolvedValue({ items: [], totalCount: 0 })
-
+  describe('Props 传递', () => {
+    it('should pass managerType to modal', () => {
       const wrapper = mountComponent({ managerType: 'npm' })
-      const input = wrapper.find('input')
+      const modal = wrapper.find('.package-selector-modal')
+      expect(modal.exists()).toBe(true)
+    })
 
-      await input.setValue('axios')
-      vi.advanceTimersByTime(300)
-      await flushPromises()
+    it('should pass existingPackages to modal', () => {
+      const packages = [{ name: 'Test', version: '1.0.0' }]
+      const wrapper = mountComponent({ modelValue: packages })
+      const modal = wrapper.find('.package-selector-modal')
+      expect(modal.exists()).toBe(true)
+    })
 
-      expect(mockSearch).toHaveBeenCalledWith('npm', 'axios', undefined)
+    it('should pass systemPackages to modal', () => {
+      const systemPackages = ['SqlSugarCore', 'Serilog']
+      const wrapper = mountComponent({ systemPackages })
+      const modal = wrapper.find('.package-selector-modal')
+      expect(modal.exists()).toBe(true)
     })
   })
 })

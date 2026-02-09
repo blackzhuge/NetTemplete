@@ -1,8 +1,8 @@
 <template>
   <div class="home-page">
-    <!-- Left Sidebar: Configuration -->
-    <aside class="config-sidebar">
-      <header class="sidebar-header">
+    <!-- Configuration Panel -->
+    <main class="config-panel">
+      <header class="panel-header">
         <div class="logo">
           <el-icon class="logo-icon"><Box /></el-icon>
           <h1>Scaffold Generator</h1>
@@ -10,71 +10,68 @@
         <p class="subtitle">.NET + Vue 全栈项目生成器</p>
       </header>
 
-      <div class="sidebar-content">
+      <div class="panel-content">
         <PresetSelector />
-        <el-divider class="sidebar-divider" />
+        <el-divider class="panel-divider" />
         <ConfigForm />
       </div>
 
-      <footer class="sidebar-footer">
-        <div class="tech-stack">
-          <el-tag size="small" type="info" effect="plain">.NET 9</el-tag>
-          <el-tag size="small" type="success" effect="plain">Vue 3</el-tag>
-          <el-tag size="small" type="warning" effect="plain">Element+</el-tag>
+      <footer class="panel-footer">
+        <div class="footer-left">
+          <div class="tech-stack">
+            <el-tag size="small" type="info" effect="plain">.NET 9</el-tag>
+            <el-tag size="small" type="success" effect="plain">Vue 3</el-tag>
+            <el-tag size="small" type="warning" effect="plain">Element+</el-tag>
+          </div>
+        </div>
+        <div class="footer-right">
+          <el-button type="primary" @click="store.openPreview()">
+            <el-icon><View /></el-icon>
+            预览
+          </el-button>
         </div>
       </footer>
-    </aside>
-
-    <!-- Right Area: IDE Preview -->
-    <main class="ide-preview">
-      <!-- File Explorer Pane -->
-      <div class="ide-sidebar">
-        <div class="ide-pane-header">
-          <span class="pane-title">EXPLORER</span>
-        </div>
-        <div class="file-tree-container">
-          <FileTreeView theme="dark" />
-        </div>
-      </div>
-
-      <!-- Editor Pane -->
-      <div class="ide-editor">
-        <CodePreview />
-      </div>
     </main>
+
+    <!-- Preview Drawer -->
+    <PreviewDrawer />
   </div>
 </template>
 
 <script setup lang="ts">
-import { Box } from '@element-plus/icons-vue'
+import { Box, View } from '@element-plus/icons-vue'
+import { useConfigStore } from '@/stores/config'
 import ConfigForm from '@/components/ConfigForm.vue'
-import FileTreeView from '@/components/FileTreeView.vue'
 import PresetSelector from '@/components/PresetSelector.vue'
-import CodePreview from '@/components/CodePreview.vue'
+import PreviewDrawer from '@/components/PreviewDrawer.vue'
+
+const store = useConfigStore()
 </script>
 
 <style scoped>
 .home-page {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
-  overflow: hidden;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px;
   background-color: #f8fafc;
 }
 
-/* Left Sidebar */
-.config-sidebar {
-  width: 420px;
-  flex-shrink: 0;
+/* Configuration Panel */
+.config-panel {
+  width: 100%;
+  max-width: 800px;
   display: flex;
   flex-direction: column;
   background: white;
-  border-right: 1px solid #e2e8f0;
-  z-index: 10;
-  box-shadow: 4px 0 24px rgba(0,0,0,0.02);
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
 }
 
-.sidebar-header {
-  padding: 24px 32px;
+.panel-header {
+  padding: 32px 40px 24px;
   background: white;
   border-bottom: 1px solid #f1f5f9;
 }
@@ -82,46 +79,52 @@ import CodePreview from '@/components/CodePreview.vue'
 .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 4px;
+  gap: 12px;
+  margin-bottom: 8px;
   color: #0f172a;
 }
 
 .logo-icon {
-  font-size: 26px;
+  font-size: 28px;
   color: #4f46e5;
 }
 
 .logo h1 {
-  font-size: 20px;
+  font-size: 24px;
   margin: 0;
   font-weight: 700;
   letter-spacing: -0.5px;
 }
 
 .subtitle {
-  font-size: 13px;
+  font-size: 14px;
   color: #64748b;
   margin: 0;
-  padding-left: 36px;
+  padding-left: 40px;
 }
 
-.sidebar-content {
+.panel-content {
   flex: 1;
   overflow-y: auto;
-  padding: 24px 32px;
+  padding: 32px 40px;
 }
 
-.sidebar-divider {
-  margin: 24px 0;
+.panel-divider {
+  margin: 28px 0;
 }
 
-.sidebar-footer {
-  padding: 16px 32px;
+.panel-footer {
+  padding: 20px 40px;
   background: #f8fafc;
   border-top: 1px solid #e2e8f0;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
 }
 
 .tech-stack {
@@ -129,57 +132,20 @@ import CodePreview from '@/components/CodePreview.vue'
   gap: 8px;
 }
 
-/* Right IDE Area */
-.ide-preview {
-  flex: 1;
+.footer-right {
   display: flex;
-  background-color: #1e1e1e; /* Dark IDE background */
-  overflow: hidden;
+  gap: 12px;
 }
 
-.ide-sidebar {
-  width: 260px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  background-color: #252526; /* VS Code Sidebar Color */
-  border-right: 1px solid #333;
-}
-
-.ide-pane-header {
-  height: 35px;
-  display: flex;
-  align-items: center;
-  padding: 0 16px;
-  font-size: 11px;
-  font-weight: 600;
-  color: #bbbbbb;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.file-tree-container {
-  flex: 1;
-  overflow-y: auto;
-}
-
-.ide-editor {
-  flex: 1;
-  min-width: 0; /* Prevent overflow */
-  background-color: #1e1e1e;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Scrollbar Styling for Sidebar */
-.sidebar-content::-webkit-scrollbar {
+/* Scrollbar Styling */
+.panel-content::-webkit-scrollbar {
   width: 6px;
 }
-.sidebar-content::-webkit-scrollbar-thumb {
+.panel-content::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 3px;
 }
-.sidebar-content::-webkit-scrollbar-track {
+.panel-content::-webkit-scrollbar-track {
   background: transparent;
 }
 </style>

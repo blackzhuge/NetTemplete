@@ -54,7 +54,9 @@ public sealed class NuGetSearchService : IPackageSearchService
                 p.Id ?? string.Empty,
                 p.Version ?? string.Empty,
                 p.Description ?? string.Empty,
-                p.IconUrl
+                p.IconUrl,
+                p.TotalDownloads,
+                null
             )).ToList() ?? [];
 
             var result = new PackageSearchResponse(items, response?.TotalHits ?? 0);
@@ -179,7 +181,8 @@ public sealed class NuGetSearchService : IPackageSearchService
         [property: JsonPropertyName("id")] string? Id,
         [property: JsonPropertyName("version")] string? Version,
         [property: JsonPropertyName("description")] string? Description,
-        [property: JsonPropertyName("iconUrl")] string? IconUrl
+        [property: JsonPropertyName("iconUrl")] string? IconUrl,
+        [property: JsonPropertyName("totalDownloads")] long? TotalDownloads
     );
 
     private sealed record NuGetVersionsResult(

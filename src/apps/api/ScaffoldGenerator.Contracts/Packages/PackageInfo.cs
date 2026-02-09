@@ -7,5 +7,7 @@ public sealed record PackageInfo(
     string Name,
     string Version,
     string Description,
-    string? IconUrl = null
+    string? IconUrl = null,
+    long? DownloadCount = null,
+    DateTimeOffset? LastUpdated = null
 );

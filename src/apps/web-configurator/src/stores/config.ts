@@ -30,6 +30,9 @@ export const useConfigStore = defineStore('config', () => {
   const nugetPackages = ref<PackageReference[]>([])
   const npmPackages = ref<PackageReference[]>([])
 
+  // Preview Drawer 状态
+  const showPreviewDrawer = ref(false)
+
   // 系统包列表（用于冲突检测）
   const systemNugetPackages = computed(() => [
     'Serilog.AspNetCore',
@@ -315,6 +318,15 @@ export const useConfigStore = defineStore('config', () => {
     }
   }
 
+  // Preview Drawer Actions
+  function openPreview() {
+    showPreviewDrawer.value = true
+  }
+
+  function closePreview() {
+    showPreviewDrawer.value = false
+  }
+
   // 监听 config 变化，自动刷新预览
   watch(
     config,
@@ -350,6 +362,10 @@ export const useConfigStore = defineStore('config', () => {
     addNugetPackage,
     removeNugetPackage,
     addNpmPackage,
-    removeNpmPackage
+    removeNpmPackage,
+    // Preview Drawer
+    showPreviewDrawer,
+    openPreview,
+    closePreview
   }
 })
