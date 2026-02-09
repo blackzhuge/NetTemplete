@@ -887,3 +887,129 @@ Codex+Gemini 双模型审查发现 5 个 Critical 问题，全部修复：API �
 ### Next Steps
 
 - None - task complete
+
+## Session 15: UI 布局重构规划 (ui-drawer-modal)
+
+**Date**: 2026-02-09
+**Task**: UI 布局重构规划 (ui-drawer-modal)
+
+### Summary
+
+(Add summary)
+
+### Main Changes
+
+## 完成内容
+
+| 阶段 | 工作 |
+|------|------|
+| 需求研究 | 使用 enhance_prompt 增强需求，search_context 分析代码库 |
+| 多模型分析 | Codex 分析后端 API 扩展，Gemini 分析前端组件设计 |
+| OpenSpec 规划 | 创建 ui-drawer-modal change，生成 5 个规划文档 |
+
+## 规划产出
+
+```
+openspec/changes/ui-drawer-modal/
+├── proposal.md         # 背景、目标、约束集合
+├── specs.md            # 3 个需求规格 + 3 个 PBT 属性
+├── design.md           # 组件架构、API 变更、样式方案
+├── tasks.md            # 15 个任务，5 个阶段
+└── ccg-context.jsonl   # 规范注入配置
+```
+
+## 任务概览
+
+| Phase | 任务数 | 内容 |
+|-------|--------|------|
+| Phase 1 | 4 | 后端 API 扩展 |
+| Phase 2 | 2 | 前端类型同步 |
+| Phase 3 | 4 | PreviewDrawer 组件 |
+| Phase 4 | 3 | PackageSelectorModal 组件 |
+| Phase 5 | 2 | E2E 测试 |
+
+## 关键决策
+
+- EXPLORER + 代码预览合并为一个 Drawer，Tab 切换
+- 包搜索改为模态弹窗，展示下载量、更新时间
+- NuGet: 使用 totalDownloads，lastUpdated 暂不实现
+- npm: 使用 downloads.weekly + package.date
+
+## 下一步
+
+运行 `/ccg:spec-impl` 开始实施 15 个任务
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `442ff85` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
+
+## Session 16: UI 布局重构为 Drawer 预览模式
+
+**Date**: 2026-02-09
+**Task**: UI 布局重构为 Drawer 预览模式
+
+### Summary
+
+(Add summary)
+
+### Main Changes
+
+## 完成内容
+
+| 模块 | 改动 |
+|------|------|
+| 后端 API | PackageInfo 添加 downloadCount/lastUpdated 字段 |
+| NuGet 服务 | 映射 totalDownloads → downloadCount |
+| npm 服务 | 映射 downloads.weekly/package.date |
+| PreviewDrawer | 新组件: Explorer/Code 双标签 Drawer |
+| PackageSelectorModal | 新组件: 弹窗式包选择器 |
+| HomePage | 重构为居中布局 + 预览按钮 |
+| 单元测试 | PreviewDrawer.spec.ts, PackageSelectorModal.spec.ts, PackageSelector.spec.ts |
+| E2E 测试 | preview-drawer.spec.ts, package-modal.spec.ts |
+| OpenSpec | ui-drawer-modal 归档到 archive/2026-02-09-ui-drawer-modal |
+
+## 统计
+
+- 22 files changed, +1762/-614 lines
+- 所有单元测试通过 (44 tests)
+- Lint 通过
+
+## 工作流
+
+1. `/ccg:spec-impl` 执行 ui-drawer-modal 规范
+2. 5 个 Phase, 15 个任务全部完成
+3. `/opsx:sync` 同步 specs 到 main
+4. `/opsx:archive` 归档 change
+5. `/ccg:commit` 提交代码
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `bdb0475` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
