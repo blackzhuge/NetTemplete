@@ -1013,3 +1013,58 @@ openspec/changes/ui-drawer-modal/
 ### Next Steps
 
 - None - task complete
+
+## Session 17: 修复后端测试并优化预览面板交互
+
+**Date**: 2026-02-09
+**Task**: 修复后端测试并优化预览面板交互
+
+### Summary
+
+(Add summary)
+
+### Main Changes
+
+## 完成内容
+
+| 模块 | 改动 |
+|------|------|
+| 后端测试修复 | Program.cs 移除外层 try-catch，修复 WebApplicationFactory 兼容性 |
+| DI 生命周期 | ITemplateFileProvider/ITemplateRenderer 从 Singleton 改为 Scoped |
+| PreviewDrawer | 从 Tab 切换改为 Explorer/Code 并排分栏布局 |
+| 可拖拽宽度 | Drawer 左边缘 (30%-90%) + Explorer 右边缘 (150-500px) |
+| 默认宽度 | Drawer 75%, Explorer 320px |
+| 预览按钮 | 从 footer 移至 header 右上角 |
+| 单元测试 | 更新 PreviewDrawer.spec.ts 适配新布局 |
+
+## 测试结果
+
+- 后端: 85 tests passed
+- 前端: 43 tests passed
+- Lint: 0 errors, 2 warnings (已有)
+
+## 改动文件
+
+- `src/apps/api/ScaffoldGenerator.Api/Program.cs`
+- `src/apps/web-configurator/src/components/PreviewDrawer.vue`
+- `src/apps/web-configurator/src/views/HomePage.vue`
+- `src/apps/web-configurator/tests/components/PreviewDrawer.spec.ts`
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `cf939b1` | (see git log) |
+| `efad308` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

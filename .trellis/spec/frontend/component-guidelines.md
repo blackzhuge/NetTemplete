@@ -1,6 +1,68 @@
 # 组件规范
 
-> 本项目的组件构建方式。
+> 本项目的组件构建方式，支持多 UI 库。
+
+---
+
+## 支持的 UI 库
+
+| UI 库 | 特点 | 导入方式 |
+|-------|------|----------|
+| Element Plus | 企业级、功能全面 | 全局注册 |
+| Ant Design Vue | 阿里设计语言 | 按需导入 |
+| Naive UI | TS 优先、高性能 | 按需导入 |
+| Tailwind + Headless UI | 原子化 CSS | 按需导入 |
+| shadcn-vue | Radix 移植 | 复制组件 |
+| MateChat | AI 对话专用 | 全局注册 |
+
+---
+
+## UI 库无关原则
+
+编写组件时，遵循以下原则确保可在不同 UI 库间迁移：
+
+### 1. 逻辑与 UI 分离
+
+```vue
+<script setup lang="ts">
+// ✅ 正确：业务逻辑放在 composable
+import { useConfigForm } from '@/composables/useConfigForm'
+
+const { config, validate, submit } = useConfigForm()
+</script>
+
+<template>
+  <!-- UI 组件可替换 -->
+  <el-form v-model="config">...</el-form>
+</template>
+```
+
+### 2. 使用类型而非具体组件
+
+```typescript
+// ✅ 正确：定义业务类型
+interface SelectOption {
+  label: string
+  value: string | number
+}
+
+// 组件只关心数据，不关心 UI 库
+const options: SelectOption[] = [...]
+```
+
+### 3. 样式隔离
+
+```vue
+<style scoped>
+/* ✅ 使用自定义类，避免覆盖 UI 库样式 */
+.my-component {
+  /* 自定义样式 */
+}
+
+/* ❌ 避免直接覆盖 UI 库类 */
+/* .el-button { ... } */
+</style>
+```
 
 ---
 

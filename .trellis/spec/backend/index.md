@@ -23,3 +23,5 @@
 | [质量规范](./quality-guidelines.md) | 代码标准、禁止模式、DI |
 | [日志规范](./logging-guidelines.md) | Serilog、结构化日志 |
 | [测试规范](./test-guidelines.md) | xUnit、Mock、集成测试 |
+| [模块规范](./module-guidelines.md) | IScaffoldModule 开发、依赖管理、冲突检测 |
+| [Provider 模式](./provider-pattern.md) | 策略接口设计、IUiLibraryProvider |

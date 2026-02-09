@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 16
+- **Total Sessions**: 17
 - **Last Active**: 2026-02-09
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1015 | Active |
+| `journal-1.md` | ~1070 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | 日期 | 标题 | 提交 |
 |---|------|------|------|
+| 17 | 2026-02-09 | 修复后端测试并优化预览面板交互 | `cf939b1`, `efad308` |
 | 16 | 2026-02-09 | UI 布局重构为 Drawer 预览模式 | `bdb0475` |
 | 15 | 2026-02-09 | UI 布局重构规划 (ui-drawer-modal) | `442ff85` |
 | 14 | 2026-02-08 | OpenSpec 工作流修复 + 前端 ESLint 配置 | `495beea`, `59ea976`, `f059ef6` |
