@@ -3,9 +3,15 @@
     <!-- Configuration Panel -->
     <main class="config-panel">
       <header class="panel-header">
-        <div class="logo">
-          <el-icon class="logo-icon"><Box /></el-icon>
-          <h1>Scaffold Generator</h1>
+        <div class="header-top">
+          <div class="logo">
+            <el-icon class="logo-icon"><Box /></el-icon>
+            <h1>Scaffold Generator</h1>
+          </div>
+          <el-button type="primary" @click="store.openPreview()">
+            <el-icon><View /></el-icon>
+            预览
+          </el-button>
         </div>
         <p class="subtitle">.NET + Vue 全栈项目生成器</p>
       </header>
@@ -17,18 +23,10 @@
       </div>
 
       <footer class="panel-footer">
-        <div class="footer-left">
-          <div class="tech-stack">
-            <el-tag size="small" type="info" effect="plain">.NET 9</el-tag>
-            <el-tag size="small" type="success" effect="plain">Vue 3</el-tag>
-            <el-tag size="small" type="warning" effect="plain">Element+</el-tag>
-          </div>
-        </div>
-        <div class="footer-right">
-          <el-button type="primary" @click="store.openPreview()">
-            <el-icon><View /></el-icon>
-            预览
-          </el-button>
+        <div class="tech-stack">
+          <el-tag size="small" type="info" effect="plain">.NET 9</el-tag>
+          <el-tag size="small" type="success" effect="plain">Vue 3</el-tag>
+          <el-tag size="small" type="warning" effect="plain">Element+</el-tag>
         </div>
       </footer>
     </main>
@@ -76,11 +74,17 @@ const store = useConfigStore()
   border-bottom: 1px solid #f1f5f9;
 }
 
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
 .logo {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 8px;
   color: #0f172a;
 }
 
@@ -118,23 +122,13 @@ const store = useConfigStore()
   background: #f8fafc;
   border-top: 1px solid #e2e8f0;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.footer-left {
-  display: flex;
+  justify-content: center;
   align-items: center;
 }
 
 .tech-stack {
   display: flex;
   gap: 8px;
-}
-
-.footer-right {
-  display: flex;
-  gap: 12px;
 }
 
 /* Scrollbar Styling */

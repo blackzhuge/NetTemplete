@@ -20,31 +20,6 @@ const stubs = {
         : null
     }
   }),
-  'el-tabs': defineComponent({
-    props: ['modelValue'],
-    emits: ['update:modelValue'],
-    setup(props, { emit, slots }) {
-      return () => h('div', { class: 'el-tabs', 'data-active': props.modelValue }, [
-        h('div', { class: 'el-tabs__header' }, [
-          h('button', {
-            class: 'tab-explorer',
-            onClick: () => emit('update:modelValue', 'explorer')
-          }, 'Explorer'),
-          h('button', {
-            class: 'tab-code',
-            onClick: () => emit('update:modelValue', 'code')
-          }, 'Code')
-        ]),
-        slots.default?.()
-      ])
-    }
-  }),
-  'el-tab-pane': defineComponent({
-    props: ['label', 'name'],
-    setup(_, { slots }) {
-      return () => h('div', { class: 'el-tab-pane' }, slots.default?.())
-    }
-  }),
   'FileTreeView': defineComponent({
     props: ['theme'],
     setup() {
@@ -104,75 +79,20 @@ describe('PreviewDrawer', () => {
     })
   })
 
-  describe('Tab 切换', () => {
-    it('should default to explorer tab', async () => {
+  describe('分栏布局', () => {
+    it('should render split layout with explorer and code panels', async () => {
       const store = useConfigStore()
       store.openPreview()
 
       const wrapper = mountComponent()
       await nextTick()
 
-      const tabs = wrapper.find('.el-tabs')
-      expect(tabs.attributes('data-active')).toBe('explorer')
+      expect(wrapper.find('.preview-split').exists()).toBe(true)
+      expect(wrapper.find('.explorer-panel').exists()).toBe(true)
+      expect(wrapper.find('.code-panel').exists()).toBe(true)
     })
 
-    it('should switch to code tab when clicked', async () => {
-      const store = useConfigStore()
-      store.openPreview()
-
-      const wrapper = mountComponent()
-      await nextTick()
-
-      const codeTab = wrapper.find('.tab-code')
-      await codeTab.trigger('click')
-
-      const tabs = wrapper.find('.el-tabs')
-      expect(tabs.attributes('data-active')).toBe('code')
-    })
-  })
-
-  describe('文件选择联动', () => {
-    it('should switch to code tab when file is selected', async () => {
-      const store = useConfigStore()
-      store.openPreview()
-
-      const wrapper = mountComponent()
-      await nextTick()
-
-      // Simulate file selection
-      store.selectedFile = {
-        name: 'Program.cs',
-        path: 'src/MyProject.Api/Program.cs',
-        isDirectory: false
-      }
-      await nextTick()
-
-      const tabs = wrapper.find('.el-tabs')
-      expect(tabs.attributes('data-active')).toBe('code')
-    })
-
-    it('should not switch tab when directory is selected', async () => {
-      const store = useConfigStore()
-      store.openPreview()
-
-      const wrapper = mountComponent()
-      await nextTick()
-
-      // Simulate directory selection (should not trigger tab switch)
-      store.selectedFile = {
-        name: 'src',
-        path: 'src',
-        isDirectory: true
-      }
-      await nextTick()
-
-      const tabs = wrapper.find('.el-tabs')
-      expect(tabs.attributes('data-active')).toBe('explorer')
-    })
-  })
-
-  describe('组件渲染', () => {
-    it('should render FileTreeView in explorer pane', async () => {
+    it('should show both FileTreeView and CodePreview simultaneously', async () => {
       const store = useConfigStore()
       store.openPreview()
 
@@ -180,16 +100,44 @@ describe('PreviewDrawer', () => {
       await nextTick()
 
       expect(wrapper.find('.file-tree-view').exists()).toBe(true)
+      expect(wrapper.find('.code-preview').exists()).toBe(true)
     })
 
-    it('should render CodePreview in code pane', async () => {
+    it('should have panel headers for explorer and code', async () => {
       const store = useConfigStore()
       store.openPreview()
 
       const wrapper = mountComponent()
       await nextTick()
 
-      expect(wrapper.find('.code-preview').exists()).toBe(true)
+      const headers = wrapper.findAll('.panel-header')
+      expect(headers).toHaveLength(2)
+      expect(headers[0].text()).toBe('Explorer')
+      expect(headers[1].text()).toBe('Code')
+    })
+  })
+
+  describe('组件渲染', () => {
+    it('should render FileTreeView in explorer panel', async () => {
+      const store = useConfigStore()
+      store.openPreview()
+
+      const wrapper = mountComponent()
+      await nextTick()
+
+      const explorerPanel = wrapper.find('.explorer-panel')
+      expect(explorerPanel.find('.file-tree-view').exists()).toBe(true)
+    })
+
+    it('should render CodePreview in code panel', async () => {
+      const store = useConfigStore()
+      store.openPreview()
+
+      const wrapper = mountComponent()
+      await nextTick()
+
+      const codePanel = wrapper.find('.code-panel')
+      expect(codePanel.find('.code-preview').exists()).toBe(true)
     })
   })
 })
