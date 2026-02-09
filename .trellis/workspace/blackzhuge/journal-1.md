@@ -1068,3 +1068,72 @@ openspec/changes/ui-drawer-modal/
 ### Next Steps
 
 - None - task complete
+
+## Session 18: Template Options Extension - 完成测试补充
+
+**Date**: 2026-02-09
+**Task**: Template Options Extension - 完成测试补充
+
+### Summary
+
+(Add summary)
+
+### Main Changes
+
+## 完成内容
+
+| 功能 | 说明 |
+|------|------|
+| 功能实现 | 架构风格/ORM/UI 库模板选项扩展 |
+| 后端测试 | 枚举序列化测试、模块测试 (132 tests) |
+| 前端测试 | Selector 组件单元测试 (12 tests) |
+| E2E 测试 | preset-workflow.spec.ts (9 tests) |
+| 文档同步 | 规范文档、归档任务更新 |
+
+## 任务进度
+
+Template Options Extension: **37/37 (100%)** ✅
+
+| Phase | 完成度 |
+|-------|--------|
+| Phase 1: 后端枚举与 DTO | 6/6 |
+| Phase 2: 后端模块实现 | 6/6 |
+| Phase 3: 后端模板文件 | 5/5 |
+| Phase 4: 前端模板文件 | 5/5 |
+| Phase 5: 预设系统 | 7/7 |
+| Phase 6: 前端配置器 | 8/8 |
+
+## 新增文件
+
+- `tests/components/ArchitectureSelector.spec.ts`
+- `tests/components/OrmSelector.spec.ts`
+- `tests/components/UiLibrarySelector.spec.ts`
+- `e2e/preset-workflow.spec.ts`
+- `.trellis/spec/backend/module-guidelines.md`
+- `.trellis/spec/backend/provider-pattern.md`
+
+## 测试结果
+
+- 后端: 132/132 ✅
+- 前端 Vitest: 55/55 ✅
+- Lint: 0 errors ✅
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `c419500` | (see git log) |
+| `09454f9` | (see git log) |
+| `4112e4d` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete

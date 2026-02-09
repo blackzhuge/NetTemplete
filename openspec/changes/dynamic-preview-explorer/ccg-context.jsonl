@@ -1,0 +1,10 @@
+{"task": "*", "file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "跨层功能（后端API→前端Store→UI组件）"}
+{"task": "1.1,1.2,1.3", "file": ".trellis/spec/backend/error-handling.md", "reason": "DTO设计和接口定义"}
+{"task": "2.1,2.2", "file": ".trellis/spec/backend/quality-guidelines.md", "reason": "服务实现和单元测试规范"}
+{"task": "3.1,3.2", "file": ".trellis/spec/backend/test-guidelines.md", "reason": "API端点和集成测试"}
+{"task": "4.1", "file": ".trellis/spec/frontend/type-safety.md", "reason": "API客户端类型定义"}
+{"task": "5.1,5.2,5.3", "file": ".trellis/spec/frontend/state-management.md", "reason": "Pinia Store改造"}
+{"task": "5.1,5.2", "file": ".trellis/spec/frontend/hook-guidelines.md", "reason": "防抖和异步逻辑"}
+{"task": "6.1", "file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Vue组件更新"}
+{"task": "6.2", "file": ".trellis/spec/frontend/test-guidelines.md", "reason": "E2E测试规范"}
+{"task": "7.1", "file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "代码清理和lint"}

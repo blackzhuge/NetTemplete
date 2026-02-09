@@ -59,6 +59,9 @@ export const useConfigStore = defineStore('config', () => {
   const fileTree = computed<FileTreeNode[]>(() => {
     const projectName = config.value.projectName
     const root: FileTreeNode[] = [
+      // 根级别的解决方案和构建文件
+      { name: `${projectName}.sln`, path: `${projectName}.sln`, isDirectory: false },
+      { name: 'Directory.Build.props', path: 'Directory.Build.props', isDirectory: false },
       {
         name: 'src',
         path: 'src',
@@ -69,6 +72,7 @@ export const useConfigStore = defineStore('config', () => {
             path: `src/${projectName}.Api`,
             isDirectory: true,
             children: [
+              { name: `${projectName}.Api.csproj`, path: `src/${projectName}.Api/${projectName}.Api.csproj`, isDirectory: false },
               { name: 'Program.cs', path: `src/${projectName}.Api/Program.cs`, isDirectory: false },
               { name: 'appsettings.json', path: `src/${projectName}.Api/appsettings.json`, isDirectory: false },
               {

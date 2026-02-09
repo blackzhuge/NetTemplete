@@ -55,15 +55,16 @@ watch(orm, (val) => {
   width: 100%;
   padding: 12px;
   border-radius: 8px !important;
-  border: 1px solid #e4e7ed !important;
+  border: 1px solid var(--el-border-color) !important;
   text-align: left;
   white-space: normal;
   line-height: 1.4;
+  background: var(--el-fill-color-blank) !important;
 }
 
 .card-radio.is-active :deep(.el-radio-button__inner) {
-  border-color: #409eff !important;
-  background: #ecf5ff;
+  border-color: var(--el-color-primary) !important;
+  background: var(--el-color-primary-light-9) !important;
 }
 
 .card-content {
