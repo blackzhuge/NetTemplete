@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    ArchitectureSelector: typeof import('./components/ArchitectureSelector.vue')['default']
     BackendOptions: typeof import('./components/BackendOptions.vue')['default']
     BasicOptions: typeof import('./components/BasicOptions.vue')['default']
     CodePreview: typeof import('./components/CodePreview.vue')['default']
@@ -23,23 +24,23 @@ declare module 'vue' {
     ElIcon: typeof import('element-plus/es')['ElIcon']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElOption: typeof import('element-plus/es')['ElOption']
-    ElPopover: typeof import('element-plus/es')['ElPopover']
     ElRadio: typeof import('element-plus/es')['ElRadio']
+    ElRadioButton: typeof import('element-plus/es')['ElRadioButton']
     ElRadioGroup: typeof import('element-plus/es')['ElRadioGroup']
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElSkeleton: typeof import('element-plus/es')['ElSkeleton']
     ElSkeletonItem: typeof import('element-plus/es')['ElSkeletonItem']
-    ElTabPane: typeof import('element-plus/es')['ElTabPane']
-    ElTabs: typeof import('element-plus/es')['ElTabs']
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTree: typeof import('element-plus/es')['ElTree']
     FileTreeView: typeof import('./components/FileTreeView.vue')['default']
     FrontendOptions: typeof import('./components/FrontendOptions.vue')['default']
+    OrmSelector: typeof import('./components/OrmSelector.vue')['default']
     PackageSelector: typeof import('./components/PackageSelector.vue')['default']
     PackageSelectorModal: typeof import('./components/PackageSelectorModal.vue')['default']
     PresetSelector: typeof import('./components/PresetSelector.vue')['default']
     PreviewDrawer: typeof import('./components/PreviewDrawer.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    UiLibrarySelector: typeof import('./components/UiLibrarySelector.vue')['default']
   }
 }

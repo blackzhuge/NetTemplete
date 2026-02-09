@@ -31,6 +31,14 @@ public sealed record BasicOptions
 
 public sealed record BackendOptions
 {
+    [JsonPropertyName("architecture")]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public ArchitectureStyle Architecture { get; init; } = ArchitectureStyle.Simple;
+
+    [JsonPropertyName("orm")]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public OrmProvider Orm { get; init; } = OrmProvider.SqlSugar;
+
     [JsonPropertyName("database")]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public DatabaseProvider Database { get; init; } = DatabaseProvider.SQLite;
@@ -51,6 +59,10 @@ public sealed record BackendOptions
 
 public sealed record FrontendOptions
 {
+    [JsonPropertyName("uiLibrary")]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public UiLibrary UiLibrary { get; init; } = UiLibrary.ElementPlus;
+
     [JsonPropertyName("routerMode")]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public RouterMode RouterMode { get; init; } = RouterMode.Hash;

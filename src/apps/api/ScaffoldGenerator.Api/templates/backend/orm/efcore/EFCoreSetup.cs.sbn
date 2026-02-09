@@ -1,0 +1,29 @@
+using Microsoft.EntityFrameworkCore;
+using {{ namespace }}.Api.Data;
+
+namespace {{ namespace }}.Api.Setup;
+
+public static class EFCoreSetup
+{
+    public static IServiceCollection AddEFCore(this IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("DefaultConnection")
+            ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+{{~ if db_type == "SQLite" ~}}
+        services.AddDbContext<{{ project_name }}DbContext>(options =>
+            options.UseSqlite(connectionString));
+{{~ else if db_type == "MySQL" ~}}
+        services.AddDbContext<{{ project_name }}DbContext>(options =>
+            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+{{~ else if db_type == "SQLServer" ~}}
+        services.AddDbContext<{{ project_name }}DbContext>(options =>
+            options.UseSqlServer(connectionString));
+{{~ else ~}}
+        services.AddDbContext<{{ project_name }}DbContext>(options =>
+            options.UseSqlite(connectionString));
+{{~ end ~}}
+
+        return services;
+    }
+}

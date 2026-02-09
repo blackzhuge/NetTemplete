@@ -6,6 +6,8 @@
     </div>
 
     <el-form label-position="top">
+      <UiLibrarySelector />
+
       <el-form-item label="路由模式">
         <el-radio-group v-model="routerMode">
           <el-radio value="Hash">Hash 模式</el-radio>
@@ -37,6 +39,7 @@ import { Monitor } from '@element-plus/icons-vue'
 import { useConfigStore } from '@/stores/config'
 import type { RouterMode } from '@/types'
 import PackageSelector from './PackageSelector.vue'
+import UiLibrarySelector from './UiLibrarySelector.vue'
 
 const store = useConfigStore()
 

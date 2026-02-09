@@ -1,0 +1,27 @@
+{
+  "$schema": "../schema.json",
+  "id": "enterprise",
+  "name": "Enterprise",
+  "description": "企业级配置，Clean Architecture + EF Core + Element Plus",
+  "isBuiltin": true,
+  "tags": ["full-featured", "production", "clean-architecture"],
+  "config": {
+    "basic": {
+      "projectName": "MyApp",
+      "namespace": "MyApp"
+    },
+    "backend": {
+      "architecture": "CleanArchitecture",
+      "orm": "EFCore",
+      "database": "MySQL",
+      "cache": "Redis",
+      "swagger": true,
+      "jwtAuth": true
+    },
+    "frontend": {
+      "uiLibrary": "ElementPlus",
+      "routerMode": "History",
+      "mockData": false
+    }
+  }
+}

@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>{{ namespace }}.Infrastructure</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\{{ project_name }}.Application\{{ project_name }}.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+{{~ if orm == "EFCore" ~}}
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+{{~ else if orm == "SqlSugar" ~}}
+    <PackageReference Include="SqlSugarCore" Version="5.1.4.169" />
+{{~ else if orm == "Dapper" ~}}
+    <PackageReference Include="Dapper" Version="2.1.35" />
+{{~ else if orm == "FreeSql" ~}}
+    <PackageReference Include="FreeSql" Version="3.2.833" />
+{{~ end ~}}
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,37 @@
+using System.Data;
+{{~ if db_type == "SQLite" ~}}
+using Microsoft.Data.Sqlite;
+{{~ else if db_type == "MySQL" ~}}
+using MySqlConnector;
+{{~ else if db_type == "SQLServer" ~}}
+using Microsoft.Data.SqlClient;
+{{~ else ~}}
+using Microsoft.Data.Sqlite;
+{{~ end ~}}
+
+namespace {{ namespace }}.Api.Setup;
+
+public static class DapperSetup
+{
+    public static IServiceCollection AddDapper(this IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("DefaultConnection")
+            ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+        services.AddScoped<IDbConnection>(sp =>
+        {
+{{~ if db_type == "SQLite" ~}}
+            var connection = new SqliteConnection(connectionString);
+{{~ else if db_type == "MySQL" ~}}
+            var connection = new MySqlConnection(connectionString);
+{{~ else if db_type == "SQLServer" ~}}
+            var connection = new SqlConnection(connectionString);
+{{~ else ~}}
+            var connection = new SqliteConnection(connectionString);
+{{~ end ~}}
+            return connection;
+        });
+
+        return services;
+    }
+}

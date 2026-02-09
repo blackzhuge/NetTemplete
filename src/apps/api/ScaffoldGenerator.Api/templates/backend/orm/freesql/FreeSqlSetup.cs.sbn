@@ -1,0 +1,31 @@
+using FreeSql;
+
+namespace {{ namespace }}.Api.Setup;
+
+public static class FreeSqlSetup
+{
+    public static IServiceCollection AddFreeSql(this IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("DefaultConnection")
+            ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+        var fsql = new FreeSqlBuilder()
+{{~ if db_type == "SQLite" ~}}
+            .UseConnectionString(DataType.Sqlite, connectionString)
+{{~ else if db_type == "MySQL" ~}}
+            .UseConnectionString(DataType.MySql, connectionString)
+{{~ else if db_type == "SQLServer" ~}}
+            .UseConnectionString(DataType.SqlServer, connectionString)
+{{~ else ~}}
+            .UseConnectionString(DataType.Sqlite, connectionString)
+{{~ end ~}}
+            .UseAutoSyncStructure(true)
+            .UseMonitorCommand(cmd => Console.WriteLine($"SQL: {cmd.CommandText}"))
+            .Build();
+
+        services.AddSingleton(fsql);
+        services.AddScoped<UnitOfWorkManager>();
+
+        return services;
+    }
+}

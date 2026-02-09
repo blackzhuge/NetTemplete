@@ -1,0 +1,51 @@
+namespace {{ namespace }}.Api.Features.Example;
+
+/// <summary>
+/// Example feature using Vertical Slice Architecture.
+/// Each feature contains its own Command/Query, Handler, and Endpoint.
+/// </summary>
+public static class ExampleFeature
+{
+    // Command
+    public sealed record CreateExampleCommand(string Name, string Description);
+
+    // Query
+    public sealed record GetExampleQuery(int Id);
+
+    // Response
+    public sealed record ExampleResponse(int Id, string Name, string Description);
+
+    // Handler
+    public sealed class Handler
+    {
+        public Task<ExampleResponse> HandleAsync(CreateExampleCommand command, CancellationToken ct = default)
+        {
+            // TODO: Implement create logic
+            return Task.FromResult(new ExampleResponse(1, command.Name, command.Description));
+        }
+
+        public Task<ExampleResponse?> HandleAsync(GetExampleQuery query, CancellationToken ct = default)
+        {
+            // TODO: Implement query logic
+            return Task.FromResult<ExampleResponse?>(new ExampleResponse(query.Id, "Example", "Description"));
+        }
+    }
+
+    // Endpoint mapping
+    public static void MapEndpoints(IEndpointRouteBuilder app)
+    {
+        var group = app.MapGroup("/api/v1/examples");
+
+        group.MapGet("/{id:int}", async (int id, Handler handler, CancellationToken ct) =>
+        {
+            var result = await handler.HandleAsync(new GetExampleQuery(id), ct);
+            return result is not null ? Results.Ok(result) : Results.NotFound();
+        });
+
+        group.MapPost("/", async (CreateExampleCommand command, Handler handler, CancellationToken ct) =>
+        {
+            var result = await handler.HandleAsync(command, ct);
+            return Results.Created($"/api/v1/examples/{result.Id}", result);
+        });
+    }
+}

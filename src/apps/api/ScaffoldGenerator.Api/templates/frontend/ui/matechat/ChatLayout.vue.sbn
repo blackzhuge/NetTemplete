@@ -1,0 +1,147 @@
+<template>
+  <div class="chat-layout">
+    <div class="chat-sidebar">
+      <d-button variant="primary" @click="newChat">新建对话</d-button>
+      <div class="chat-list">
+        <div
+          v-for="chat in chatList"
+          :key="chat.id"
+          class="chat-item"
+          :class="{ active: chat.id === currentChatId }"
+          @click="selectChat(chat.id)"
+        >
+          {{ chat.title }}
+        </div>
+      </div>
+    </div>
+    <div class="chat-main">
+      <div class="chat-messages">
+        <div
+          v-for="msg in messages"
+          :key="msg.id"
+          class="message"
+          :class="msg.role"
+        >
+          <div class="message-content">{{ msg.content }}</div>
+        </div>
+      </div>
+      <div class="chat-input">
+        <d-textarea
+          v-model="inputText"
+          placeholder="输入消息..."
+          @keydown.enter.ctrl="sendMessage"
+        />
+        <d-button variant="primary" @click="sendMessage">发送</d-button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+
+interface ChatMessage {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
+}
+
+interface Chat {
+  id: string
+  title: string
+}
+
+const chatList = ref<Chat[]>([])
+const currentChatId = ref<string | null>(null)
+const messages = ref<ChatMessage[]>([])
+const inputText = ref('')
+
+function newChat() {
+  const id = Date.now().toString()
+  chatList.value.push({ id, title: '新对话' })
+  currentChatId.value = id
+  messages.value = []
+}
+
+function selectChat(id: string) {
+  currentChatId.value = id
+  // TODO: Load messages for selected chat
+}
+
+function sendMessage() {
+  if (!inputText.value.trim()) return
+
+  messages.value.push({
+    id: Date.now().toString(),
+    role: 'user',
+    content: inputText.value
+  })
+
+  // TODO: Call AI API
+  inputText.value = ''
+}
+</script>
+
+<style scoped>
+.chat-layout {
+  display: flex;
+  height: 100vh;
+}
+
+.chat-sidebar {
+  width: 260px;
+  padding: 16px;
+  border-right: 1px solid #e0e0e0;
+}
+
+.chat-list {
+  margin-top: 16px;
+}
+
+.chat-item {
+  padding: 12px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.chat-item:hover,
+.chat-item.active {
+  background: #f5f5f5;
+}
+
+.chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.message {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  max-width: 80%;
+}
+
+.message.user {
+  margin-left: auto;
+  background: #1890ff;
+  color: white;
+}
+
+.message.assistant {
+  background: #f5f5f5;
+}
+
+.chat-input {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  border-top: 1px solid #e0e0e0;
+}
+</style>

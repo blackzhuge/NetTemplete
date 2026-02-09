@@ -3,10 +3,10 @@ using ScaffoldGenerator.Contracts.Requests;
 
 namespace ScaffoldGenerator.Application.Modules;
 
-public sealed class FrontendModule : IScaffoldModule
+public sealed class FrontendModule(IEnumerable<IUiLibraryProvider> providers) : IScaffoldModule
 {
     public string Name => "Frontend";
-    public int Order => 50;
+    public int Order => 100;
 
     public bool IsEnabled(GenerateScaffoldRequest request) => true;
 
@@ -24,26 +24,50 @@ public sealed class FrontendModule : IScaffoldModule
             Namespace = request.Basic.Namespace,
             RouterMode = request.Frontend.RouterMode.ToString(),
             EnableMockData = request.Frontend.MockData,
-            NpmPackages = request.Frontend.NpmPackages
+            NpmPackages = request.Frontend.NpmPackages,
+            UiLibrary = request.Frontend.UiLibrary.ToString()
         };
 
-        plan.AddTemplateFile("frontend/package.json.sbn", $"src/{request.Basic.ProjectName}.Web/package.json", model);
-        plan.AddTemplateFile("frontend/vite.config.ts.sbn", $"src/{request.Basic.ProjectName}.Web/vite.config.ts", model);
-        plan.AddTemplateFile("frontend/tsconfig.json.sbn", $"src/{request.Basic.ProjectName}.Web/tsconfig.json", model);
-        plan.AddTemplateFile("frontend/tsconfig.node.json.sbn", $"src/{request.Basic.ProjectName}.Web/tsconfig.node.json", model);
-        plan.AddTemplateFile("frontend/index.html.sbn", $"src/{request.Basic.ProjectName}.Web/index.html", model);
-        plan.AddTemplateFile("frontend/main.ts.sbn", $"src/{request.Basic.ProjectName}.Web/src/main.ts", model);
-        plan.AddTemplateFile("frontend/App.vue.sbn", $"src/{request.Basic.ProjectName}.Web/src/App.vue", model);
-        plan.AddTemplateFile("frontend/router/index.ts.sbn", $"src/{request.Basic.ProjectName}.Web/src/router/index.ts", model);
-        plan.AddTemplateFile("frontend/stores/index.ts.sbn", $"src/{request.Basic.ProjectName}.Web/src/stores/index.ts", model);
-        plan.AddTemplateFile("frontend/api/index.ts.sbn", $"src/{request.Basic.ProjectName}.Web/src/api/index.ts", model);
-        plan.AddTemplateFile("frontend/views/HomeView.vue.sbn", $"src/{request.Basic.ProjectName}.Web/src/views/HomeView.vue", model);
+        var webPath = $"src/{request.Basic.ProjectName}.Web";
 
+        // 基础前端文件
+        plan.AddTemplateFile("frontend/package.json.sbn", $"{webPath}/package.json", model);
+        plan.AddTemplateFile("frontend/vite.config.ts.sbn", $"{webPath}/vite.config.ts", model);
+        plan.AddTemplateFile("frontend/tsconfig.json.sbn", $"{webPath}/tsconfig.json", model);
+        plan.AddTemplateFile("frontend/tsconfig.node.json.sbn", $"{webPath}/tsconfig.node.json", model);
+        plan.AddTemplateFile("frontend/index.html.sbn", $"{webPath}/index.html", model);
+        plan.AddTemplateFile("frontend/App.vue.sbn", $"{webPath}/src/App.vue", model);
+        plan.AddTemplateFile("frontend/router/index.ts.sbn", $"{webPath}/src/router/index.ts", model);
+        plan.AddTemplateFile("frontend/stores/index.ts.sbn", $"{webPath}/src/stores/index.ts", model);
+        plan.AddTemplateFile("frontend/api/index.ts.sbn", $"{webPath}/src/api/index.ts", model);
+        plan.AddTemplateFile("frontend/views/HomeView.vue.sbn", $"{webPath}/src/views/HomeView.vue", model);
+
+        // 基础依赖
         plan.AddNpmPackage("vue");
         plan.AddNpmPackage("vue-router");
         plan.AddNpmPackage("pinia");
         plan.AddNpmPackage("axios");
-        plan.AddNpmPackage("element-plus");
+
+        // 根据选择的 UI 库添加依赖和模板
+        var provider = providers.FirstOrDefault(p => p.Library == request.Frontend.UiLibrary)
+            ?? throw new InvalidOperationException($"不支持的 UI 库: {request.Frontend.UiLibrary}");
+
+        foreach (var pkg in provider.GetNpmPackages())
+        {
+            plan.AddNpmPackage(pkg);
+        }
+
+        // main.ts 使用 UI 库特定模板
+        plan.AddTemplateFile(provider.GetMainTsTemplatePath(), $"{webPath}/src/main.ts", model);
+
+        // 添加 UI 库额外模板
+        foreach (var template in provider.GetAdditionalTemplates())
+        {
+            var outputPath = template.OutputPath.StartsWith("src/")
+                ? $"{webPath}/{template.OutputPath}"
+                : $"{webPath}/{template.OutputPath}";
+            plan.AddTemplateFile(template.TemplatePath, outputPath, model);
+        }
 
         return Task.CompletedTask;
     }

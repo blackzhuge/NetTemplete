@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Scaffold Preset",
+  "description": "脚手架预设配置文件 Schema",
+  "type": "object",
+  "required": ["id", "name", "config"],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "预设唯一标识符"
+    },
+    "name": {
+      "type": "string",
+      "description": "预设显示名称"
+    },
+    "description": {
+      "type": "string",
+      "description": "预设描述"
+    },
+    "isBuiltin": {
+      "type": "boolean",
+      "default": false,
+      "description": "是否为内置预设（只读）"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "预设标签"
+    },
+    "config": {
+      "type": "object",
+      "required": ["basic"],
+      "properties": {
+        "basic": {
+          "type": "object",
+          "required": ["projectName", "namespace"],
+          "properties": {
+            "projectName": { "type": "string" },
+            "namespace": { "type": "string" }
+          }
+        },
+        "backend": {
+          "type": "object",
+          "properties": {
+            "architecture": {
+              "type": "string",
+              "enum": ["Simple", "CleanArchitecture", "VerticalSlice", "ModularMonolith"],
+              "default": "Simple"
+            },
+            "orm": {
+              "type": "string",
+              "enum": ["SqlSugar", "EFCore", "Dapper", "FreeSql"],
+              "default": "SqlSugar"
+            },
+            "database": {
+              "type": "string",
+              "enum": ["SQLite", "MySQL", "SQLServer"],
+              "default": "SQLite"
+            },
+            "cache": {
+              "type": "string",
+              "enum": ["None", "MemoryCache", "Redis"],
+              "default": "None"
+            },
+            "swagger": { "type": "boolean", "default": true },
+            "jwtAuth": { "type": "boolean", "default": false }
+          }
+        },
+        "frontend": {
+          "type": "object",
+          "properties": {
+            "uiLibrary": {
+              "type": "string",
+              "enum": ["ElementPlus", "AntDesignVue", "NaiveUI", "TailwindHeadless", "ShadcnVue", "MateChat"],
+              "default": "ElementPlus"
+            },
+            "routerMode": {
+              "type": "string",
+              "enum": ["Hash", "History"],
+              "default": "Hash"
+            },
+            "mockData": { "type": "boolean", "default": false }
+          }
+        }
+      }
+    }
+  }
+}

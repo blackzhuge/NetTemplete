@@ -1,6 +1,7 @@
 using FluentAssertions;
 using ScaffoldGenerator.Application.Presets;
 using ScaffoldGenerator.Application.Validators;
+using ScaffoldGenerator.Contracts.Enums;
 using Xunit;
 
 namespace ScaffoldGenerator.Tests.Application;
@@ -20,7 +21,7 @@ public class PresetServiceTests
         // Assert
         response.Should().NotBeNull();
         response.Version.Should().Be("1.0.0");
-        response.Presets.Should().HaveCount(3);
+        response.Presets.Should().HaveCount(5);
     }
 
     [Fact]
@@ -72,8 +73,8 @@ public class PresetServiceTests
         var enterprise = response.Presets.FirstOrDefault(p => p.Id == "enterprise");
         enterprise.Should().NotBeNull();
         enterprise!.Name.Should().Be("Enterprise");
-        enterprise.Config.Backend.Database.Should().Be(Contracts.Enums.DatabaseProvider.MySQL);
-        enterprise.Config.Backend.Cache.Should().Be(Contracts.Enums.CacheProvider.Redis);
+        enterprise.Config.Backend.Database.Should().Be(DatabaseProvider.MySQL);
+        enterprise.Config.Backend.Cache.Should().Be(CacheProvider.Redis);
     }
 
     [Fact]

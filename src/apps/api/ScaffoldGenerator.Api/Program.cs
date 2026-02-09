@@ -8,6 +8,7 @@ using ScaffoldGenerator.Application.Validators;
 using ScaffoldGenerator.Contracts.Preview;
 using ScaffoldGenerator.Contracts.Responses;
 using ScaffoldGenerator.Application.Modules;
+using ScaffoldGenerator.Application.Providers;
 using ScaffoldGenerator.Application.UseCases;
 using ScaffoldGenerator.Contracts.Requests;
 using ScaffoldGenerator.Infrastructure.FileSystem;
@@ -53,6 +54,8 @@ builder.Services.AddScoped<ITemplateRenderer, ScribanTemplateRenderer>();
 
 // Module Registration
 builder.Services.AddScoped<IScaffoldModule, CoreModule>();
+builder.Services.AddScoped<IScaffoldModule, ArchitectureModule>();
+builder.Services.AddScoped<IScaffoldModule, OrmModule>();
 builder.Services.AddScoped<IScaffoldModule, DatabaseModule>();
 builder.Services.AddScoped<IScaffoldModule, CacheModule>();
 builder.Services.AddScoped<IScaffoldModule, JwtModule>();
@@ -60,6 +63,14 @@ builder.Services.AddScoped<IScaffoldModule, SwaggerModule>();
 builder.Services.AddScoped<IScaffoldModule, FrontendModule>();
 builder.Services.AddScoped<ScaffoldPlanBuilder>();
 builder.Services.AddScoped<GenerateScaffoldUseCase>();
+
+// UI Library Providers
+builder.Services.AddSingleton<IUiLibraryProvider, ElementPlusProvider>();
+builder.Services.AddSingleton<IUiLibraryProvider, AntDesignProvider>();
+builder.Services.AddSingleton<IUiLibraryProvider, NaiveUiProvider>();
+builder.Services.AddSingleton<IUiLibraryProvider, TailwindProvider>();
+builder.Services.AddSingleton<IUiLibraryProvider, ShadcnVueProvider>();
+builder.Services.AddSingleton<IUiLibraryProvider, MateChatProvider>();
 
 // Preset and Preview Services
 builder.Services.AddScoped<IPresetService, PresetService>();

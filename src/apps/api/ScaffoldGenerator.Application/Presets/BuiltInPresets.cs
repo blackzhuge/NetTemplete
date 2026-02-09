@@ -20,8 +20,21 @@ public static class BuiltInPresets
             Config: new GenerateScaffoldRequest
             {
                 Basic = new BasicOptions { ProjectName = "MyApp", Namespace = "MyApp" },
-                Backend = new BackendOptions { Database = DatabaseProvider.SQLite, Cache = CacheProvider.None, Swagger = true, JwtAuth = false },
-                Frontend = new FrontendOptions { RouterMode = RouterMode.Hash, MockData = false }
+                Backend = new BackendOptions
+                {
+                    Architecture = ArchitectureStyle.Simple,
+                    Orm = OrmProvider.SqlSugar,
+                    Database = DatabaseProvider.SQLite,
+                    Cache = CacheProvider.None,
+                    Swagger = true,
+                    JwtAuth = false
+                },
+                Frontend = new FrontendOptions
+                {
+                    UiLibrary = UiLibrary.ElementPlus,
+                    RouterMode = RouterMode.Hash,
+                    MockData = false
+                }
             }
         ),
         new ScaffoldPresetDto(
@@ -33,21 +46,99 @@ public static class BuiltInPresets
             Config: new GenerateScaffoldRequest
             {
                 Basic = new BasicOptions { ProjectName = "MyApp", Namespace = "MyApp" },
-                Backend = new BackendOptions { Database = DatabaseProvider.SQLite, Cache = CacheProvider.MemoryCache, Swagger = true, JwtAuth = true },
-                Frontend = new FrontendOptions { RouterMode = RouterMode.Hash, MockData = false }
+                Backend = new BackendOptions
+                {
+                    Architecture = ArchitectureStyle.Simple,
+                    Orm = OrmProvider.SqlSugar,
+                    Database = DatabaseProvider.SQLite,
+                    Cache = CacheProvider.MemoryCache,
+                    Swagger = true,
+                    JwtAuth = true
+                },
+                Frontend = new FrontendOptions
+                {
+                    UiLibrary = UiLibrary.ElementPlus,
+                    RouterMode = RouterMode.Hash,
+                    MockData = false
+                }
             }
         ),
         new ScaffoldPresetDto(
             Id: "enterprise",
             Name: "Enterprise",
-            Description: "企业级配置，包含完整功能",
+            Description: "企业级配置，Clean Architecture + EF Core",
             IsDefault: false,
-            Tags: ["full-featured", "production"],
+            Tags: ["full-featured", "production", "clean-architecture"],
             Config: new GenerateScaffoldRequest
             {
                 Basic = new BasicOptions { ProjectName = "MyApp", Namespace = "MyApp" },
-                Backend = new BackendOptions { Database = DatabaseProvider.MySQL, Cache = CacheProvider.Redis, Swagger = true, JwtAuth = true },
-                Frontend = new FrontendOptions { RouterMode = RouterMode.History, MockData = false }
+                Backend = new BackendOptions
+                {
+                    Architecture = ArchitectureStyle.CleanArchitecture,
+                    Orm = OrmProvider.EFCore,
+                    Database = DatabaseProvider.MySQL,
+                    Cache = CacheProvider.Redis,
+                    Swagger = true,
+                    JwtAuth = true
+                },
+                Frontend = new FrontendOptions
+                {
+                    UiLibrary = UiLibrary.ElementPlus,
+                    RouterMode = RouterMode.History,
+                    MockData = false
+                }
+            }
+        ),
+        new ScaffoldPresetDto(
+            Id: "startup",
+            Name: "Startup",
+            Description: "快速启动配置，Simple + SqlSugar + Naive UI",
+            IsDefault: false,
+            Tags: ["startup", "quick-start", "naive-ui"],
+            Config: new GenerateScaffoldRequest
+            {
+                Basic = new BasicOptions { ProjectName = "MyApp", Namespace = "MyApp" },
+                Backend = new BackendOptions
+                {
+                    Architecture = ArchitectureStyle.Simple,
+                    Orm = OrmProvider.SqlSugar,
+                    Database = DatabaseProvider.SQLite,
+                    Cache = CacheProvider.MemoryCache,
+                    Swagger = true,
+                    JwtAuth = false
+                },
+                Frontend = new FrontendOptions
+                {
+                    UiLibrary = UiLibrary.NaiveUI,
+                    RouterMode = RouterMode.Hash,
+                    MockData = true
+                }
+            }
+        ),
+        new ScaffoldPresetDto(
+            Id: "ai-ready",
+            Name: "AI Ready",
+            Description: "AI 对话应用配置，集成 MateChat",
+            IsDefault: false,
+            Tags: ["ai", "chat", "matechat"],
+            Config: new GenerateScaffoldRequest
+            {
+                Basic = new BasicOptions { ProjectName = "MyApp", Namespace = "MyApp" },
+                Backend = new BackendOptions
+                {
+                    Architecture = ArchitectureStyle.Simple,
+                    Orm = OrmProvider.SqlSugar,
+                    Database = DatabaseProvider.SQLite,
+                    Cache = CacheProvider.MemoryCache,
+                    Swagger = true,
+                    JwtAuth = true
+                },
+                Frontend = new FrontendOptions
+                {
+                    UiLibrary = UiLibrary.MateChat,
+                    RouterMode = RouterMode.Hash,
+                    MockData = false
+                }
             }
         )
     };

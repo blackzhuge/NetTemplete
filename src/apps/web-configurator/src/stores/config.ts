@@ -8,10 +8,13 @@ export const useConfigStore = defineStore('config', () => {
   const config = ref<ScaffoldConfig>({
     projectName: 'MyProject',
     namespace: 'MyProject',
+    architecture: 'Simple',
+    orm: 'SqlSugar',
     database: 'SQLite',
     cache: 'None',
     enableSwagger: true,
     enableJwtAuth: true,
+    uiLibrary: 'ElementPlus',
     routerMode: 'Hash',
     enableMockData: false
   })
@@ -201,12 +204,14 @@ export const useConfigStore = defineStore('config', () => {
     config.value = {
       projectName: preset.config.basic.projectName,
       namespace: preset.config.basic.namespace,
-      database: preset.config.backend.database as ScaffoldConfig['database'],
-      cache: preset.config.backend.cache as ScaffoldConfig['cache'],
+      architecture: preset.config.backend.architecture,
+      orm: preset.config.backend.orm,
+      database: preset.config.backend.database,
+      cache: preset.config.backend.cache,
       enableSwagger: preset.config.backend.swagger,
       enableJwtAuth: preset.config.backend.jwtAuth,
-      routerMode: (preset.config.frontend.routerMode.charAt(0).toUpperCase() +
-                   preset.config.frontend.routerMode.slice(1)) as ScaffoldConfig['routerMode'],
+      uiLibrary: preset.config.frontend.uiLibrary,
+      routerMode: preset.config.frontend.routerMode,
       enableMockData: preset.config.frontend.mockData
     }
   }

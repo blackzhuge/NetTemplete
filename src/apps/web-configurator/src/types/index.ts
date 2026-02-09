@@ -3,14 +3,20 @@ import type { PackageReference } from './packages'
 export type DatabaseProvider = 'SQLite' | 'MySQL' | 'SQLServer'
 export type CacheProvider = 'None' | 'MemoryCache' | 'Redis'
 export type RouterMode = 'Hash' | 'History'
+export type ArchitectureStyle = 'Simple' | 'CleanArchitecture' | 'VerticalSlice' | 'ModularMonolith'
+export type OrmProvider = 'SqlSugar' | 'EFCore' | 'Dapper' | 'FreeSql'
+export type UiLibrary = 'ElementPlus' | 'AntDesignVue' | 'NaiveUI' | 'TailwindHeadless' | 'ShadcnVue' | 'MateChat'
 
 export interface ScaffoldConfig {
   projectName: string
   namespace: string
+  architecture: ArchitectureStyle
+  orm: OrmProvider
   database: DatabaseProvider
   cache: CacheProvider
   enableSwagger: boolean
   enableJwtAuth: boolean
+  uiLibrary: UiLibrary
   routerMode: RouterMode
   enableMockData: boolean
   nugetPackages?: PackageReference[]
@@ -51,13 +57,16 @@ export interface ScaffoldPreset {
       namespace: string
     }
     backend: {
-      database: string
-      cache: string
+      architecture: ArchitectureStyle
+      orm: OrmProvider
+      database: DatabaseProvider
+      cache: CacheProvider
       swagger: boolean
       jwtAuth: boolean
     }
     frontend: {
-      routerMode: string
+      uiLibrary: UiLibrary
+      routerMode: RouterMode
       mockData: boolean
     }
   }

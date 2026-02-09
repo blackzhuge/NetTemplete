@@ -6,6 +6,10 @@
     </div>
 
     <el-form label-position="top">
+      <ArchitectureSelector />
+
+      <OrmSelector />
+
       <el-form-item label="数据库">
         <el-radio-group v-model="database" class="full-width-radio">
           <el-radio value="SQLite">SQLite</el-radio>
@@ -47,6 +51,8 @@ import { Cpu } from '@element-plus/icons-vue'
 import { useConfigStore } from '@/stores/config'
 import type { DatabaseProvider, CacheProvider } from '@/types'
 import PackageSelector from './PackageSelector.vue'
+import ArchitectureSelector from './ArchitectureSelector.vue'
+import OrmSelector from './OrmSelector.vue'
 
 const store = useConfigStore()
 
