@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 13
+- **Total Sessions**: 14
 - **Last Active**: 2026-02-08
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~833 | Active |
+| `journal-1.md` | ~889 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | 日期 | 标题 | 提交 |
 |---|------|------|------|
+| 14 | 2026-02-08 | OpenSpec 工作流修复 + 前端 ESLint 配置 | `495beea`, `59ea976`, `f059ef6` |
 | 13 | 2026-02-08 | Package Manager 测试完成与生成请求修复 | `2db45fa` |
 | 12 | 2026-02-08 | 整理规范并添加测试规范 | `a74fe35` |
 | 11 | 2026-02-08 | Package Manager 集成 + Moq 迁移 | `8ea81d4` |

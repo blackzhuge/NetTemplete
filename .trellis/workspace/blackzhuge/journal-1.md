@@ -831,3 +831,59 @@ Codex+Gemini 双模型审查发现 5 个 Critical 问题，全部修复：API �
 ### Next Steps
 
 - None - task complete
+
+## Session 14: OpenSpec 工作流修复 + 前端 ESLint 配置
+
+**Date**: 2026-02-08
+**Task**: OpenSpec 工作流修复 + 前端 ESLint 配置
+
+### Summary
+
+(Add summary)
+
+### Main Changes
+
+## 完成内容
+
+| 类型 | 描述 |
+|------|------|
+| OpenSpec 修复 | 同步 3 个已归档 change 的 specs 到主规格库 |
+| 工作流强化 | 添加 archive 强制 sync 前置规则 |
+| 前端工具 | 为 web-configurator 添加 ESLint 9 配置 |
+
+## 变更文件
+
+**OpenSpec**:
+- `openspec/specs/scaffold-generator/spec.md` - 新增
+- `openspec/specs/preset-preview/spec.md` - 新增
+- `openspec/specs/package-manager/spec.md` - 新增
+- `openspec/config.yaml` - 添加 archive 规则
+
+**前端 ESLint**:
+- `src/apps/web-configurator/eslint.config.js` - 新增
+- `src/apps/web-configurator/package.json` - 添加依赖和 scripts
+
+## 修复问题
+
+- `ccg:spec-impl` 归档时未执行 sync 导致规格丢失
+- 已补充修复全局配置 `~/.claude/commands/ccg/spec-impl.md`
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `495beea` | (see git log) |
+| `59ea976` | (see git log) |
+| `f059ef6` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
