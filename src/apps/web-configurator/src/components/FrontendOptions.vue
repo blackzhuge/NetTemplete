@@ -21,6 +21,21 @@
         </div>
       </el-form-item>
 
+      <el-form-item label="单元测试框架">
+        <el-select v-model="frontendUnitTestFramework" placeholder="选择单元测试框架">
+          <el-option value="None" label="无" />
+          <el-option value="Vitest" label="Vitest" />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="E2E 测试框架">
+        <el-select v-model="frontendE2EFramework" placeholder="选择 E2E 测试框架">
+          <el-option value="None" label="无" />
+          <el-option value="Playwright" label="Playwright" />
+          <el-option value="Cypress" label="Cypress" />
+        </el-select>
+      </el-form-item>
+
       <el-form-item label="npm 包">
         <PackageSelector
           manager-type="npm"
@@ -37,7 +52,7 @@ import { watch } from 'vue'
 import { useField } from 'vee-validate'
 import { Monitor } from '@element-plus/icons-vue'
 import { useConfigStore } from '@/stores/config'
-import type { RouterMode } from '@/types'
+import type { RouterMode, FrontendUnitTestFramework, FrontendE2EFramework } from '@/types'
 import PackageSelector from './PackageSelector.vue'
 import UiLibrarySelector from './UiLibrarySelector.vue'
 
@@ -45,12 +60,16 @@ const store = useConfigStore()
 
 const { value: routerMode } = useField<RouterMode>('routerMode')
 const { value: enableMockData } = useField<boolean>('enableMockData')
+const { value: frontendUnitTestFramework } = useField<FrontendUnitTestFramework>('frontendUnitTestFramework')
+const { value: frontendE2EFramework } = useField<FrontendE2EFramework>('frontendE2EFramework')
 
 // 实时同步到 store，触发预览刷新
-watch([routerMode, enableMockData], ([mode, mock]) => {
+watch([routerMode, enableMockData, frontendUnitTestFramework, frontendE2EFramework], ([mode, mock, unitTest, e2e]) => {
   store.updateConfig({
     routerMode: mode,
-    enableMockData: mock
+    enableMockData: mock,
+    frontendUnitTestFramework: unitTest,
+    frontendE2EFramework: e2e
   })
 })
 </script>

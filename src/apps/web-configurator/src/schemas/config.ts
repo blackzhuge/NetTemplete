@@ -27,6 +27,10 @@ export const scaffoldConfigSchema = z.object({
   uiLibrary: z.enum(['ElementPlus', 'AntDesignVue', 'NaiveUI', 'TailwindHeadless', 'ShadcnVue', 'MateChat']),
   routerMode: z.enum(['Hash', 'History']),
   enableMockData: z.boolean(),
+  backendUnitTestFramework: z.enum(['None', 'xUnit', 'NUnit', 'MSTest']),
+  backendIntegrationTestFramework: z.enum(['None', 'xUnit']),
+  frontendUnitTestFramework: z.enum(['None', 'Vitest']),
+  frontendE2EFramework: z.enum(['None', 'Playwright', 'Cypress']),
   nugetPackages: z.array(packageReferenceSchema).optional().default([]),
   npmPackages: z.array(packageReferenceSchema).optional().default([])
 })

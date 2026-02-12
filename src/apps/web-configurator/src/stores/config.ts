@@ -16,7 +16,11 @@ export const useConfigStore = defineStore('config', () => {
     enableJwtAuth: true,
     uiLibrary: 'ElementPlus',
     routerMode: 'Hash',
-    enableMockData: false
+    enableMockData: false,
+    backendUnitTestFramework: 'None',
+    backendIntegrationTestFramework: 'None',
+    frontendUnitTestFramework: 'None',
+    frontendE2EFramework: 'None'
   })
 
   const loading = ref(false)
@@ -141,7 +145,11 @@ export const useConfigStore = defineStore('config', () => {
       enableJwtAuth: preset.config.backend.jwtAuth,
       uiLibrary: preset.config.frontend.uiLibrary,
       routerMode: preset.config.frontend.routerMode,
-      enableMockData: preset.config.frontend.mockData
+      enableMockData: preset.config.frontend.mockData,
+      backendUnitTestFramework: preset.config.backend.unitTestFramework ?? 'None',
+      backendIntegrationTestFramework: preset.config.backend.integrationTestFramework ?? 'None',
+      frontendUnitTestFramework: preset.config.frontend.unitTestFramework ?? 'None',
+      frontendE2EFramework: preset.config.frontend.e2eFramework ?? 'None'
     }
   }
 

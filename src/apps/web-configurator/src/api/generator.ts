@@ -64,12 +64,16 @@ interface GenerateScaffoldRequestDto {
     swagger: boolean
     jwtAuth: boolean
     nugetPackages?: PackageReference[]
+    unitTestFramework?: string
+    integrationTestFramework?: string
   }
   frontend: {
     uiLibrary: string
     routerMode: string
     mockData: boolean
     npmPackages?: PackageReference[]
+    unitTestFramework?: string
+    e2eFramework?: string
   }
 }
 
@@ -87,13 +91,17 @@ function toApiRequest(config: ScaffoldConfig): GenerateScaffoldRequestDto {
       cache: config.cache,
       swagger: config.enableSwagger,
       jwtAuth: config.enableJwtAuth,
-      nugetPackages: config.nugetPackages
+      nugetPackages: config.nugetPackages,
+      unitTestFramework: config.backendUnitTestFramework,
+      integrationTestFramework: config.backendIntegrationTestFramework
     },
     frontend: {
       uiLibrary: config.uiLibrary,
       routerMode: config.routerMode,
       mockData: config.enableMockData,
-      npmPackages: config.npmPackages
+      npmPackages: config.npmPackages,
+      unitTestFramework: config.frontendUnitTestFramework,
+      e2eFramework: config.frontendE2EFramework
     }
   }
 }

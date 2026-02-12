@@ -16,12 +16,16 @@
       "database": "MySQL",
       "cache": "Redis",
       "swagger": true,
-      "jwtAuth": true
+      "jwtAuth": true,
+      "unitTestFramework": "xUnit",
+      "integrationTestFramework": "xUnit"
     },
     "frontend": {
       "uiLibrary": "ElementPlus",
       "routerMode": "History",
-      "mockData": false
+      "mockData": false,
+      "unitTestFramework": "Vitest",
+      "e2eFramework": "Playwright"
     }
   }
 }

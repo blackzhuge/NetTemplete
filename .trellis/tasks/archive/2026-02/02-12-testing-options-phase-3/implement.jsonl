@@ -1,0 +1,7 @@
+{"file": ".trellis/workflow.md", "reason": "Project workflow and conventions"}
+{"file": ".trellis/spec/shared/index.md", "reason": "Shared coding standards"}
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend development guide"}
+{"file": ".trellis/spec/frontend/components.md", "reason": "Component conventions"}
+{"file": "openspec/changes/testing-options/specs/testing-options/spec.md", "reason": "Testing options spec"}
+{"file": "openspec/changes/testing-options/design.md", "reason": "Design decisions"}
+{"file": "openspec/changes/testing-options/tasks.md", "reason": "Task checklist"}

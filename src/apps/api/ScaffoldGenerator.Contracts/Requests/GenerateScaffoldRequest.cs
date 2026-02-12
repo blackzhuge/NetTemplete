@@ -47,6 +47,14 @@ public sealed record BackendOptions
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public CacheProvider Cache { get; init; } = CacheProvider.None;
 
+    [JsonPropertyName("unitTestFramework")]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public BackendUnitTestFramework UnitTestFramework { get; init; } = BackendUnitTestFramework.None;
+
+    [JsonPropertyName("integrationTestFramework")]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public BackendIntegrationTestFramework IntegrationTestFramework { get; init; } = BackendIntegrationTestFramework.None;
+
     [JsonPropertyName("swagger")]
     public bool Swagger { get; init; } = true;
 
@@ -66,6 +74,14 @@ public sealed record FrontendOptions
     [JsonPropertyName("routerMode")]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public RouterMode RouterMode { get; init; } = RouterMode.Hash;
+
+    [JsonPropertyName("unitTestFramework")]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public FrontendUnitTestFramework UnitTestFramework { get; init; } = FrontendUnitTestFramework.None;
+
+    [JsonPropertyName("e2eFramework")]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public FrontendE2EFramework E2EFramework { get; init; } = FrontendE2EFramework.None;
 
     [JsonPropertyName("mockData")]
     public bool MockData { get; init; }

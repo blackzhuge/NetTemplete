@@ -53,13 +53,17 @@ public static class BuiltInPresets
                     Database = DatabaseProvider.SQLite,
                     Cache = CacheProvider.MemoryCache,
                     Swagger = true,
-                    JwtAuth = true
+                    JwtAuth = true,
+                    UnitTestFramework = BackendUnitTestFramework.xUnit,
+                    IntegrationTestFramework = BackendIntegrationTestFramework.None
                 },
                 Frontend = new FrontendOptions
                 {
                     UiLibrary = UiLibrary.ElementPlus,
                     RouterMode = RouterMode.Hash,
-                    MockData = false
+                    MockData = false,
+                    UnitTestFramework = FrontendUnitTestFramework.Vitest,
+                    E2EFramework = FrontendE2EFramework.None
                 }
             }
         ),
@@ -79,13 +83,17 @@ public static class BuiltInPresets
                     Database = DatabaseProvider.MySQL,
                     Cache = CacheProvider.Redis,
                     Swagger = true,
-                    JwtAuth = true
+                    JwtAuth = true,
+                    UnitTestFramework = BackendUnitTestFramework.xUnit,
+                    IntegrationTestFramework = BackendIntegrationTestFramework.xUnit
                 },
                 Frontend = new FrontendOptions
                 {
                     UiLibrary = UiLibrary.ElementPlus,
                     RouterMode = RouterMode.History,
-                    MockData = false
+                    MockData = false,
+                    UnitTestFramework = FrontendUnitTestFramework.Vitest,
+                    E2EFramework = FrontendE2EFramework.Playwright
                 }
             }
         ),
