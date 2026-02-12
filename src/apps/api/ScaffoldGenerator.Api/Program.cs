@@ -61,6 +61,10 @@ builder.Services.AddScoped<IScaffoldModule, CacheModule>();
 builder.Services.AddScoped<IScaffoldModule, JwtModule>();
 builder.Services.AddScoped<IScaffoldModule, SwaggerModule>();
 builder.Services.AddScoped<IScaffoldModule, FrontendModule>();
+builder.Services.AddScoped<IScaffoldModule, BackendUnitTestModule>();
+builder.Services.AddScoped<IScaffoldModule, BackendIntegrationTestModule>();
+builder.Services.AddScoped<IScaffoldModule, FrontendUnitTestModule>();
+builder.Services.AddScoped<IScaffoldModule, FrontendE2EModule>();
 builder.Services.AddScoped<ScaffoldPlanBuilder>();
 builder.Services.AddScoped<GenerateScaffoldUseCase>();
 

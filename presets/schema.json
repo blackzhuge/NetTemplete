@@ -67,7 +67,17 @@
               "default": "None"
             },
             "swagger": { "type": "boolean", "default": true },
-            "jwtAuth": { "type": "boolean", "default": false }
+            "jwtAuth": { "type": "boolean", "default": false },
+            "unitTestFramework": {
+              "type": "string",
+              "enum": ["None", "xUnit", "NUnit", "MSTest"],
+              "default": "None"
+            },
+            "integrationTestFramework": {
+              "type": "string",
+              "enum": ["None", "xUnit"],
+              "default": "None"
+            }
           }
         },
         "frontend": {
@@ -83,7 +93,17 @@
               "enum": ["Hash", "History"],
               "default": "Hash"
             },
-            "mockData": { "type": "boolean", "default": false }
+            "mockData": { "type": "boolean", "default": false },
+            "unitTestFramework": {
+              "type": "string",
+              "enum": ["None", "Vitest"],
+              "default": "None"
+            },
+            "e2eFramework": {
+              "type": "string",
+              "enum": ["None", "Playwright", "Cypress"],
+              "default": "None"
+            }
           }
         }
       }

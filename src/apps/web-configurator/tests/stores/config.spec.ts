@@ -18,6 +18,10 @@ describe('useConfigStore', () => {
     expect(store.config.enableJwtAuth).toBe(true)
     expect(store.config.routerMode).toBe('Hash')
     expect(store.config.enableMockData).toBe(false)
+    expect(store.config.backendUnitTestFramework).toBe('None')
+    expect(store.config.backendIntegrationTestFramework).toBe('None')
+    expect(store.config.frontendUnitTestFramework).toBe('None')
+    expect(store.config.frontendE2EFramework).toBe('None')
   })
 
   it('should update config partially', () => {
@@ -27,6 +31,19 @@ describe('useConfigStore', () => {
 
     expect(store.config.projectName).toBe('NewProject')
     expect(store.config.namespace).toBe('MyProject')
+  })
+
+  it('should update test framework fields', () => {
+    const store = useConfigStore()
+
+    store.updateConfig({
+      backendUnitTestFramework: 'xUnit',
+      frontendE2EFramework: 'Playwright'
+    })
+
+    expect(store.config.backendUnitTestFramework).toBe('xUnit')
+    expect(store.config.frontendE2EFramework).toBe('Playwright')
+    expect(store.config.backendIntegrationTestFramework).toBe('None')
   })
 
   it('should set loading state', () => {

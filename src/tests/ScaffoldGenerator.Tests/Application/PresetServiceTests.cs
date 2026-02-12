@@ -123,4 +123,37 @@ public class PresetServiceTests
         defaults.Should().HaveCount(1);
         defaults[0].Id.Should().Be("standard");
     }
+
+    [Fact]
+    public void MinimalPreset_HasNoTestFrameworks()
+    {
+        var minimal = BuiltInPresets.All.First(p => p.Id == "minimal");
+
+        minimal.Config.Backend.UnitTestFramework.Should().Be(BackendUnitTestFramework.None);
+        minimal.Config.Backend.IntegrationTestFramework.Should().Be(BackendIntegrationTestFramework.None);
+        minimal.Config.Frontend.UnitTestFramework.Should().Be(FrontendUnitTestFramework.None);
+        minimal.Config.Frontend.E2EFramework.Should().Be(FrontendE2EFramework.None);
+    }
+
+    [Fact]
+    public void StandardPreset_HasBasicTestFrameworks()
+    {
+        var standard = BuiltInPresets.All.First(p => p.Id == "standard");
+
+        standard.Config.Backend.UnitTestFramework.Should().Be(BackendUnitTestFramework.xUnit);
+        standard.Config.Backend.IntegrationTestFramework.Should().Be(BackendIntegrationTestFramework.None);
+        standard.Config.Frontend.UnitTestFramework.Should().Be(FrontendUnitTestFramework.Vitest);
+        standard.Config.Frontend.E2EFramework.Should().Be(FrontendE2EFramework.None);
+    }
+
+    [Fact]
+    public void EnterprisePreset_HasAllTestFrameworks()
+    {
+        var enterprise = BuiltInPresets.All.First(p => p.Id == "enterprise");
+
+        enterprise.Config.Backend.UnitTestFramework.Should().Be(BackendUnitTestFramework.xUnit);
+        enterprise.Config.Backend.IntegrationTestFramework.Should().Be(BackendIntegrationTestFramework.xUnit);
+        enterprise.Config.Frontend.UnitTestFramework.Should().Be(FrontendUnitTestFramework.Vitest);
+        enterprise.Config.Frontend.E2EFramework.Should().Be(FrontendE2EFramework.Playwright);
+    }
 }

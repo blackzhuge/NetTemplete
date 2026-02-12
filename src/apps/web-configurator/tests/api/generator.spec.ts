@@ -45,6 +45,10 @@ describe('generator api payload mapping', () => {
     uiLibrary: 'ShadcnVue',
     routerMode: 'History',
     enableMockData: false,
+    backendUnitTestFramework: 'None',
+    backendIntegrationTestFramework: 'None',
+    frontendUnitTestFramework: 'None',
+    frontendE2EFramework: 'None',
     nugetPackages: [],
     npmPackages: []
   }
@@ -91,5 +95,25 @@ describe('generator api payload mapping', () => {
     expect(payload.config.backend.architecture).toBe('CleanArchitecture')
     expect(payload.config.frontend.uiLibrary).toBe('ShadcnVue')
     expect(payload.config.frontend.routerMode).toBe('History')
+  })
+
+  it('should map test framework fields to API payload', async () => {
+    postMock.mockResolvedValue({ data: { tree: [] } })
+
+    const configWithTests: ScaffoldConfig = {
+      ...baseConfig,
+      backendUnitTestFramework: 'xUnit',
+      backendIntegrationTestFramework: 'xUnit',
+      frontendUnitTestFramework: 'Vitest',
+      frontendE2EFramework: 'Playwright'
+    }
+
+    await getPreviewTree(configWithTests)
+
+    const [, payload] = postMock.mock.calls[0]
+    expect(payload.config.backend.unitTestFramework).toBe('xUnit')
+    expect(payload.config.backend.integrationTestFramework).toBe('xUnit')
+    expect(payload.config.frontend.unitTestFramework).toBe('Vitest')
+    expect(payload.config.frontend.e2eFramework).toBe('Playwright')
   })
 })

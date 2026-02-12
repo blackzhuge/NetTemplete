@@ -6,6 +6,10 @@ export type RouterMode = 'Hash' | 'History'
 export type ArchitectureStyle = 'Simple' | 'CleanArchitecture' | 'VerticalSlice' | 'ModularMonolith'
 export type OrmProvider = 'SqlSugar' | 'EFCore' | 'Dapper' | 'FreeSql'
 export type UiLibrary = 'ElementPlus' | 'AntDesignVue' | 'NaiveUI' | 'TailwindHeadless' | 'ShadcnVue' | 'MateChat'
+export type BackendUnitTestFramework = 'None' | 'xUnit' | 'NUnit' | 'MSTest'
+export type BackendIntegrationTestFramework = 'None' | 'xUnit'
+export type FrontendUnitTestFramework = 'None' | 'Vitest'
+export type FrontendE2EFramework = 'None' | 'Playwright' | 'Cypress'
 
 export interface ScaffoldConfig {
   projectName: string
@@ -19,6 +23,10 @@ export interface ScaffoldConfig {
   uiLibrary: UiLibrary
   routerMode: RouterMode
   enableMockData: boolean
+  backendUnitTestFramework: BackendUnitTestFramework
+  backendIntegrationTestFramework: BackendIntegrationTestFramework
+  frontendUnitTestFramework: FrontendUnitTestFramework
+  frontendE2EFramework: FrontendE2EFramework
   nugetPackages?: PackageReference[]
   npmPackages?: PackageReference[]
 }
@@ -63,11 +71,15 @@ export interface ScaffoldPreset {
       cache: CacheProvider
       swagger: boolean
       jwtAuth: boolean
+      unitTestFramework?: BackendUnitTestFramework
+      integrationTestFramework?: BackendIntegrationTestFramework
     }
     frontend: {
       uiLibrary: UiLibrary
       routerMode: RouterMode
       mockData: boolean
+      unitTestFramework?: FrontendUnitTestFramework
+      e2eFramework?: FrontendE2EFramework
     }
   }
 }

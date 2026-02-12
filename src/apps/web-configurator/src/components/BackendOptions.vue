@@ -33,6 +33,22 @@
         </div>
       </el-form-item>
 
+      <el-form-item label="单元测试框架">
+        <el-select v-model="backendUnitTestFramework" placeholder="选择单元测试框架">
+          <el-option value="None" label="无" />
+          <el-option value="xUnit" label="xUnit" />
+          <el-option value="NUnit" label="NUnit" />
+          <el-option value="MSTest" label="MSTest" />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="集成测试框架">
+        <el-select v-model="backendIntegrationTestFramework" placeholder="选择集成测试框架">
+          <el-option value="None" label="无" />
+          <el-option value="xUnit" label="xUnit + WebApplicationFactory" />
+        </el-select>
+      </el-form-item>
+
       <el-form-item label="NuGet 包">
         <PackageSelector
           manager-type="nuget"
@@ -49,7 +65,7 @@ import { watch } from 'vue'
 import { useField } from 'vee-validate'
 import { Cpu } from '@element-plus/icons-vue'
 import { useConfigStore } from '@/stores/config'
-import type { DatabaseProvider, CacheProvider } from '@/types'
+import type { DatabaseProvider, CacheProvider, BackendUnitTestFramework, BackendIntegrationTestFramework } from '@/types'
 import PackageSelector from './PackageSelector.vue'
 import ArchitectureSelector from './ArchitectureSelector.vue'
 import OrmSelector from './OrmSelector.vue'
@@ -60,14 +76,18 @@ const { value: database } = useField<DatabaseProvider>('database')
 const { value: cache } = useField<CacheProvider>('cache')
 const { value: enableJwtAuth } = useField<boolean>('enableJwtAuth')
 const { value: enableSwagger } = useField<boolean>('enableSwagger')
+const { value: backendUnitTestFramework } = useField<BackendUnitTestFramework>('backendUnitTestFramework')
+const { value: backendIntegrationTestFramework } = useField<BackendIntegrationTestFramework>('backendIntegrationTestFramework')
 
 // 实时同步到 store，触发预览刷新
-watch([database, cache, enableJwtAuth, enableSwagger], ([db, c, jwt, swagger]) => {
+watch([database, cache, enableJwtAuth, enableSwagger, backendUnitTestFramework, backendIntegrationTestFramework], ([db, c, jwt, swagger, unitTest, integrationTest]) => {
   store.updateConfig({
     database: db,
     cache: c,
     enableJwtAuth: jwt,
-    enableSwagger: swagger
+    enableSwagger: swagger,
+    backendUnitTestFramework: unitTest,
+    backendIntegrationTestFramework: integrationTest
   })
 })
 </script>

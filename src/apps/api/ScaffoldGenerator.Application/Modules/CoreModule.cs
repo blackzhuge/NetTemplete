@@ -1,4 +1,5 @@
 using ScaffoldGenerator.Application.Abstractions;
+using ScaffoldGenerator.Contracts.Enums;
 using ScaffoldGenerator.Contracts.Requests;
 
 namespace ScaffoldGenerator.Application.Modules;
@@ -30,7 +31,11 @@ public sealed class CoreModule : IScaffoldModule
             EnableSwagger = request.Backend.Swagger,
             RouterMode = request.Frontend.RouterMode.ToString(),
             EnableMockData = request.Frontend.MockData,
-            NugetPackages = request.Backend.NugetPackages
+            NugetPackages = request.Backend.NugetPackages,
+            EnableBackendUnitTests = request.Backend.UnitTestFramework != BackendUnitTestFramework.None,
+            EnableBackendIntegrationTests = request.Backend.IntegrationTestFramework != BackendIntegrationTestFramework.None,
+            EnableFrontendUnitTests = request.Frontend.UnitTestFramework != FrontendUnitTestFramework.None,
+            EnableFrontendE2ETests = request.Frontend.E2EFramework != FrontendE2EFramework.None
         };
 
         // 核心后端文件
