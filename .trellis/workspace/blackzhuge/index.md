@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 19
-- **Last Active**: 2026-02-09
+- **Total Sessions**: 20
+- **Last Active**: 2026-02-12
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1204 | Active |
+| `journal-1.md` | ~1235 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | 日期 | 标题 | 提交 |
 |---|------|------|------|
+| 20 | 2026-02-12 | 归档 dynamic-preview-explorer | `3c214bc` |
 | 19 | 2026-02-09 | Dynamic Preview Explorer 规划 | `992177c` |
 | 18 | 2026-02-09 | Template Options Extension - 完成测试补充 | `c419500`, `09454f9`, `4112e4d` |
 | 17 | 2026-02-09 | 修复后端测试并优化预览面板交互 | `cf939b1`, `efad308` |

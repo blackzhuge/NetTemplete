@@ -1202,3 +1202,34 @@ openspec/changes/dynamic-preview-explorer/
 ### Next Steps
 
 - None - task complete
+
+## Session 20: 归档 dynamic-preview-explorer
+
+**Date**: 2026-02-12
+**Task**: 归档 dynamic-preview-explorer
+
+### Summary
+
+完成 7 个 phase 任务，同步 specs 到 main，创建 PR #2
+
+### Main Changes
+
+
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `3c214bc` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
