@@ -58,7 +58,7 @@ withDefaults(defineProps<{
 })
 
 const store = useConfigStore()
-const { fileTree, treeLoading, selectedFile } = storeToRefs(store)
+const { fileTree, treeLoading } = storeToRefs(store)
 
 const treeProps = {
   label: 'name',
