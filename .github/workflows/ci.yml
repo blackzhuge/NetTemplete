@@ -1,0 +1,128 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  detect-changes:
+    name: Detect Changed Areas
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Filter paths
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            backend:
+              - 'src/apps/api/**'
+              - 'src/tests/**'
+              - 'src/scaffold-generator.sln'
+              - 'src/Directory.Build.props'
+              - 'src/Directory.Packages.props'
+              - 'src/global.json'
+              - '.github/workflows/ci.yml'
+            frontend:
+              - 'src/apps/web-configurator/**'
+              - 'src/packages/@scaffold/**'
+              - 'src/pnpm-lock.yaml'
+              - 'src/pnpm-workspace.yaml'
+              - '.github/workflows/ci.yml'
+
+  backend-test:
+    name: Backend Build & Test
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.backend == 'true' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('src/**/*.csproj', 'src/Directory.Packages.props', 'src/global.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore
+        run: dotnet restore scaffold-generator.sln
+
+      - name: Build
+        run: dotnet build scaffold-generator.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test scaffold-generator.sln --configuration Release --no-build --verbosity minimal
+
+  frontend-quality:
+    name: Frontend Lint/Test/Build
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.frontend == 'true' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: src/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm --filter web-configurator lint
+
+      - name: Unit test
+        run: pnpm --filter web-configurator test
+
+      - name: Build
+        run: pnpm --filter web-configurator build
+
+  no-relevant-changes:
+    name: No Relevant Changes
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.backend != 'true' && needs.detect-changes.outputs.frontend != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip heavy checks
+        run: echo "No backend/frontend related files changed."

@@ -1,0 +1,17 @@
+# Default owners
+* @blackzhuge
+
+# Backend
+/src/apps/api/ @blackzhuge
+/src/tests/ @blackzhuge
+
+# Frontend
+/src/apps/web-configurator/ @blackzhuge
+/src/packages/ @blackzhuge
+
+# Specs and docs
+/docs/ @blackzhuge
+/openspec/ @blackzhuge
+
+# Workflow governance
+/.github/ @blackzhuge
