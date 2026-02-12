@@ -7,8 +7,8 @@ public static class EFCoreSetup
 {
     public static IServiceCollection AddEFCore(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("DefaultConnection")
-            ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+        var connectionString = configuration.GetConnectionString("Default")
+            ?? throw new InvalidOperationException("Connection string 'Default' not found.");
 
 {{~ if db_type == "SQLite" ~}}
         services.AddDbContext<{{ project_name }}DbContext>(options =>

@@ -1,0 +1,28 @@
+const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
+export function setupMockData() {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  const originalFetch = window.fetch.bind(window)
+
+  window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+    const requestUrl = typeof input === 'string' ? input : input.toString()
+
+    if (requestUrl.includes('/api/health')) {
+      await wait(150)
+      return new Response(
+        JSON.stringify({ status: 'ok', source: 'mock' }),
+        {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+    }
+
+    return originalFetch(input, init)
+  }
+}

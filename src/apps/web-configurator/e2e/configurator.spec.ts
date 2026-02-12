@@ -11,26 +11,27 @@ test.describe('Scaffold Generator UI', () => {
   })
 
   test('should show config form with default values', async ({ page }) => {
-    const projectNameInput = page.locator('input[placeholder*="项目名称"], input').first()
+    const projectNameInput = page.getByRole('textbox', { name: '项目名称' })
     await expect(projectNameInput).toBeVisible()
   })
 
   test('should show file tree preview panel', async ({ page }) => {
-    await expect(page.locator('.ide-preview')).toBeVisible()
+    await page.getByRole('button', { name: '预览' }).click()
+    await expect(page.locator('.preview-drawer')).toBeVisible()
+    await expect(page.locator('.preview-drawer .panel-header').first()).toContainText('Explorer')
   })
 
   test('should have generate button', async ({ page }) => {
-    const generateButton = page.locator('button:has-text("生成项目")')
+    const generateButton = page.locator('.generate-btn')
     await expect(generateButton).toBeVisible()
   })
 
   test('should update file tree when config changes', async ({ page }) => {
-    // 使用 role 精确定位项目名称输入框
     const projectNameInput = page.getByRole('textbox', { name: '项目名称' })
     await projectNameInput.fill('CustomProject')
 
-    await page.waitForTimeout(500)
-    await expect(page.locator('.ide-preview')).toContainText('CustomProject')
+    await page.getByRole('button', { name: '预览' }).click()
+    await expect(page.locator('.preview-drawer')).toContainText('CustomProject')
   })
 })
 
@@ -40,12 +41,10 @@ test.describe('Form Validation', () => {
   })
 
   test('should disable generate button when form is invalid', async ({ page }) => {
-    // 使用 role 精确定位项目名称输入框
     const projectNameInput = page.getByRole('textbox', { name: '项目名称' })
-    await projectNameInput.clear()
+    await projectNameInput.fill('')
     await projectNameInput.blur()
 
-    // Wait for validation to run
     await page.waitForTimeout(300)
 
     const generateButton = page.locator('.generate-btn')
@@ -71,7 +70,7 @@ test.describe('Generate Flow', () => {
     const generateButton = page.locator('.generate-btn')
     await generateButton.click()
 
-    await expect(page.locator('.generate-btn:has-text("正在生成")')).toBeVisible()
+    await expect(page.locator('.generate-btn .btn-text')).toContainText('正在生成...')
   })
 
   test('should trigger download on successful generation', async ({ page }) => {

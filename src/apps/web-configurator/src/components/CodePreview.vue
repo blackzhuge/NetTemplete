@@ -47,6 +47,7 @@ async function copyCode() {
       <div class="file-tab" v-if="store.selectedFile">
         <span class="file-icon-dot"></span>
         <span class="file-name">{{ store.selectedFile.name }}</span>
+        <span class="file-path">{{ store.selectedFile.path }}</span>
       </div>
       <div v-else class="file-tab placeholder">
         <span>Preview</span>
@@ -130,6 +131,15 @@ async function copyCode() {
 
 .file-name {
   font-family: 'Segoe UI', sans-serif;
+}
+
+.file-path {
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #7f848e;
+  font-size: 12px;
 }
 
 .header-actions {

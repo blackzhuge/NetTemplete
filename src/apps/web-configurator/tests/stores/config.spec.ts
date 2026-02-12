@@ -29,52 +29,6 @@ describe('useConfigStore', () => {
     expect(store.config.namespace).toBe('MyProject')
   })
 
-  it('should generate correct file tree based on config', () => {
-    const store = useConfigStore()
-    store.updateConfig({ projectName: 'TestApp' })
-
-    const tree = store.fileTree
-    expect(tree).toHaveLength(1)
-    expect(tree[0].name).toBe('src')
-    expect(tree[0].children).toBeDefined()
-
-    const apiProject = tree[0].children?.find(c => c.name === 'TestApp.Api')
-    expect(apiProject).toBeDefined()
-  })
-
-  it('should include JWT files when jwtAuth is enabled', () => {
-    const store = useConfigStore()
-    store.updateConfig({ enableJwtAuth: true })
-
-    const tree = store.fileTree
-    const apiProject = tree[0].children?.find(c => c.name.endsWith('.Api'))
-    const extensions = apiProject?.children?.find(c => c.name === 'Extensions')
-
-    expect(extensions?.children?.some(f => f.name === 'JwtSetup.cs')).toBe(true)
-  })
-
-  it('should exclude JWT files when jwtAuth is disabled', () => {
-    const store = useConfigStore()
-    store.updateConfig({ enableJwtAuth: false })
-
-    const tree = store.fileTree
-    const apiProject = tree[0].children?.find(c => c.name.endsWith('.Api'))
-    const extensions = apiProject?.children?.find(c => c.name === 'Extensions')
-
-    expect(extensions?.children?.some(f => f.name === 'JwtSetup.cs')).toBe(false)
-  })
-
-  it('should include Redis files when cache is Redis', () => {
-    const store = useConfigStore()
-    store.updateConfig({ cache: 'Redis' })
-
-    const tree = store.fileTree
-    const apiProject = tree[0].children?.find(c => c.name.endsWith('.Api'))
-    const extensions = apiProject?.children?.find(c => c.name === 'Extensions')
-
-    expect(extensions?.children?.some(f => f.name === 'RedisSetup.cs')).toBe(true)
-  })
-
   it('should set loading state', () => {
     const store = useConfigStore()
 
@@ -198,6 +152,20 @@ describe('useConfigStore', () => {
       expect(store.systemNpmPackages).toContain('pinia')
       expect(store.systemNpmPackages).toContain('axios')
       expect(store.systemNpmPackages).toContain('element-plus')
+    })
+
+    describe('Async File Tree', () => {
+      it('should have empty fileTree initially', () => {
+        const store = useConfigStore()
+
+        expect(store.fileTree).toEqual([])
+      })
+
+      it('should have treeLoading as boolean initially', () => {
+        const store = useConfigStore()
+
+        expect(typeof store.treeLoading).toBe('boolean')
+      })
     })
   })
 })

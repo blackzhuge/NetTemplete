@@ -18,10 +18,13 @@ export const scaffoldConfigSchema = z.object({
     .string()
     .min(1, '命名空间不能为空')
     .regex(/^[a-zA-Z][a-zA-Z0-9.]*$/, '命名空间格式不正确'),
+  architecture: z.enum(['Simple', 'CleanArchitecture', 'VerticalSlice', 'ModularMonolith']),
+  orm: z.enum(['SqlSugar', 'EFCore', 'Dapper', 'FreeSql']),
   database: z.enum(['SQLite', 'MySQL', 'SQLServer']),
   cache: z.enum(['None', 'MemoryCache', 'Redis']),
   enableSwagger: z.boolean(),
   enableJwtAuth: z.boolean(),
+  uiLibrary: z.enum(['ElementPlus', 'AntDesignVue', 'NaiveUI', 'TailwindHeadless', 'ShadcnVue', 'MateChat']),
   routerMode: z.enum(['Hash', 'History']),
   enableMockData: z.boolean(),
   nugetPackages: z.array(packageReferenceSchema).optional().default([]),

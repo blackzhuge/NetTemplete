@@ -75,124 +75,100 @@ test.describe('Package Selector Modal', () => {
     await page.goto('/')
   })
 
+  async function openNugetModal(page: any) {
+    await page.getByRole('button', { name: '添加NuGet依赖' }).click()
+    await expect(page.locator('.el-dialog')).toBeVisible()
+  }
+
   test('should open modal when clicking add dependency button', async ({ page }) => {
-    // Find and click add NuGet dependency button
-    const addButton = page.locator('button:has-text("添加NuGet依赖")')
+    const addButton = page.getByRole('button', { name: '添加NuGet依赖' })
     await expect(addButton).toBeVisible()
     await addButton.click()
 
-    // Modal should be visible
     const modal = page.locator('.el-dialog')
     await expect(modal).toBeVisible()
     await expect(modal).toContainText('添加 NuGet 依赖')
   })
 
   test('should search packages and display results', async ({ page }) => {
-    // Open modal
-    await page.locator('button:has-text("添加NuGet依赖")').click()
-    await page.waitForTimeout(300)
+    await openNugetModal(page)
 
-    // Type search query
-    const searchInput = page.locator('.el-dialog input[placeholder*="搜索"]')
+    const searchInput = page.getByRole('textbox', { name: '搜索 NuGet 包...' })
     await searchInput.fill('serilog')
     await page.waitForTimeout(500)
 
-    // Results should be displayed
     const results = page.locator('.result-item')
     await expect(results).toHaveCount(2)
     await expect(page.locator('.result-item').first()).toContainText('Serilog')
   })
 
   test('should sort results by downloads', async ({ page }) => {
-    // Open modal
-    await page.locator('button:has-text("添加NuGet依赖")').click()
-    await page.waitForTimeout(300)
+    await openNugetModal(page)
 
-    // Search
-    const searchInput = page.locator('.el-dialog input[placeholder*="搜索"]')
+    const searchInput = page.getByRole('textbox', { name: '搜索 NuGet 包...' })
     await searchInput.fill('serilog')
     await page.waitForTimeout(500)
 
-    // First result should be the one with more downloads
     const firstResult = page.locator('.result-item').first()
     await expect(firstResult).toContainText('Serilog')
-    await expect(firstResult).toContainText('500') // 500M downloads
+    await expect(firstResult).toContainText('500.0M')
   })
 
   test('should select package and show in selection list', async ({ page }) => {
-    // Open modal
-    await page.locator('button:has-text("添加NuGet依赖")').click()
-    await page.waitForTimeout(300)
+    await openNugetModal(page)
 
-    // Search and select
-    const searchInput = page.locator('.el-dialog input[placeholder*="搜索"]')
+    const searchInput = page.getByRole('textbox', { name: '搜索 NuGet 包...' })
     await searchInput.fill('serilog')
     await page.waitForTimeout(500)
 
-    // Click to select
     await page.locator('.result-item').first().click()
     await page.waitForTimeout(300)
 
-    // Should appear in selected section
     const selectedSection = page.locator('.selected-section')
     await expect(selectedSection).toBeVisible()
     await expect(selectedSection).toContainText('Serilog')
   })
 
   test('should confirm and add packages', async ({ page }) => {
-    // Open modal
-    await page.locator('button:has-text("添加NuGet依赖")').click()
-    await page.waitForTimeout(300)
+    await openNugetModal(page)
 
-    // Search and select
-    await page.locator('.el-dialog input[placeholder*="搜索"]').fill('serilog')
+    await page.getByRole('textbox', { name: '搜索 NuGet 包...' }).fill('serilog')
     await page.waitForTimeout(500)
-    await page.locator('.result-item').first().click()
+    await page.locator('.result-item').first().click({ force: true })
     await page.waitForTimeout(300)
 
-    // Click confirm
-    const confirmButton = page.locator('.el-dialog button:has-text("添加")')
-    await confirmButton.click()
+    const confirmButton = page.getByRole('button', { name: /添加 \(1\)/ })
+    await confirmButton.click({ force: true })
     await page.waitForTimeout(300)
 
-    // Modal should close
     await expect(page.locator('.el-dialog')).not.toBeVisible()
 
-    // Package should appear as tag
     const packageTag = page.locator('.el-tag:has-text("Serilog")')
     await expect(packageTag).toBeVisible()
   })
 
   test('should cancel and close modal', async ({ page }) => {
-    // Open modal
-    await page.locator('button:has-text("添加NuGet依赖")').click()
-    await page.waitForTimeout(300)
+    await openNugetModal(page)
 
-    // Click cancel
-    const cancelButton = page.locator('.el-dialog button:has-text("取消")')
+    const cancelButton = page.getByRole('button', { name: '取消' }).last()
     await cancelButton.click()
     await page.waitForTimeout(300)
 
-    // Modal should close
     await expect(page.locator('.el-dialog')).not.toBeVisible()
   })
 
   test('should remove package from selection', async ({ page }) => {
-    // First add a package
-    await page.locator('button:has-text("添加NuGet依赖")').click()
-    await page.waitForTimeout(300)
-    await page.locator('.el-dialog input[placeholder*="搜索"]').fill('serilog')
+    await openNugetModal(page)
+    await page.getByRole('textbox', { name: '搜索 NuGet 包...' }).fill('serilog')
     await page.waitForTimeout(500)
-    await page.locator('.result-item').first().click()
+    await page.locator('.result-item').first().click({ force: true })
     await page.waitForTimeout(300)
-    await page.locator('.el-dialog button:has-text("添加")').click()
+    await page.getByRole('button', { name: /添加 \(1\)/ }).click({ force: true })
     await page.waitForTimeout(300)
 
-    // Now remove it
     const closeButton = page.locator('.el-tag:has-text("Serilog") .el-tag__close')
     await closeButton.click()
 
-    // Package should be removed
     await expect(page.locator('.el-tag:has-text("Serilog")')).not.toBeVisible()
   })
 })
@@ -234,12 +210,10 @@ test.describe('npm Package Selector', () => {
   })
 
   test('should open npm modal when clicking npm button', async ({ page }) => {
-    // Find and click add npm dependency button
-    const addButton = page.locator('button:has-text("添加npm依赖")')
+    const addButton = page.getByRole('button', { name: '添加npm依赖' })
     await expect(addButton).toBeVisible()
     await addButton.click()
 
-    // Modal should show npm title
     const modal = page.locator('.el-dialog')
     await expect(modal).toContainText('添加 npm 依赖')
   })

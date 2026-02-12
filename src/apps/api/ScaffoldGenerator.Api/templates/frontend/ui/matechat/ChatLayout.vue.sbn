@@ -10,7 +10,7 @@
           :class="{ active: chat.id === currentChatId }"
           @click="selectChat(chat.id)"
         >
-          {{ chat.title }}
+          <span v-text="chat.title"></span>
         </div>
       </div>
     </div>
@@ -22,7 +22,7 @@
           class="message"
           :class="msg.role"
         >
-          <div class="message-content">{{ msg.content }}</div>
+          <div class="message-content" v-text="msg.content"></div>
         </div>
       </div>
       <div class="chat-input">

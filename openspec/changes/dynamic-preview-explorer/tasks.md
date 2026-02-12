@@ -4,7 +4,7 @@
 
 ### 1.1 创建 FileTreeNodeDto
 
-- [ ] **文件**: `src/apps/api/ScaffoldGenerator.Contracts/Preview/FileTreeNodeDto.cs`
+- [x] **文件**: `src/apps/api/ScaffoldGenerator.Contracts/Preview/FileTreeNodeDto.cs`
 
 **实现要点**:
 - record 类型，属性: Name, Path, IsDirectory, Children?
@@ -16,7 +16,7 @@
 
 ### 1.2 创建 PreviewTreeRequest/Response
 
-- [ ] **文件**: `src/apps/api/ScaffoldGenerator.Contracts/Preview/PreviewTreeRequest.cs`
+- [x] **文件**: `src/apps/api/ScaffoldGenerator.Contracts/Preview/PreviewTreeRequest.cs`
 
 **实现要点**:
 - PreviewTreeRequest 包含 GenerateScaffoldRequest Config
@@ -28,7 +28,7 @@
 
 ### 1.3 扩展 IPreviewService 接口
 
-- [ ] **文件**: `src/apps/api/ScaffoldGenerator.Application/Preview/IPreviewService.cs`
+- [x] **文件**: `src/apps/api/ScaffoldGenerator.Application/Preview/IPreviewService.cs`
 
 **实现要点**:
 - 新增 GetPreviewTreeAsync(GenerateScaffoldRequest, CancellationToken)
@@ -42,7 +42,7 @@
 
 ### 2.1 实现树构建算法
 
-- [ ] **文件**: `src/apps/api/ScaffoldGenerator.Application/Preview/PreviewService.cs`
+- [x] **文件**: `src/apps/api/ScaffoldGenerator.Application/Preview/PreviewService.cs`
 
 **实现要点**:
 - 新增 GetPreviewTreeAsync 方法
@@ -56,7 +56,7 @@
 
 ### 2.2 单元测试 - 树构建
 
-- [ ] **文件**: `src/tests/ScaffoldGenerator.Tests/Preview/PreviewServiceTreeTests.cs`
+- [x] **文件**: `src/tests/ScaffoldGenerator.Tests/Preview/PreviewServiceTreeTests.cs`
 
 **实现要点**:
 - 测试空文件列表 → 空树
@@ -73,7 +73,7 @@
 
 ### 3.1 添加 Preview Tree 端点
 
-- [ ] **文件**: `src/apps/api/ScaffoldGenerator.Api/Endpoints/ScaffoldEndpoints.cs`
+- [x] **文件**: `src/apps/api/ScaffoldGenerator.Api/Endpoints/ScaffoldEndpoints.cs`
 
 **实现要点**:
 - POST /api/scaffold/preview/tree
@@ -87,7 +87,7 @@
 
 ### 3.2 集成测试 - Preview Tree API
 
-- [ ] **文件**: `src/tests/ScaffoldGenerator.Tests/Integration/PreviewTreeEndpointTests.cs`
+- [x] **文件**: `src/tests/ScaffoldGenerator.Tests/Integration/PreviewTreeEndpointTests.cs`
 
 **实现要点**:
 - 测试 200：有效配置返回树
@@ -103,7 +103,7 @@
 
 ### 4.1 添加 getPreviewTree 函数
 
-- [ ] **文件**: `src/apps/web-configurator/src/api/generator.ts`
+- [x] **文件**: `src/apps/web-configurator/src/api/generator.ts`
 
 **实现要点**:
 - 新增 getPreviewTree(config: ScaffoldConfig): Promise<{ tree: FileTreeNode[] }>
@@ -118,7 +118,7 @@
 
 ### 5.1 重构 fileTree 为异步状态
 
-- [ ] **文件**: `src/apps/web-configurator/src/stores/config.ts`
+- [x] **文件**: `src/apps/web-configurator/src/stores/config.ts`
 
 **实现要点**:
 - 删除 fileTree computed 和 getExtensionFiles 函数
@@ -134,7 +134,7 @@
 
 ### 5.2 处理选中文件同步
 
-- [ ] **文件**: `src/apps/web-configurator/src/stores/config.ts`
+- [x] **文件**: `src/apps/web-configurator/src/stores/config.ts`
 
 **实现要点**:
 - fetchFileTree 成功后，检查 selectedFile 是否在新树中存在
@@ -147,7 +147,7 @@
 
 ### 5.3 单元测试 - Store 改造
 
-- [ ] **文件**: `src/apps/web-configurator/tests/stores/config.spec.ts`
+- [x] **文件**: `src/apps/web-configurator/tests/stores/config.spec.ts`
 
 **实现要点**:
 - 测试 fetchFileTree 更新 fileTree
@@ -162,7 +162,7 @@
 
 ### 6.1 FileTreeView 加载状态
 
-- [ ] **文件**: `src/apps/web-configurator/src/components/FileTreeView.vue`
+- [x] **文件**: `src/apps/web-configurator/src/components/FileTreeView.vue`
 
 **实现要点**:
 - 引入 treeLoading 状态
@@ -175,7 +175,7 @@
 
 ### 6.2 E2E 测试 - 动态预览
 
-- [ ] **文件**: `src/apps/web-configurator/e2e/dynamic-preview.spec.ts`
+- [x] **文件**: `src/apps/web-configurator/e2e/dynamic-preview.spec.ts`
 
 **实现要点**:
 - 测试切换架构后文件树更新
@@ -191,7 +191,7 @@
 
 ### 7.1 删除废弃代码
 
-- [ ] **文件**: `src/apps/web-configurator/src/stores/config.ts`
+- [x] **文件**: `src/apps/web-configurator/src/stores/config.ts`
 
 **实现要点**:
 - 确认 getExtensionFiles 已删除
@@ -206,11 +206,11 @@
 
 | Phase | 总任务 | 已完成 | 进度 |
 |-------|--------|--------|------|
-| Phase 1: 后端 DTO | 3 | 0 | 0% |
-| Phase 2: 树构建 | 2 | 0 | 0% |
-| Phase 3: API 端点 | 2 | 0 | 0% |
-| Phase 4: 前端 API | 1 | 0 | 0% |
-| Phase 5: Store 改造 | 3 | 0 | 0% |
-| Phase 6: UI 更新 | 2 | 0 | 0% |
-| Phase 7: 清理 | 1 | 0 | 0% |
-| **总计** | **14** | **0** | **0%** |
+| Phase 1: 后端 DTO | 3 | 3 | 100% |
+| Phase 2: 树构建 | 2 | 2 | 100% |
+| Phase 3: API 端点 | 2 | 2 | 100% |
+| Phase 4: 前端 API | 1 | 1 | 100% |
+| Phase 5: Store 改造 | 3 | 3 | 100% |
+| Phase 6: UI 更新 | 2 | 2 | 100% |
+| Phase 7: 清理 | 1 | 1 | 100% |
+| **总计** | **14** | **14** | **100%** |

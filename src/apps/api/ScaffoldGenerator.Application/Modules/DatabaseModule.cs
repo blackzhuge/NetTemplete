@@ -9,7 +9,7 @@ public sealed class DatabaseModule : IScaffoldModule
     public string Name => "Database";
     public int Order => 10;
 
-    public bool IsEnabled(GenerateScaffoldRequest request) => true;
+    public bool IsEnabled(GenerateScaffoldRequest request) => request.Backend.Orm == OrmProvider.SqlSugar;
 
     public Task ContributeAsync(ScaffoldPlan plan, GenerateScaffoldRequest request, CancellationToken ct = default)
     {

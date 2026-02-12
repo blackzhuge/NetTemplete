@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>{{ namespace }}.Api</RootNamespace>
@@ -9,7 +9,31 @@
 
   <ItemGroup>
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
+{{~ if orm == "SqlSugar" ~}}
     <PackageReference Include="SqlSugarCore" Version="5.1.4.169" />
+{{~ end ~}}
+{{~ if orm == "EFCore" ~}}
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0" />
+{{~ if db_type == "SQLite" ~}}
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
+{{~ else if db_type == "MySQL" ~}}
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
+{{~ else if db_type == "SQLServer" ~}}
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
+{{~ end ~}}
+{{~ else if orm == "Dapper" ~}}
+    <PackageReference Include="Dapper" Version="2.1.35" />
+{{~ else if orm == "FreeSql" ~}}
+    <PackageReference Include="FreeSql" Version="3.2.833" />
+{{~ if db_type == "SQLite" ~}}
+    <PackageReference Include="FreeSql.Provider.Sqlite" Version="3.2.833" />
+{{~ else if db_type == "MySQL" ~}}
+    <PackageReference Include="FreeSql.Provider.MySql" Version="3.2.833" />
+{{~ else if db_type == "SQLServer" ~}}
+    <PackageReference Include="FreeSql.Provider.SqlServer" Version="3.2.833" />
+{{~ end ~}}
+{{~ end ~}}
 {{~ if enable_jwt_auth ~}}
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
 {{~ end ~}}

@@ -22,6 +22,7 @@ public sealed class CoreModule : IScaffoldModule
         {
             ProjectName = request.Basic.ProjectName,
             Namespace = request.Basic.Namespace,
+            Orm = request.Backend.Orm.ToString(),
             DbType = request.Backend.Database.ToString(),
             ConnectionString = GetConnectionString(request),
             CacheType = request.Backend.Cache.ToString(),

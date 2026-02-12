@@ -20,30 +20,48 @@ test.describe('Preset Workflow', () => {
   })
 
   test('should change configuration when selecting different preset', async ({ page }) => {
-    // Mock presets API
-    await page.route('**/api/v1/presets', async route => {
+    await page.route('**/api/v1/scaffolds/presets', async route => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
-          version: '1.0.0',
           presets: [
             {
               id: 'minimal',
               name: 'Minimal',
               isDefault: false,
+              description: '最小化',
+              tags: [],
               config: {
-                projectName: 'MinimalApp',
-                backend: { database: 'SQLite', cache: 'None', jwtAuth: false, swagger: true }
+                basic: { projectName: 'MinimalApp', namespace: 'MinimalApp' },
+                backend: {
+                  architecture: 'Simple',
+                  orm: 'SqlSugar',
+                  database: 'SQLite',
+                  cache: 'None',
+                  jwtAuth: false,
+                  swagger: true
+                },
+                frontend: { uiLibrary: 'ElementPlus', routerMode: 'Hash', mockData: false }
               }
             },
             {
               id: 'standard',
               name: 'Standard',
               isDefault: true,
+              description: '标准',
+              tags: [],
               config: {
-                projectName: 'StandardApp',
-                backend: { database: 'MySQL', cache: 'MemoryCache', jwtAuth: true, swagger: true }
+                basic: { projectName: 'StandardApp', namespace: 'StandardApp' },
+                backend: {
+                  architecture: 'Simple',
+                  orm: 'SqlSugar',
+                  database: 'MySQL',
+                  cache: 'MemoryCache',
+                  jwtAuth: true,
+                  swagger: true
+                },
+                frontend: { uiLibrary: 'ElementPlus', routerMode: 'Hash', mockData: false }
               }
             }
           ]
@@ -54,27 +72,27 @@ test.describe('Preset Workflow', () => {
     await page.reload()
     await page.waitForLoadState('networkidle')
 
-    // 验证预设选择器可交互
-    const presetSelector = page.locator('.preset-selector')
-    await expect(presetSelector).toBeVisible()
+    await page.locator('.preset-selector .el-select').click()
+    await page.locator('.el-select-dropdown__item').filter({ hasText: 'Minimal' }).click()
+
+    await expect(page.getByRole('textbox', { name: '项目名称' })).toHaveValue('MinimalApp')
   })
 
   test('should display architecture selector in backend options', async ({ page }) => {
-    const backendSection = page.locator('.section-title:has-text("后端配置")').locator('..')
+    const backendSection = page.locator('.section-title').filter({ hasText: '后端配置' })
     await expect(backendSection).toBeVisible()
 
-    // 检查架构选择器
-    const architectureLabel = page.locator('label:has-text("架构风格")')
+    const architectureLabel = page.locator('.el-form-item__label').filter({ hasText: '架构风格' })
     await expect(architectureLabel).toBeVisible()
   })
 
   test('should display ORM selector in backend options', async ({ page }) => {
-    const ormLabel = page.locator('label:has-text("ORM 框架")')
+    const ormLabel = page.locator('.el-form-item__label').filter({ hasText: 'ORM 框架' })
     await expect(ormLabel).toBeVisible()
   })
 
   test('should display UI library selector in frontend options', async ({ page }) => {
-    const uiLibraryLabel = page.locator('label:has-text("UI 组件库")')
+    const uiLibraryLabel = page.locator('.el-form-item__label').filter({ hasText: 'UI 组件库' })
     await expect(uiLibraryLabel).toBeVisible()
   })
 
@@ -84,27 +102,22 @@ test.describe('Preset Workflow', () => {
   })
 
   test('should have 6 UI library options', async ({ page }) => {
-    // 找到 UI 组件库的选择器
-    const uiSection = page.locator('label:has-text("UI 组件库")').locator('..')
+    const uiSection = page.locator('.el-form-item').filter({ hasText: 'UI 组件库' }).first()
     const uiOptions = uiSection.locator('.el-radio-button')
     await expect(uiOptions).toHaveCount(6)
   })
 
   test('should generate scaffold with selected options', async ({ page }) => {
-    // Mock generate API
-    await page.route('**/api/v1/scaffold/generate', async route => {
+    await page.route('**/api/v1/scaffolds/generate-zip', async route => {
       await route.fulfill({
         status: 200,
-        contentType: 'application/octet-stream',
-        body: Buffer.from('mock zip content')
+        contentType: 'application/zip',
+        body: Buffer.from([0x50, 0x4B, 0x03, 0x04])
       })
     })
 
-    // 点击生成按钮
-    const generateButton = page.locator('button:has-text("生成")')
-    if (await generateButton.isVisible()) {
-      // 验证按钮可点击
-      await expect(generateButton).toBeEnabled()
-    }
+    const generateButton = page.locator('.generate-btn')
+    await expect(generateButton).toBeVisible()
+    await expect(generateButton).toBeEnabled()
   })
 })

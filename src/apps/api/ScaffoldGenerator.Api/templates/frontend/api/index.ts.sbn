@@ -1,6 +1,8 @@
 import axios from 'axios'
 import type { AxiosInstance, AxiosResponse } from 'axios'
+{{~ if ui_library == "ElementPlus" ~}}
 import { ElMessage } from 'element-plus'
+{{~ end ~}}
 
 const api: AxiosInstance = axios.create({
   baseURL: '/api',
@@ -14,7 +16,11 @@ api.interceptors.response.use(
   (response: AxiosResponse) => response,
   (error) => {
     const message = error.response?.data?.error || '请求失败'
+{{~ if ui_library == "ElementPlus" ~}}
     ElMessage.error(message)
+{{~ else ~}}
+    console.error(message)
+{{~ end ~}}
     return Promise.reject(error)
   }
 )

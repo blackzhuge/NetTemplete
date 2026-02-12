@@ -1,0 +1,31 @@
+{
+  "id": "dynamic-preview-explorer-phase-2",
+  "name": "dynamic-preview-explorer-phase-2",
+  "title": "Phase 2: 后端树构建逻辑",
+  "description": "Execute Phase 2 of OpenSpec change: dynamic-preview-explorer",
+  "status": "planning",
+  "dev_type": "backend",
+  "scope": "dynamic-preview-explorer",
+  "priority": "P2",
+  "creator": "blackzhuge",
+  "assignee": "blackzhuge",
+  "createdAt": "2026-02-10",
+  "completedAt": null,
+  "branch": "feature/dynamic-preview-explorer",
+  "base_branch": "main",
+  "worktree_path": null,
+  "current_phase": 0,
+  "next_action": [
+    {"phase": 1, "action": "ccg-impl"},
+    {"phase": 2, "action": "ccg-review"},
+    {"phase": 3, "action": "finish"},
+    {"phase": 4, "action": "create-pr"}
+  ],
+  "openspec_change": "openspec/changes/dynamic-preview-explorer",
+  "phase_number": 2,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "relatedFiles": [],
+  "notes": "Auto-generated from OpenSpec change"
+}

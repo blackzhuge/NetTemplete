@@ -22,8 +22,16 @@ try
         });
     });
 
-    // Database
+    // Database / ORM
+{{~ if orm == "EFCore" ~}}
+    builder.Services.AddEFCore(builder.Configuration);
+{{~ else if orm == "Dapper" ~}}
+    builder.Services.AddDapper(builder.Configuration);
+{{~ else if orm == "FreeSql" ~}}
+    builder.Services.AddFreeSql(builder.Configuration);
+{{~ else ~}}
     builder.Services.AddSqlSugar(builder.Configuration);
+{{~ end ~}}
 {{~ if enable_jwt_auth ~}}
 
     // JWT Authentication

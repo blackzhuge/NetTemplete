@@ -4,10 +4,16 @@ import './style.css'
 
 import App from './App.vue'
 import router from './router'
+{{~ if enable_mock_data ~}}
+import { setupMockData } from './mock'
+{{~ end ~}}
 
 const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
+{{~ if enable_mock_data ~}}
+setupMockData()
+{{~ end ~}}
 
 app.mount('#app')

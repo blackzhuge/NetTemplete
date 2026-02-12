@@ -84,6 +84,26 @@ Hook will auto-inject:
 
 Implement receives complete context and autonomously: read → understand → implement.
 
+### action: "ccg-impl"
+
+```
+Task(
+  subagent_type: "ccg-impl",
+  prompt: "Execute the OpenSpec phase implementation with multi-model collaboration",
+  model: "opus",
+  run_in_background: true
+)
+```
+
+Hook will auto-inject:
+
+- All spec files from implement.jsonl
+- OpenSpec artifacts (specs.md, design.md, tasks.md)
+- Phase-specific tasks extracted from tasks.md
+- Requirements document (prd.md)
+
+CCG-Impl uses multi-model collaboration: routes backend tasks to Codex, frontend to Gemini.
+
 ### action: "check"
 
 ```
@@ -102,6 +122,25 @@ Hook will auto-inject:
 - check-backend.md
 - check-frontend.md
 - All spec files from check.jsonl
+
+### action: "ccg-review"
+
+```
+Task(
+  subagent_type: "ccg-review",
+  prompt: "Perform dual-model cross-validation code review",
+  model: "opus",
+  run_in_background: true
+)
+```
+
+Hook will auto-inject:
+
+- All spec files from check.jsonl
+- OpenSpec specs.md (constraints)
+- Requirements document (prd.md)
+
+CCG-Review uses parallel Codex + Gemini review, self-fixes Critical issues.
 
 ### action: "debug"
 

@@ -48,11 +48,13 @@ AGENT_IMPLEMENT = "implement"
 AGENT_CHECK = "check"
 AGENT_DEBUG = "debug"
 AGENT_RESEARCH = "research"
+AGENT_CCG_IMPL = "ccg-impl"
+AGENT_CCG_REVIEW = "ccg-review"
 
 # Agents that require a task directory
-AGENTS_REQUIRE_TASK = (AGENT_IMPLEMENT, AGENT_CHECK, AGENT_DEBUG)
+AGENTS_REQUIRE_TASK = (AGENT_IMPLEMENT, AGENT_CHECK, AGENT_DEBUG, AGENT_CCG_IMPL, AGENT_CCG_REVIEW)
 # All supported agents
-AGENTS_ALL = (AGENT_IMPLEMENT, AGENT_CHECK, AGENT_DEBUG, AGENT_RESEARCH)
+AGENTS_ALL = (AGENT_IMPLEMENT, AGENT_CHECK, AGENT_DEBUG, AGENT_RESEARCH, AGENT_CCG_IMPL, AGENT_CCG_REVIEW)
 
 
 def find_repo_root(start_path: str) -> str | None:
@@ -119,10 +121,13 @@ def update_current_phase(repo_root: str, task_dir: str, subagent_type: str) -> N
 
         # Map action names to subagent types
         # "implement" -> "implement", "check" -> "check", "finish" -> "check"
+        # CCG workflow: "ccg-impl" -> "ccg-impl", "ccg-review" -> "ccg-review"
         action_to_agent = {
             "implement": "implement",
             "check": "check",
             "finish": "check",  # finish uses check agent
+            "ccg-impl": "ccg-impl",
+            "ccg-review": "ccg-review",
         }
 
         # Find the next phase that matches this subagent_type
@@ -669,6 +674,199 @@ Provide structured search results including:
 - External references (if any)"""
 
 
+def get_ccg_impl_context(repo_root: str, task_dir: str) -> str:
+    """
+    Complete context for CCG Implement Agent
+
+    Read order:
+    1. All files in implement.jsonl (includes openspec artifacts)
+    2. prd.md (contains change path and phase number)
+    3. Extract phase-specific tasks from tasks.md
+    """
+    context_parts = []
+
+    # 1. Read implement.jsonl (includes specs.md, design.md, tasks.md from openspec)
+    base_context = get_agent_context(repo_root, task_dir, "implement")
+    if base_context:
+        context_parts.append(base_context)
+
+    # 2. Requirements document (contains change path and phase)
+    prd_content = read_file_content(repo_root, f"{task_dir}/prd.md")
+    if prd_content:
+        context_parts.append(f"=== {task_dir}/prd.md (Task Definition) ===\n{prd_content}")
+
+    # 3. Try to extract phase number and read phase-specific tasks
+    # Parse prd.md to get openspec_change and phase_number
+    task_json_content = read_file_content(repo_root, f"{task_dir}/{FILE_TASK_JSON}")
+    if task_json_content:
+        try:
+            task_data = json.loads(task_json_content)
+            openspec_change = task_data.get("openspec_change")
+            phase_number = task_data.get("phase_number")
+
+            if openspec_change and phase_number:
+                # Read and extract phase-specific section from tasks.md
+                tasks_md = read_file_content(repo_root, f"{openspec_change}/tasks.md")
+                if tasks_md:
+                    phase_section = extract_phase_section(tasks_md, phase_number)
+                    if phase_section:
+                        context_parts.append(
+                            f"=== Phase {phase_number} Tasks (from {openspec_change}/tasks.md) ===\n{phase_section}"
+                        )
+        except (json.JSONDecodeError, KeyError):
+            pass
+
+    return "\n\n".join(context_parts)
+
+
+def extract_phase_section(tasks_md: str, phase_number: int) -> str:
+    """
+    Extract a specific phase section from tasks.md
+
+    Looks for pattern: ## Phase N: Title
+    Returns content until next ## Phase or end of file
+    """
+    lines = tasks_md.split("\n")
+    in_phase = False
+    phase_lines = []
+    phase_header = f"## Phase {phase_number}"
+
+    for line in lines:
+        if line.startswith(phase_header):
+            in_phase = True
+            phase_lines.append(line)
+        elif in_phase:
+            # Check if we hit next phase or progress section
+            if line.startswith("## Phase ") or line.startswith("## 进度统计"):
+                break
+            phase_lines.append(line)
+
+    return "\n".join(phase_lines).strip()
+
+
+def build_ccg_impl_prompt(original_prompt: str, context: str) -> str:
+    """Build complete prompt for CCG Implement Agent"""
+    return f"""# CCG Implement Agent Task
+
+You are the CCG Implement Agent - multi-model collaborative implementation.
+
+## Your Context
+
+All the information you need has been prepared for you:
+
+{context}
+
+---
+
+## Your Task
+
+{original_prompt}
+
+---
+
+## Workflow
+
+1. **Parse prd.md** - Extract change path and phase number
+2. **Read Phase tasks** - Get task list for the specified phase
+3. **Read specs and design** - Understand requirements and technical decisions
+4. **Multi-model collaboration**:
+   - Route backend tasks to Codex
+   - Route frontend tasks to Gemini
+   - Request unified diff patch format only
+5. **Rewrite prototype** - External outputs are reference only, rewrite to production code
+6. **Side-effect review** - Verify changes don't exceed scope
+7. **Multi-model review** - Launch Codex AND Gemini in parallel for review
+8. **Update status** - Mark completed tasks in tasks.md as [x]
+
+## Important Constraints
+
+- Do NOT execute git commit, only code modifications
+- External model outputs are prototypes only - NEVER apply directly
+- Request unified diff patch format from external models
+- Follow all dev specs injected above
+- Keep implementation within tasks.md scope - no scope creep
+- Report list of modified/created files when done"""
+
+
+def get_ccg_review_context(repo_root: str, task_dir: str) -> str:
+    """
+    Complete context for CCG Review Agent
+
+    Read order:
+    1. All files in check.jsonl (review specs)
+    2. prd.md (task requirements)
+    3. OpenSpec specs.md if available
+    """
+    context_parts = []
+
+    # 1. Read check.jsonl
+    check_entries = read_jsonl_entries(repo_root, f"{task_dir}/check.jsonl")
+    if check_entries:
+        for file_path, content in check_entries:
+            context_parts.append(f"=== {file_path} ===\n{content}")
+
+    # 2. Requirements document
+    prd_content = read_file_content(repo_root, f"{task_dir}/prd.md")
+    if prd_content:
+        context_parts.append(f"=== {task_dir}/prd.md (Requirements) ===\n{prd_content}")
+
+    # 3. Try to get OpenSpec specs.md from task.json
+    task_json_content = read_file_content(repo_root, f"{task_dir}/{FILE_TASK_JSON}")
+    if task_json_content:
+        try:
+            task_data = json.loads(task_json_content)
+            openspec_change = task_data.get("openspec_change")
+            if openspec_change:
+                specs_content = read_file_content(repo_root, f"{openspec_change}/specs.md")
+                if specs_content:
+                    context_parts.append(
+                        f"=== {openspec_change}/specs.md (Constraints) ===\n{specs_content}"
+                    )
+        except (json.JSONDecodeError, KeyError):
+            pass
+
+    return "\n\n".join(context_parts)
+
+
+def build_ccg_review_prompt(original_prompt: str, context: str) -> str:
+    """Build complete prompt for CCG Review Agent"""
+    return f"""# CCG Review Agent Task
+
+You are the CCG Review Agent - dual-model cross-validation code reviewer.
+
+## Your Context
+
+All review specs and constraints:
+
+{context}
+
+---
+
+## Your Task
+
+{original_prompt}
+
+---
+
+## Workflow
+
+1. **Get changes** - Run `git diff --name-only` and `git diff` to get code changes
+2. **Multi-model review (PARALLEL)** - Launch BOTH Codex AND Gemini simultaneously
+   - Codex: spec compliance, logic, security, regression
+   - Gemini: patterns, maintainability, integration, alignment
+3. **Synthesize findings** - Merge and classify by severity (Critical/Warning/Info)
+4. **Self-fix Critical issues** - Fix issues directly, don't just report
+5. **Run verification** - Run project's lint and typecheck commands
+
+## Important Constraints
+
+- Launch BOTH models in parallel with run_in_background: true
+- Self-fix Critical issues before reporting
+- External model outputs are prototypes only - always rewrite
+- Do NOT execute git commit
+- Report all findings even if fixed"""
+
+
 def main():
     try:
         input_data = json.load(sys.stdin)
@@ -735,6 +933,14 @@ def main():
         # Research can work without task directory
         context = get_research_context(repo_root, task_dir)
         new_prompt = build_research_prompt(original_prompt, context)
+    elif subagent_type == AGENT_CCG_IMPL:
+        assert task_dir is not None  # validated above
+        context = get_ccg_impl_context(repo_root, task_dir)
+        new_prompt = build_ccg_impl_prompt(original_prompt, context)
+    elif subagent_type == AGENT_CCG_REVIEW:
+        assert task_dir is not None  # validated above
+        context = get_ccg_review_context(repo_root, task_dir)
+        new_prompt = build_ccg_review_prompt(original_prompt, context)
     else:
         sys.exit(0)
 
