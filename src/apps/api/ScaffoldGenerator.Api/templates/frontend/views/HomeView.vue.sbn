@@ -11,7 +11,7 @@
       <el-space wrap>
         <el-tag type="success">Vue 3</el-tag>
         <el-tag type="primary">TypeScript</el-tag>
-        <el-tag type="warning">Element Plus</el-tag>
+        <el-tag type="warning">{{ ui_library }}</el-tag>
         <el-tag type="info">Pinia</el-tag>
       </el-space>
     </el-card>

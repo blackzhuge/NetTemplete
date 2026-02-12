@@ -1015,6 +1015,208 @@ cmd_create_pr() {
 }
 
 # =============================================================================
+# Command: create-from-phase
+# =============================================================================
+
+cmd_create_from_phase() {
+  local change_dir=""
+  local phase_num=""
+  local dev_type="fullstack"
+  local priority="P2"
+
+  # Parse arguments
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --change|-c)
+        change_dir="$2"
+        shift 2
+        ;;
+      --phase|-p)
+        phase_num="$2"
+        shift 2
+        ;;
+      --dev-type|-t)
+        dev_type="$2"
+        shift 2
+        ;;
+      --priority)
+        priority="$2"
+        shift 2
+        ;;
+      *)
+        echo -e "${RED}Error: Unknown option $1${NC}" >&2
+        exit 1
+        ;;
+    esac
+  done
+
+  # Validate required fields
+  if [[ -z "$change_dir" ]] || [[ -z "$phase_num" ]]; then
+    echo -e "${RED}Error: --change and --phase are required${NC}" >&2
+    echo "Usage: $0 create-from-phase --change <openspec-change-dir> --phase <N> [--dev-type <type>]" >&2
+    echo "Example: $0 create-from-phase --change openspec/changes/my-feature --phase 1 --dev-type backend" >&2
+    exit 1
+  fi
+
+  # Validate change directory exists
+  if [[ ! -d "$REPO_ROOT/$change_dir" ]]; then
+    echo -e "${RED}Error: Change directory not found: $change_dir${NC}" >&2
+    exit 1
+  fi
+
+  # Validate tasks.md exists
+  local tasks_md="$REPO_ROOT/$change_dir/tasks.md"
+  if [[ ! -f "$tasks_md" ]]; then
+    echo -e "${RED}Error: tasks.md not found in $change_dir${NC}" >&2
+    exit 1
+  fi
+
+  # Extract phase title from tasks.md
+  # Format: ## Phase N: Title
+  local phase_title=$(grep -E "^## Phase ${phase_num}:" "$tasks_md" | sed "s/^## Phase ${phase_num}: //")
+  if [[ -z "$phase_title" ]]; then
+    echo -e "${RED}Error: Phase $phase_num not found in tasks.md${NC}" >&2
+    exit 1
+  fi
+
+  # Generate slug from change name and phase
+  local change_name=$(basename "$change_dir")
+  local slug="${change_name}-phase-${phase_num}"
+
+  # Get current developer
+  local developer=$(get_developer "$REPO_ROOT")
+  if [[ -z "$developer" ]]; then
+    echo -e "${RED}Error: No developer set. Run init-developer.sh first${NC}" >&2
+    exit 1
+  fi
+
+  ensure_tasks_dir
+
+  # Create task directory
+  local tasks_dir=$(get_tasks_dir)
+  local date_prefix=$(generate_task_date_prefix)
+  local dir_name="${date_prefix}-${slug}"
+  local task_dir="$tasks_dir/$dir_name"
+
+  if [[ -d "$task_dir" ]]; then
+    echo -e "${YELLOW}Warning: Task directory already exists: $dir_name${NC}" >&2
+  else
+    mkdir -p "$task_dir"
+  fi
+
+  local today=$(date +%Y-%m-%d)
+
+  # Create task.json with ccg-impl as first action
+  cat > "$task_dir/$FILE_TASK_JSON" << EOF
+{
+  "id": "$slug",
+  "name": "$slug",
+  "title": "Phase $phase_num: $phase_title",
+  "description": "Execute Phase $phase_num of OpenSpec change: $change_name",
+  "status": "planning",
+  "dev_type": "$dev_type",
+  "scope": "$change_name",
+  "priority": "$priority",
+  "creator": "$developer",
+  "assignee": "$developer",
+  "createdAt": "$today",
+  "completedAt": null,
+  "branch": "feature/${change_name}",
+  "base_branch": "main",
+  "worktree_path": null,
+  "current_phase": 0,
+  "next_action": [
+    {"phase": 1, "action": "ccg-impl"},
+    {"phase": 2, "action": "ccg-review"},
+    {"phase": 3, "action": "finish"},
+    {"phase": 4, "action": "create-pr"}
+  ],
+  "openspec_change": "$change_dir",
+  "phase_number": $phase_num,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "relatedFiles": [],
+  "notes": "Auto-generated from OpenSpec change"
+}
+EOF
+
+  # Create prd.md
+  cat > "$task_dir/prd.md" << EOF
+# Task: 执行 OpenSpec Change Phase
+
+## Change
+$change_dir
+
+## Phase
+$phase_num
+
+## Phase 标题
+$phase_title
+
+## 说明
+执行上述 change 的 Phase $phase_num 任务。
+
+按照 ccg-impl 工作流：
+1. 读取 $change_dir/tasks.md 中 Phase $phase_num 的任务列表
+2. 读取 $change_dir/specs.md 和 design.md 理解规范和设计
+3. 多模型协作实现（后端用 Codex，前端用 Gemini）
+4. 外部模型只返回 diff patch，Claude 重写为生产代码
+5. 完成后更新 tasks.md 标记 [x]
+EOF
+
+  # Initialize context files based on dev_type
+  echo -e "${CYAN}Initializing context files...${NC}" >&2
+
+  # implement.jsonl - add openspec artifacts
+  local implement_file="$task_dir/implement.jsonl"
+  {
+    get_implement_base
+    case "$dev_type" in
+      backend|test) get_implement_backend ;;
+      frontend) get_implement_frontend ;;
+      fullstack)
+        get_implement_backend
+        get_implement_frontend
+        ;;
+    esac
+    # Add openspec artifacts
+    echo "{\"file\": \"$change_dir/specs.md\", \"reason\": \"OpenSpec requirements and constraints\"}"
+    echo "{\"file\": \"$change_dir/design.md\", \"reason\": \"OpenSpec technical design\"}"
+    echo "{\"file\": \"$change_dir/tasks.md\", \"reason\": \"OpenSpec task list\"}"
+  } > "$implement_file"
+
+  # check.jsonl
+  local check_file="$task_dir/check.jsonl"
+  {
+    get_check_context "$dev_type"
+    echo "{\"file\": \"$change_dir/specs.md\", \"reason\": \"Verify against OpenSpec requirements\"}"
+  } > "$check_file"
+
+  # debug.jsonl
+  local debug_file="$task_dir/debug.jsonl"
+  {
+    get_debug_context "$dev_type"
+    echo "{\"file\": \"$change_dir/specs.md\", \"reason\": \"Debug against OpenSpec requirements\"}"
+  } > "$debug_file"
+
+  echo -e "${GREEN}Created task from OpenSpec phase:${NC}" >&2
+  echo -e "  Task: $dir_name" >&2
+  echo -e "  Change: $change_dir" >&2
+  echo -e "  Phase: $phase_num - $phase_title" >&2
+  echo -e "  Dev Type: $dev_type" >&2
+  echo "" >&2
+  echo -e "${BLUE}Next steps:${NC}" >&2
+  echo -e "  1. Review: cat $task_dir/prd.md" >&2
+  echo -e "  2. Start: $0 start $DIR_WORKFLOW/$DIR_TASKS/$dir_name" >&2
+  echo -e "  3. Or use dispatch to run ccg-impl agent" >&2
+  echo "" >&2
+
+  # Output relative path for script chaining
+  echo "$DIR_WORKFLOW/$DIR_TASKS/$dir_name"
+}
+
+# =============================================================================
 # Help
 # =============================================================================
 
@@ -1036,6 +1238,8 @@ Usage:
   $0 archive <task-name>                Archive completed task
   $0 list [--mine] [--status <status>]  List tasks
   $0 list-archive [YYYY-MM]             List archived tasks
+  $0 create-from-phase --change <dir> --phase <N> [--dev-type <type>]
+                                        Create task from OpenSpec change phase
 
 Arguments:
   dev_type: backend | frontend | fullstack | test | docs
@@ -1107,6 +1311,10 @@ case "${1:-}" in
     ;;
   list-archive)
     cmd_list_archive "$2"
+    ;;
+  create-from-phase)
+    shift
+    cmd_create_from_phase "$@"
     ;;
   -h|--help|help)
     show_usage

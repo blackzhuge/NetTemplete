@@ -10,9 +10,9 @@ public sealed class ShadcnVueProvider : IUiLibraryProvider
 
     public IEnumerable<PackageReference> GetNpmPackages()
     {
-        yield return new PackageReference("tailwindcss", "^3.4.0");
-        yield return new PackageReference("postcss", "^8.4.0");
-        yield return new PackageReference("autoprefixer", "^10.4.0");
+        yield return new PackageReference("tailwindcss", "^3.4.0", IsDevDependency: true);
+        yield return new PackageReference("postcss", "^8.4.0", IsDevDependency: true);
+        yield return new PackageReference("autoprefixer", "^10.4.0", IsDevDependency: true);
         yield return new PackageReference("class-variance-authority", "^0.7.0");
         yield return new PackageReference("clsx", "^2.1.0");
         yield return new PackageReference("tailwind-merge", "^2.2.0");

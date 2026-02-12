@@ -1,0 +1,7 @@
+{"file": ".trellis/workflow.md", "reason": "Project workflow and conventions"}
+{"file": ".trellis/spec/shared/index.md", "reason": "Shared coding standards"}
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend development guide"}
+{"file": ".trellis/spec/frontend/components.md", "reason": "Component conventions"}
+{"file": "openspec/changes/dynamic-preview-explorer/specs.md", "reason": "OpenSpec requirements and constraints"}
+{"file": "openspec/changes/dynamic-preview-explorer/design.md", "reason": "OpenSpec technical design"}
+{"file": "openspec/changes/dynamic-preview-explorer/tasks.md", "reason": "OpenSpec task list"}

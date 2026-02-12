@@ -8,5 +8,6 @@ namespace ScaffoldGenerator.Contracts.Packages;
 public sealed record PackageReference(
     [property: JsonPropertyName("name")] string Name,
     [property: JsonPropertyName("version")] string Version,
-    [property: JsonPropertyName("source")] string? Source = null
+    [property: JsonPropertyName("source")] string? Source = null,
+    [property: JsonPropertyName("isDevDependency")] bool IsDevDependency = false
 );

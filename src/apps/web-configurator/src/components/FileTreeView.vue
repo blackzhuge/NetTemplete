@@ -1,7 +1,7 @@
 <template>
   <div class="file-tree-view" :class="theme">
     <!-- Loading skeleton -->
-    <div v-if="loading" class="skeleton-container">
+    <div v-if="treeLoading" class="skeleton-container">
       <div v-for="i in 6" :key="i" class="skeleton-item">
         <el-skeleton :rows="0" animated :class="{ 'dark-skeleton': theme === 'dark' }">
           <template #template>
@@ -58,7 +58,7 @@ withDefaults(defineProps<{
 })
 
 const store = useConfigStore()
-const { fileTree, loading } = storeToRefs(store)
+const { fileTree, treeLoading } = storeToRefs(store)
 
 const treeProps = {
   label: 'name',

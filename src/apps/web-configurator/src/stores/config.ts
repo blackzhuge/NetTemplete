@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
 import type { ScaffoldConfig, FileTreeNode, ScaffoldPreset, PreviewFileResponse } from '@/types'
 import type { PackageReference } from '@/types/packages'
-import { getPresets, previewFile } from '@/api/generator'
+import { getPresets, previewFile, getPreviewTree } from '@/api/generator'
 
 export const useConfigStore = defineStore('config', () => {
   const config = ref<ScaffoldConfig>({
@@ -33,6 +33,10 @@ export const useConfigStore = defineStore('config', () => {
   const nugetPackages = ref<PackageReference[]>([])
   const npmPackages = ref<PackageReference[]>([])
 
+  // 文件树状态 - 从后端获取
+  const fileTree = ref<FileTreeNode[]>([])
+  const treeLoading = ref(false)
+
   // Preview Drawer 状态
   const showPreviewDrawer = ref(false)
 
@@ -55,122 +59,43 @@ export const useConfigStore = defineStore('config', () => {
 
   // 防抖定时器
   let previewDebounceTimer: ReturnType<typeof setTimeout> | null = null
+  let treeDebounceTimer: ReturnType<typeof setTimeout> | null = null
 
-  const fileTree = computed<FileTreeNode[]>(() => {
-    const projectName = config.value.projectName
-    const root: FileTreeNode[] = [
-      // 根级别的解决方案和构建文件
-      { name: `${projectName}.sln`, path: `${projectName}.sln`, isDirectory: false },
-      { name: 'Directory.Build.props', path: 'Directory.Build.props', isDirectory: false },
-      {
-        name: 'src',
-        path: 'src',
-        isDirectory: true,
-        children: [
-          {
-            name: `${projectName}.Api`,
-            path: `src/${projectName}.Api`,
-            isDirectory: true,
-            children: [
-              { name: `${projectName}.Api.csproj`, path: `src/${projectName}.Api/${projectName}.Api.csproj`, isDirectory: false },
-              { name: 'Program.cs', path: `src/${projectName}.Api/Program.cs`, isDirectory: false },
-              { name: 'appsettings.json', path: `src/${projectName}.Api/appsettings.json`, isDirectory: false },
-              {
-                name: 'Extensions',
-                path: `src/${projectName}.Api/Extensions`,
-                isDirectory: true,
-                children: getExtensionFiles()
-              },
-              // Options 目录 - 根据配置条件显示
-              ...(config.value.enableJwtAuth ? [{
-                name: 'Options',
-                path: `src/${projectName}.Api/Options`,
-                isDirectory: true,
-                children: [
-                  { name: 'JwtOptions.cs', path: `src/${projectName}.Api/Options/JwtOptions.cs`, isDirectory: false }
-                ]
-              }] : [])
-            ]
-          },
-          {
-            name: `${projectName}.Web`,
-            path: `src/${projectName}.Web`,
-            isDirectory: true,
-            children: [
-              { name: 'package.json', path: `src/${projectName}.Web/package.json`, isDirectory: false },
-              { name: 'vite.config.ts', path: `src/${projectName}.Web/vite.config.ts`, isDirectory: false },
-              { name: 'tsconfig.json', path: `src/${projectName}.Web/tsconfig.json`, isDirectory: false },
-              { name: 'index.html', path: `src/${projectName}.Web/index.html`, isDirectory: false },
-              {
-                name: 'src',
-                path: `src/${projectName}.Web/src`,
-                isDirectory: true,
-                children: [
-                  { name: 'main.ts', path: `src/${projectName}.Web/src/main.ts`, isDirectory: false },
-                  { name: 'App.vue', path: `src/${projectName}.Web/src/App.vue`, isDirectory: false },
-                  {
-                    name: 'router',
-                    path: `src/${projectName}.Web/src/router`,
-                    isDirectory: true,
-                    children: [
-                      { name: 'index.ts', path: `src/${projectName}.Web/src/router/index.ts`, isDirectory: false }
-                    ]
-                  },
-                  {
-                    name: 'stores',
-                    path: `src/${projectName}.Web/src/stores`,
-                    isDirectory: true,
-                    children: [
-                      { name: 'index.ts', path: `src/${projectName}.Web/src/stores/index.ts`, isDirectory: false }
-                    ]
-                  },
-                  {
-                    name: 'api',
-                    path: `src/${projectName}.Web/src/api`,
-                    isDirectory: true,
-                    children: [
-                      { name: 'index.ts', path: `src/${projectName}.Web/src/api/index.ts`, isDirectory: false }
-                    ]
-                  },
-                  {
-                    name: 'views',
-                    path: `src/${projectName}.Web/src/views`,
-                    isDirectory: true,
-                    children: [
-                      { name: 'HomeView.vue', path: `src/${projectName}.Web/src/views/HomeView.vue`, isDirectory: false }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ]
-    return root
-  })
-
-  function getExtensionFiles(): FileTreeNode[] {
-    const basePath = `src/${config.value.projectName}.Api/Extensions`
-    const files: FileTreeNode[] = [
-      { name: 'SqlSugarSetup.cs', path: `${basePath}/SqlSugarSetup.cs`, isDirectory: false }
-    ]
-
-    if (config.value.enableJwtAuth) {
-      files.push({ name: 'JwtSetup.cs', path: `${basePath}/JwtSetup.cs`, isDirectory: false })
+  function buildConfigWithPackages(): ScaffoldConfig {
+    return {
+      ...config.value,
+      nugetPackages: [...nugetPackages.value],
+      npmPackages: [...npmPackages.value]
     }
+  }
 
-    if (config.value.enableSwagger) {
-      files.push({ name: 'SwaggerSetup.cs', path: `${basePath}/SwaggerSetup.cs`, isDirectory: false })
+  // 获取文件树
+  async function fetchFileTree() {
+    treeLoading.value = true
+    try {
+      const requestConfig = buildConfigWithPackages()
+      console.log('[fetchFileTree] Fetching tree for config:', requestConfig.projectName, requestConfig.orm, requestConfig.architecture)
+      const response = await getPreviewTree(requestConfig)
+      fileTree.value = response.tree
+      onConfigChange()
+      console.log('[fetchFileTree] Received tree:', response.tree.length, 'nodes')
+    } catch (e) {
+      console.error('Failed to fetch file tree:', e)
+      // 保持当前状态，不做特殊处理
+    } finally {
+      treeLoading.value = false
     }
+  }
 
-    if (config.value.cache === 'MemoryCache') {
-      files.push({ name: 'MemoryCacheSetup.cs', path: `${basePath}/MemoryCacheSetup.cs`, isDirectory: false })
-    } else if (config.value.cache === 'Redis') {
-      files.push({ name: 'RedisSetup.cs', path: `${basePath}/RedisSetup.cs`, isDirectory: false })
+  // 防抖调用（使用较短延迟 100ms）
+  function fetchFileTreeDebounced() {
+    console.log('[fetchFileTreeDebounced] Triggered')
+    if (treeDebounceTimer) {
+      clearTimeout(treeDebounceTimer)
     }
-
-    return files
+    treeDebounceTimer = setTimeout(() => {
+      fetchFileTree()
+    }, 100)
   }
 
   function updateConfig(partial: Partial<ScaffoldConfig>) {
@@ -229,10 +154,19 @@ export const useConfigStore = defineStore('config', () => {
   // 当 config 变化时，如果有选中文件，需要更新文件路径并刷新预览
   function onConfigChange() {
     if (selectedFile.value) {
-      const fileName = selectedFile.value.name
+      const currentPath = selectedFile.value.path
 
-      // 在新的 fileTree 中查找同名文件
-      const newNode = findFileInTree(fileTree.value, fileName)
+      // 优先按完整路径匹配，避免 index.ts 等重名文件选错
+      let newNode = findFileByPath(fileTree.value, currentPath)
+
+      // 仅在同名文件唯一时回退到文件名匹配
+      if (!newNode) {
+        const sameNameFiles = findFilesByName(fileTree.value, selectedFile.value.name)
+        if (sameNameFiles.length === 1) {
+          newNode = sameNameFiles[0]
+        }
+      }
+
       if (newNode) {
         selectedFile.value = newNode
         fetchPreviewDebounced()
@@ -244,17 +178,35 @@ export const useConfigStore = defineStore('config', () => {
     }
   }
 
-  function findFileInTree(nodes: FileTreeNode[], fileName: string): FileTreeNode | null {
+  function findFileByPath(nodes: FileTreeNode[], path: string): FileTreeNode | null {
     for (const node of nodes) {
-      if (!node.isDirectory && node.name === fileName) {
+      if (!node.isDirectory && node.path === path) {
         return node
       }
       if (node.children) {
-        const found = findFileInTree(node.children, fileName)
+        const found = findFileByPath(node.children, path)
         if (found) return found
       }
     }
     return null
+  }
+
+  function findFilesByName(nodes: FileTreeNode[], fileName: string): FileTreeNode[] {
+    const matches: FileTreeNode[] = []
+
+    function walk(treeNodes: FileTreeNode[]) {
+      for (const node of treeNodes) {
+        if (!node.isDirectory && node.name === fileName) {
+          matches.push(node)
+        }
+        if (node.children) {
+          walk(node.children)
+        }
+      }
+    }
+
+    walk(nodes)
+    return matches
   }
 
   function fetchPreviewDebounced() {
@@ -271,7 +223,7 @@ export const useConfigStore = defineStore('config', () => {
 
     previewLoading.value = true
     try {
-      previewContent.value = await previewFile(config.value, selectedFile.value.path)
+      previewContent.value = await previewFile(buildConfigWithPackages(), selectedFile.value.path)
     } catch (e) {
       console.error('Failed to fetch preview:', e)
       previewContent.value = null
@@ -336,11 +288,25 @@ export const useConfigStore = defineStore('config', () => {
     showPreviewDrawer.value = false
   }
 
+  // 初始化时获取文件树
+  fetchFileTree()
+
   // 监听 config 变化，自动刷新预览
   watch(
     config,
     () => {
-      onConfigChange()
+      fetchFileTreeDebounced()
+    },
+    { deep: true }
+  )
+
+  watch(
+    [nugetPackages, npmPackages],
+    () => {
+      fetchFileTreeDebounced()
+      if (selectedFile.value) {
+        fetchPreviewDebounced()
+      }
     },
     { deep: true }
   )
@@ -350,6 +316,7 @@ export const useConfigStore = defineStore('config', () => {
     loading,
     error,
     fileTree,
+    treeLoading,
     updateConfig,
     setLoading,
     setError,

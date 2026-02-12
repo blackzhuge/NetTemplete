@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios'
 import type { AxiosInstance } from 'axios'
 import { ElMessage } from 'element-plus'
-import type { ScaffoldConfig, ApiErrorResponse, ErrorCode, ScaffoldPreset, PreviewFileResponse } from '@/types'
+import type { ScaffoldConfig, ApiErrorResponse, ErrorCode, ScaffoldPreset, PreviewFileResponse, FileTreeNode } from '@/types'
 import type { PackageReference } from '@/types/packages'
 
 type ErrorMessageKey = ErrorCode | 'NetworkError' | 'Unknown'
@@ -57,6 +57,8 @@ interface GenerateScaffoldRequestDto {
     namespace: string
   }
   backend: {
+    architecture: string
+    orm: string
     database: string
     cache: string
     swagger: boolean
@@ -64,6 +66,7 @@ interface GenerateScaffoldRequestDto {
     nugetPackages?: PackageReference[]
   }
   frontend: {
+    uiLibrary: string
     routerMode: string
     mockData: boolean
     npmPackages?: PackageReference[]
@@ -78,6 +81,8 @@ function toApiRequest(config: ScaffoldConfig): GenerateScaffoldRequestDto {
       namespace: config.namespace
     },
     backend: {
+      architecture: config.architecture,
+      orm: config.orm,
       database: config.database,
       cache: config.cache,
       swagger: config.enableSwagger,
@@ -85,7 +90,8 @@ function toApiRequest(config: ScaffoldConfig): GenerateScaffoldRequestDto {
       nugetPackages: config.nugetPackages
     },
     frontend: {
-      routerMode: config.routerMode.toLowerCase(),
+      uiLibrary: config.uiLibrary,
+      routerMode: config.routerMode,
       mockData: config.enableMockData,
       npmPackages: config.npmPackages
     }
@@ -120,6 +126,14 @@ export async function previewFile(config: ScaffoldConfig, outputPath: string): P
     outputPath
   }
   const response = await api.post<PreviewFileResponse>('/v1/scaffolds/preview-file', payload)
+  return response.data
+}
+
+export async function getPreviewTree(config: ScaffoldConfig): Promise<{ tree: FileTreeNode[] }> {
+  const payload = {
+    config: toApiRequest(config)
+  }
+  const response = await api.post<{ tree: FileTreeNode[] }>('/v1/scaffolds/preview-tree', payload)
   return response.data
 }
 

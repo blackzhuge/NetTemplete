@@ -1,5 +1,6 @@
 using ScaffoldGenerator.Application.Abstractions;
 using ScaffoldGenerator.Contracts.Enums;
+using PackageReference = ScaffoldGenerator.Contracts.Packages.PackageReference;
 using ScaffoldGenerator.Contracts.Requests;
 
 namespace ScaffoldGenerator.Application.Modules;
@@ -16,7 +17,9 @@ public sealed class ArchitectureModule : IScaffoldModule
         var model = new
         {
             ProjectName = request.Basic.ProjectName,
-            Namespace = request.Basic.Namespace
+            Namespace = request.Basic.Namespace,
+            Orm = request.Backend.Orm.ToString(),
+            DbType = request.Backend.Database.ToString()
         };
 
         switch (request.Backend.Architecture)
@@ -63,6 +66,49 @@ public sealed class ArchitectureModule : IScaffoldModule
             "backend/architecture/clean/Infrastructure.csproj.sbn",
             $"src/{projectName}.Infrastructure/{projectName}.Infrastructure.csproj",
             model);
+
+        if (request.Backend.Orm == OrmProvider.EFCore)
+        {
+            plan.AddNugetPackage(new PackageReference("Microsoft.EntityFrameworkCore", "9.0.0"));
+
+            switch (request.Backend.Database)
+            {
+                case DatabaseProvider.SQLite:
+                    plan.AddNugetPackage(new PackageReference("Microsoft.EntityFrameworkCore.Sqlite", "9.0.0"));
+                    break;
+                case DatabaseProvider.MySQL:
+                    plan.AddNugetPackage(new PackageReference("Pomelo.EntityFrameworkCore.MySql", "9.0.0"));
+                    break;
+                case DatabaseProvider.SQLServer:
+                    plan.AddNugetPackage(new PackageReference("Microsoft.EntityFrameworkCore.SqlServer", "9.0.0"));
+                    break;
+            }
+        }
+        else if (request.Backend.Orm == OrmProvider.SqlSugar)
+        {
+            plan.AddNugetPackage(new PackageReference("SqlSugarCore", "5.1.4.169"));
+        }
+        else if (request.Backend.Orm == OrmProvider.Dapper)
+        {
+            plan.AddNugetPackage(new PackageReference("Dapper", "2.1.35"));
+        }
+        else if (request.Backend.Orm == OrmProvider.FreeSql)
+        {
+            plan.AddNugetPackage(new PackageReference("FreeSql", "3.2.833"));
+
+            switch (request.Backend.Database)
+            {
+                case DatabaseProvider.SQLite:
+                    plan.AddNugetPackage(new PackageReference("FreeSql.Provider.Sqlite", "3.2.833"));
+                    break;
+                case DatabaseProvider.MySQL:
+                    plan.AddNugetPackage(new PackageReference("FreeSql.Provider.MySql", "3.2.833"));
+                    break;
+                case DatabaseProvider.SQLServer:
+                    plan.AddNugetPackage(new PackageReference("FreeSql.Provider.SqlServer", "3.2.833"));
+                    break;
+            }
+        }
     }
 
     private static void AddVerticalSliceFiles(ScaffoldPlan plan, GenerateScaffoldRequest request, object model)

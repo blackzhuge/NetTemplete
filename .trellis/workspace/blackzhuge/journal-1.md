@@ -1137,3 +1137,68 @@ Template Options Extension: **37/37 (100%)** ✅
 ### Next Steps
 
 - None - task complete
+
+## Session 19: Dynamic Preview Explorer 规划
+
+**Date**: 2026-02-09
+**Task**: Dynamic Preview Explorer 规划
+
+### Summary
+
+(Add summary)
+
+### Main Changes
+
+## 工作内容
+
+| 阶段 | 完成项 |
+|------|--------|
+| spec-research | 分析问题根因，创建 OPSX 提案 |
+| spec-plan | 双模型并行分析，生成零决策任务 |
+| 提交 | 组件修复 + 规划文档 |
+
+## 问题诊断
+
+- **根因**: 前端 `fileTree` computed 硬编码，不反映配置差异
+- **方案**: 后端提供 `/api/scaffold/preview/tree` API，复用 ScaffoldPlan
+
+## 产出物
+
+```
+openspec/changes/dynamic-preview-explorer/
+├── proposal.md       # 需求提案
+├── specs.md          # 需求规格 + PBT 属性
+├── design.md         # 技术设计 + API + 数据结构
+├── tasks.md          # 14 个零决策任务
+└── ccg-context.jsonl # 任务→规范映射
+```
+
+## 关键决策
+
+| 决策 | 选择 |
+|------|------|
+| 服务设计 | 扩展 PreviewService |
+| 缓存策略 | 前端 computed 自动缓存 |
+| 错误处理 | 不做特殊处理 |
+
+## 下一步
+
+执行 `/ccg:spec-impl` 实施 14 个任务
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `992177c` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
