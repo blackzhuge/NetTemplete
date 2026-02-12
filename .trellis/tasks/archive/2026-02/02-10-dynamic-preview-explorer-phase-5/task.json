@@ -3,23 +3,35 @@
   "name": "dynamic-preview-explorer-phase-5",
   "title": "Phase 5: 前端 Store 改造",
   "description": "Execute Phase 5 of OpenSpec change: dynamic-preview-explorer",
-  "status": "planning",
+  "status": "completed",
   "dev_type": "frontend",
   "scope": "dynamic-preview-explorer",
   "priority": "P2",
   "creator": "blackzhuge",
   "assignee": "blackzhuge",
   "createdAt": "2026-02-10",
-  "completedAt": null,
+  "completedAt": "2026-02-12",
   "branch": "feature/dynamic-preview-explorer",
   "base_branch": "main",
   "worktree_path": null,
   "current_phase": 0,
   "next_action": [
-    {"phase": 1, "action": "ccg-impl"},
-    {"phase": 2, "action": "ccg-review"},
-    {"phase": 3, "action": "finish"},
-    {"phase": 4, "action": "create-pr"}
+    {
+      "phase": 1,
+      "action": "ccg-impl"
+    },
+    {
+      "phase": 2,
+      "action": "ccg-review"
+    },
+    {
+      "phase": 3,
+      "action": "finish"
+    },
+    {
+      "phase": 4,
+      "action": "create-pr"
+    }
   ],
   "openspec_change": "openspec/changes/dynamic-preview-explorer",
   "phase_number": 5,
