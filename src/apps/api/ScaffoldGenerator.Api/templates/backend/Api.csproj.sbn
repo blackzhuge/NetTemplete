@@ -24,6 +24,13 @@
 {{~ end ~}}
 {{~ else if orm == "Dapper" ~}}
     <PackageReference Include="Dapper" Version="2.1.35" />
+{{~ if db_type == "SQLite" ~}}
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.0" />
+{{~ else if db_type == "MySQL" ~}}
+    <PackageReference Include="MySqlConnector" Version="2.4.0" />
+{{~ else if db_type == "SQLServer" ~}}
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
+{{~ end ~}}
 {{~ else if orm == "FreeSql" ~}}
     <PackageReference Include="FreeSql" Version="3.2.833" />
 {{~ if db_type == "SQLite" ~}}

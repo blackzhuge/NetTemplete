@@ -1,0 +1,39 @@
+{
+  "id": "scaffold-core-hardening-phase-1",
+  "name": "scaffold-core-hardening-phase-1",
+  "title": "Phase 1: 后端模板修复（REQ-1 + REQ-2）",
+  "description": "Execute Phase 1 of OpenSpec change: scaffold-core-hardening",
+  "status": "completed",
+  "dev_type": "backend",
+  "scope": "scaffold-core-hardening",
+  "priority": "P2",
+  "creator": "blackzhuge",
+  "assignee": "blackzhuge",
+  "createdAt": "2026-02-15",
+  "completedAt": "2026-02-15",
+  "branch": "feature/scaffold-core-hardening",
+  "base_branch": "main",
+  "worktree_path": null,
+  "current_phase": 1,
+  "next_action": [
+    {
+      "phase": 1,
+      "action": "ccg-impl"
+    },
+    {
+      "phase": 2,
+      "action": "ccg-review"
+    },
+    {
+      "phase": 3,
+      "action": "finish"
+    }
+  ],
+  "openspec_change": "openspec/changes/scaffold-core-hardening",
+  "phase_number": 1,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "relatedFiles": [],
+  "notes": "Auto-generated from OpenSpec change"
+}

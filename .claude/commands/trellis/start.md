@@ -191,7 +191,7 @@ Call Implement Agent (specs are auto-injected by hook):
 
 ```
 Task(
-  subagent_type: "implement",
+  subagent_type: "ccg-impl",
   prompt: "Implement the task described in prd.md.
 
   Follow all specs that have been injected into your context.
@@ -206,7 +206,7 @@ Call Check Agent (specs are auto-injected by hook):
 
 ```
 Task(
-  subagent_type: "check",
+  subagent_type: "ccg-review",
   prompt: "Review all code changes against the specs.
 
   Fix any issues you find directly.
@@ -266,8 +266,8 @@ If yes, resume from the appropriate step (usually Step 7 or 8).
 | Agent | Purpose | Hook Injection |
 |-------|---------|----------------|
 | research | Analyze codebase | No (reads directly) |
-| implement | Write code | Yes (implement.jsonl) |
-| check | Review & fix | Yes (check.jsonl) |
+| ccg-impl | Write code (multi-model) | Yes (implement.jsonl) |
+| ccg-review | Review & fix (dual-model) | Yes (check.jsonl) |
 | debug | Fix specific issues | Yes (debug.jsonl) |
 
 ---

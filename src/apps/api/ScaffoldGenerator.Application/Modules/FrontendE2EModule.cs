@@ -22,7 +22,7 @@ public sealed class FrontendE2EModule : IScaffoldModule
         {
             plan.AddTemplateFile(
                 "frontend/tests/e2e/playwright/playwright.config.ts.sbn",
-                $"{projectName}.Web/playwright.config.ts",
+                $"src/{projectName}.Web/playwright.config.ts",
                 new { ProjectName = projectName });
 
             plan.AddNpmPackage(new PackageReference("@playwright/test", "^1.49.0"));
@@ -31,7 +31,7 @@ public sealed class FrontendE2EModule : IScaffoldModule
         {
             plan.AddTemplateFile(
                 "frontend/tests/e2e/cypress/cypress.config.ts.sbn",
-                $"{projectName}.Web/cypress.config.ts",
+                $"src/{projectName}.Web/cypress.config.ts",
                 new { ProjectName = projectName });
 
             plan.AddNpmPackage(new PackageReference("cypress", "^13.0.0"));

@@ -19,7 +19,7 @@ public sealed class FrontendUnitTestModule : IScaffoldModule
 
         plan.AddTemplateFile(
             "frontend/tests/unit/vitest/vitest.config.ts.sbn",
-            $"{projectName}.Web/vitest.config.ts",
+            $"src/{projectName}.Web/vitest.config.ts",
             new { ProjectName = projectName });
 
         plan.AddNpmPackage(new PackageReference("vitest", "^3.0.0"));

@@ -40,6 +40,18 @@ public class FrontendUnitTestModuleTests
         plan.NpmPackages.Should().Contain(p => p.Name == "jsdom");
     }
 
+    [Fact]
+    public async Task ContributeAsync_Vitest_OutputPathStartsWithSrcPrefix()
+    {
+        var plan = new ScaffoldPlan();
+        var request = CreateRequest(FrontendUnitTestFramework.Vitest);
+
+        await _module.ContributeAsync(plan, request, default);
+
+        plan.Files.Should().Contain(f =>
+            f.OutputPath == "src/TestProject.Web/vitest.config.ts");
+    }
+
     private static GenerateScaffoldRequest CreateRequest(
         FrontendUnitTestFramework fw) => new()
     {

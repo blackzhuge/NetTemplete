@@ -1,4 +1,7 @@
 using {{ namespace }}.Api.Extensions;
+{{~ if orm == "EFCore" || orm == "Dapper" || orm == "FreeSql" ~}}
+using {{ namespace }}.Api.Setup;
+{{~ end ~}}
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()

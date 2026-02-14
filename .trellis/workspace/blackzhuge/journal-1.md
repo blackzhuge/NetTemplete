@@ -1233,3 +1233,59 @@ openspec/changes/dynamic-preview-explorer/
 ### Next Steps
 
 - None - task complete
+
+## Session 21: Testing Options 全栈实现
+
+**Date**: 2026-02-13
+**Task**: Testing Options 全栈实现
+
+### Summary
+
+完成 testing-options 功能的 Phase 2 剩余任务、Phase 3 前端、Phase 4 预设收尾，23/23 任务 100% 完成
+
+### Main Changes
+
+## 完成内容
+
+| Phase | 内容 | 状态 |
+|-------|------|------|
+| Phase 1 | 后端枚举 + DTO + 序列化测试 | 100% |
+| Phase 2 | Module + 模板 + 单元/集成测试 | 100% |
+| Phase 3 | 前端 TS 类型 + Zod + Store + UI + 测试 | 100% |
+| Phase 4 | 预设方案 + 验证 + 预设测试 + Module 测试 | 100% |
+
+## 关键文件
+
+**后端新增**:
+- 4 个枚举: `BackendUnitTestFramework`, `BackendIntegrationTestFramework`, `FrontendUnitTestFramework`, `FrontendE2EFramework`
+- 4 个 Module: `BackendUnitTestModule`, `BackendIntegrationTestModule`, `FrontendUnitTestModule`, `FrontendE2EModule`
+- 7 个 Scriban 模板 (xUnit/NUnit/MSTest .csproj, Vitest/Playwright/Cypress config)
+
+**前端新增**:
+- TypeScript 类型、Zod schema、Pinia store 扩展
+- BackendOptions.vue / FrontendOptions.vue 测试框架选择器
+- API 映射层更新
+
+**测试**: 后端 204 passed, 前端 63 passed
+
+## PR
+- PR #3: feat(testing): 添加前后端测试框架可选项
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `56407ac` | (see git log) |
+| `433b7c2` | (see git log) |
+
+### Testing
+
+- [OK] (Add test results)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- None - task complete
