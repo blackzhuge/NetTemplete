@@ -110,6 +110,20 @@ public class GenerateEndpointTests : IClassFixture<CustomWebApplicationFactory>
     }
 
     [Fact]
+    public async Task Generate_OutOfRangeEnumValue_ReturnsBadRequest()
+    {
+        var request = CreateRequest();
+        // Cast out-of-range int to enum to simulate invalid numeric deserialization
+        var invalidRequest = request with
+        {
+            Backend = request.Backend with { Orm = (OrmProvider)999 }
+        };
+
+        var response = await _client.PostAsJsonAsync("/api/v1/scaffolds/generate-zip", invalidRequest);
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
     public async Task Generate_AllDatabaseProviders_Succeeds()
     {
         foreach (var provider in Enum.GetValues<DatabaseProvider>())
@@ -240,6 +254,81 @@ public class GenerateEndpointTests : IClassFixture<CustomWebApplicationFactory>
         preview.Should().NotBeNull();
         preview!.Content.Should().Contain("Dapper");
         preview.Content.Should().NotContain("SqlSugarCore");
+    }
+
+    [Theory]
+    [InlineData(DatabaseProvider.SQLite, "Microsoft.Data.Sqlite")]
+    [InlineData(DatabaseProvider.MySQL, "MySqlConnector")]
+    [InlineData(DatabaseProvider.SQLServer, "Microsoft.Data.SqlClient")]
+    public async Task PreviewFile_DapperCsproj_ContainsCorrectDbDriver(
+        DatabaseProvider db, string expectedDriver)
+    {
+        var request = CreateRequest(
+            projectName: "MyApp",
+            ns: "MyApp",
+            database: db,
+            orm: OrmProvider.Dapper);
+
+        var previewRequest = new PreviewFileRequest(
+            request,
+            "src/MyApp.Api/MyApp.Api.csproj");
+
+        var response = await _client.PostAsJsonAsync("/api/v1/scaffolds/preview-file", previewRequest);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var preview = await response.Content.ReadFromJsonAsync<PreviewFileResponse>();
+        preview.Should().NotBeNull();
+        preview!.Content.Should().Contain("Dapper");
+        preview.Content.Should().Contain(expectedDriver);
+    }
+
+    [Theory]
+    [InlineData(OrmProvider.EFCore)]
+    [InlineData(OrmProvider.Dapper)]
+    [InlineData(OrmProvider.FreeSql)]
+    public async Task PreviewFile_NonSqlSugarOrm_ProgramCsContainsSetupUsing(OrmProvider orm)
+    {
+        var request = CreateRequest(
+            projectName: "MyApp",
+            ns: "MyApp",
+            database: DatabaseProvider.SQLite,
+            orm: orm);
+
+        var previewRequest = new PreviewFileRequest(
+            request,
+            "src/MyApp.Api/Program.cs");
+
+        var response = await _client.PostAsJsonAsync("/api/v1/scaffolds/preview-file", previewRequest);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var preview = await response.Content.ReadFromJsonAsync<PreviewFileResponse>();
+        preview.Should().NotBeNull();
+        preview!.Content.Should().Contain("using MyApp.Api.Setup;");
+    }
+
+    [Fact]
+    public async Task PreviewFile_SqlSugar_ProgramCsDoesNotContainSetupUsing()
+    {
+        var request = CreateRequest(
+            projectName: "MyApp",
+            ns: "MyApp",
+            database: DatabaseProvider.SQLite,
+            orm: OrmProvider.SqlSugar);
+
+        var previewRequest = new PreviewFileRequest(
+            request,
+            "src/MyApp.Api/Program.cs");
+
+        var response = await _client.PostAsJsonAsync("/api/v1/scaffolds/preview-file", previewRequest);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var preview = await response.Content.ReadFromJsonAsync<PreviewFileResponse>();
+        preview.Should().NotBeNull();
+        preview!.Content.Should().NotContain("using MyApp.Api.Setup;");
+        preview.Content.Should().Contain("using MyApp.Api.Extensions;");
     }
 
     [Fact]
@@ -468,6 +557,75 @@ public class GenerateEndpointTests : IClassFixture<CustomWebApplicationFactory>
                 FlattenNames(result!.Tree).Should().Contain(expectedFile);
             }
         }
+    }
+
+    [Fact]
+    public async Task PreviewFile_PackageJson_LintScriptUsesEslintFlatConfig()
+    {
+        var request = CreateRequest(
+            projectName: "MyApp",
+            ns: "MyApp",
+            orm: OrmProvider.EFCore);
+
+        var previewRequest = new PreviewFileRequest(
+            request,
+            "src/MyApp.Web/package.json");
+
+        var response = await _client.PostAsJsonAsync("/api/v1/scaffolds/preview-file", previewRequest);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var preview = await response.Content.ReadFromJsonAsync<PreviewFileResponse>();
+        preview.Should().NotBeNull();
+        preview!.Content.Should().Contain("\"lint\": \"eslint .\"");
+        preview.Content.Should().Contain("\"lint:fix\": \"eslint . --fix\"");
+        preview.Content.Should().NotContain("--ext");
+    }
+
+    [Fact]
+    public async Task PreviewFile_EslintConfig_ContainsExpectedContent()
+    {
+        var request = CreateRequest(
+            projectName: "MyApp",
+            ns: "MyApp",
+            orm: OrmProvider.EFCore);
+
+        var previewRequest = new PreviewFileRequest(
+            request,
+            "src/MyApp.Web/eslint.config.js");
+
+        var response = await _client.PostAsJsonAsync("/api/v1/scaffolds/preview-file", previewRequest);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var preview = await response.Content.ReadFromJsonAsync<PreviewFileResponse>();
+        preview.Should().NotBeNull();
+        preview!.Content.Should().Contain("@eslint/js");
+        preview.Content.Should().Contain("eslint-plugin-vue");
+        preview.Content.Should().Contain("@vue/eslint-config-typescript");
+        preview.Content.Should().Contain("skipFormatting");
+        preview.Content.Should().Contain("vue/multi-word-component-names");
+    }
+
+    [Fact]
+    public async Task PreviewTree_DefaultRequest_ContainsEslintAndPrettierFiles()
+    {
+        var request = CreateRequest(
+            projectName: "MyApp",
+            ns: "MyApp",
+            orm: OrmProvider.EFCore);
+
+        var treeRequest = new PreviewTreeRequest(request);
+        var response = await _client.PostAsJsonAsync("/api/v1/scaffolds/preview-tree", treeRequest);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var tree = await response.Content.ReadFromJsonAsync<PreviewTreeResponse>();
+        tree.Should().NotBeNull();
+
+        var names = FlattenNames(tree!.Tree).ToList();
+        names.Should().Contain("eslint.config.js");
+        names.Should().Contain(".prettierrc");
     }
 
     private static IEnumerable<string> FlattenNames(IEnumerable<FileTreeNodeDto> nodes)

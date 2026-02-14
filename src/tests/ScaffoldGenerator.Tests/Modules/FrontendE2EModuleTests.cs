@@ -42,6 +42,18 @@ public class FrontendE2EModuleTests
     }
 
     [Fact]
+    public async Task ContributeAsync_Playwright_OutputPathStartsWithSrcPrefix()
+    {
+        var plan = new ScaffoldPlan();
+        var request = CreateRequest(FrontendE2EFramework.Playwright);
+
+        await _module.ContributeAsync(plan, request, default);
+
+        plan.Files.Should().Contain(f =>
+            f.OutputPath == "src/TestProject.Web/playwright.config.ts");
+    }
+
+    [Fact]
     public async Task ContributeAsync_Cypress_AddsConfigAndPackage()
     {
         var plan = new ScaffoldPlan();
@@ -53,6 +65,18 @@ public class FrontendE2EModuleTests
             f.OutputPath.Contains("cypress.config.ts"));
         plan.NpmPackages.Should().Contain(p =>
             p.Name == "cypress");
+    }
+
+    [Fact]
+    public async Task ContributeAsync_Cypress_OutputPathStartsWithSrcPrefix()
+    {
+        var plan = new ScaffoldPlan();
+        var request = CreateRequest(FrontendE2EFramework.Cypress);
+
+        await _module.ContributeAsync(plan, request, default);
+
+        plan.Files.Should().Contain(f =>
+            f.OutputPath == "src/TestProject.Web/cypress.config.ts");
     }
 
     private static GenerateScaffoldRequest CreateRequest(

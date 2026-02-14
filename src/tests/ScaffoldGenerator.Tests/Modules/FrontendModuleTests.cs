@@ -130,6 +130,43 @@ public class FrontendModuleTests
         }
     }
 
+    [Fact]
+    public async Task ContributeAsync_AddsEslintDevDependencies()
+    {
+        var plan = new ScaffoldPlan();
+        var request = CreateRequest();
+
+        await _module.ContributeAsync(plan, request, default);
+
+        var expectedPackages = new[]
+        {
+            "eslint", "@eslint/js", "eslint-plugin-vue",
+            "@vue/eslint-config-typescript", "@vue/eslint-config-prettier",
+            "typescript-eslint", "prettier"
+        };
+
+        foreach (var name in expectedPackages)
+        {
+            plan.NpmPackages.Should().Contain(
+                p => p.Name == name && p.IsDevDependency,
+                $"{name} should be a devDependency");
+        }
+    }
+
+    [Fact]
+    public async Task ContributeAsync_AddsEslintConfigAndPrettierrcFiles()
+    {
+        var plan = new ScaffoldPlan();
+        var request = CreateRequest();
+
+        await _module.ContributeAsync(plan, request, default);
+
+        plan.Files.Should().Contain(f =>
+            f.OutputPath == "src/TestProject.Web/eslint.config.js");
+        plan.Files.Should().Contain(f =>
+            f.OutputPath == "src/TestProject.Web/.prettierrc");
+    }
+
     private static GenerateScaffoldRequest CreateRequest(
         UiLibrary uiLibrary = UiLibrary.ElementPlus) => new()
     {

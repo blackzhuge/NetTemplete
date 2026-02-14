@@ -87,6 +87,20 @@ public sealed class OrmModule : IScaffoldModule
             model);
 
         plan.AddNugetPackage(new PackageReference("Dapper", "2.1.35"));
+
+        // 根据数据库类型添加 ADO.NET 驱动包
+        switch (request.Backend.Database)
+        {
+            case DatabaseProvider.SQLite:
+                plan.AddNugetPackage(new PackageReference("Microsoft.Data.Sqlite", "9.0.0"));
+                break;
+            case DatabaseProvider.MySQL:
+                plan.AddNugetPackage(new PackageReference("MySqlConnector", "2.4.0"));
+                break;
+            case DatabaseProvider.SQLServer:
+                plan.AddNugetPackage(new PackageReference("Microsoft.Data.SqlClient", "5.2.2"));
+                break;
+        }
     }
 
     private static void AddFreeSqlFiles(ScaffoldPlan plan, GenerateScaffoldRequest request, object model)

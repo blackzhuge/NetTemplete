@@ -95,6 +95,21 @@ public class OrmModuleTests
             p.Name.Contains(expectedPackageContains, StringComparison.OrdinalIgnoreCase));
     }
 
+    [Theory]
+    [InlineData(DatabaseProvider.SQLite, "Microsoft.Data.Sqlite")]
+    [InlineData(DatabaseProvider.MySQL, "MySqlConnector")]
+    [InlineData(DatabaseProvider.SQLServer, "Microsoft.Data.SqlClient")]
+    public async Task ContributeAsync_Dapper_AddsCorrectDbDriver(
+        DatabaseProvider db, string expectedPackage)
+    {
+        var plan = new ScaffoldPlan();
+        var request = CreateRequest(OrmProvider.Dapper, db);
+
+        await _module.ContributeAsync(plan, request, default);
+
+        plan.NugetPackages.Should().Contain(p => p.Name == expectedPackage);
+    }
+
     private static GenerateScaffoldRequest CreateRequest(
         OrmProvider orm = OrmProvider.SqlSugar,
         DatabaseProvider database = DatabaseProvider.SQLite) => new()

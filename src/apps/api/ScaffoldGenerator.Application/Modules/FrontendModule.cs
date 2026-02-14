@@ -34,6 +34,15 @@ public sealed class FrontendModule(IEnumerable<IUiLibraryProvider> providers) : 
             plan.AddNpmPackage(pkg);
         }
 
+        // eslint + prettier 工具链
+        plan.AddNpmPackage(new PackageReference("eslint", "^9.17.0", IsDevDependency: true));
+        plan.AddNpmPackage(new PackageReference("@eslint/js", "^9.17.0", IsDevDependency: true));
+        plan.AddNpmPackage(new PackageReference("eslint-plugin-vue", "^9.32.0", IsDevDependency: true));
+        plan.AddNpmPackage(new PackageReference("@vue/eslint-config-typescript", "^14.1.4", IsDevDependency: true));
+        plan.AddNpmPackage(new PackageReference("@vue/eslint-config-prettier", "^10.1.0", IsDevDependency: true));
+        plan.AddNpmPackage(new PackageReference("typescript-eslint", "^8.18.2", IsDevDependency: true));
+        plan.AddNpmPackage(new PackageReference("prettier", "^3.4.0", IsDevDependency: true));
+
         var npmPackages = plan.NpmPackages.ToArray();
 
         var model = new
@@ -61,6 +70,8 @@ public sealed class FrontendModule(IEnumerable<IUiLibraryProvider> providers) : 
         plan.AddTemplateFile("frontend/stores/index.ts.sbn", $"{webPath}/src/stores/index.ts", model);
         plan.AddTemplateFile("frontend/api/index.ts.sbn", $"{webPath}/src/api/index.ts", model);
         plan.AddTemplateFile("frontend/views/HomeView.vue.sbn", $"{webPath}/src/views/HomeView.vue", model);
+        plan.AddTemplateFile("frontend/eslint.config.js.sbn", $"{webPath}/eslint.config.js", model);
+        plan.AddTemplateFile("frontend/.prettierrc.sbn", $"{webPath}/.prettierrc", model);
 
         if (request.Frontend.MockData)
         {
